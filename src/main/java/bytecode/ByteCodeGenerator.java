@@ -9,6 +9,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,20 +21,18 @@ public class ByteCodeGenerator {
         List<Class> classes = (List<Class>) program.classes;
         HashMap<String, byte[]> byteList = new HashMap<>();
 
-
-
         for(Class currentClass : classes){
 
             ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+            String className = currentClass.name;
             int visibility = Opcodes.ACC_PUBLIC;
+
             cw.visit(Opcodes.V1_8,
                     visibility,
-                    currentClass.name,
+                    className,
                     null,
                     "java/lang/Object",
                     null);
-
-            String type = currentClass.name;
 
             //generate fields
             cw = generateByteCodeFields(cw, currentClass.fields);
@@ -45,8 +44,22 @@ public class ByteCodeGenerator {
             cw = generateByteCodeMethods(cw, currentClass.methods);
             cw.visitEnd();
 
-            byteList.put(currentClass.name, cw.toByteArray());
+            byte[] classBytes = cw.toByteArray();
+
+            byteList.put(className, classBytes);
+
+            String outputFileName = className + ".class";
+            File outputFile = new File(outputDir, outputFileName);
+
+            try {
+                FileOutputStream f = new FileOutputStream(outputFile);
+                f.write(classBytes);
+                f.close();
+            }catch (Exception e){
+                System.out.println("Error occurred while writing to file:" + e);
+            }
         }
+
         return byteList;
     }
 
