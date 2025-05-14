@@ -1,5 +1,5 @@
 // Generated from /Users/olli/Studium/semester_4/Compilerbau/compiler/git/EHCompiler/src/antlr/AST.g4 by ANTLR 4.13.2
-package parser;
+package scannerparserlexer.parser;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.*;

@@ -54,7 +54,6 @@ statement
     | 'while' '(' expression ')' statement                        # whileStmt
     | 'do' statement 'while' '(' expression ')' ';'               # doWhileStmt
     | 'for' '(' expression ';' expression ';' expression ')' statement  # forStmt
-    | 'switch' '(' expression ')' '{' switchBlockStatementGroup* '}'    # switchStmt
     | 'return' expression? ';'                                    # returnStmt
     | 'break' ';'                                                 # breakStmt
     | 'continue' ';'                                              # continueStmt
