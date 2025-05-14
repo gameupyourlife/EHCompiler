@@ -25,30 +25,39 @@ public class StatementAdapter {
     }
 
     public static Statement adapt(ASTParser.StatementContext ctx) {
-        if (ctx.block() != null) {
-            return adaptBlock(ctx.block());
-        } else if (ctx.ifStmt() != null) {
-            return adaptIf(ctx.ifStmt());
-        } else if (ctx.whileStmt() != null) {
-            return adaptWhile(ctx.whileStmt());
-        } else if (ctx.forStmt() != null) {
-            return adaptFor(ctx.forStmt());
-        } else if (ctx.returnStmt() != null) {
-            return adaptReturn(ctx.returnStmt());
-        } else if (ctx.localVarDeclStmt() != null) {
-            return adaptLocalVarDecl(ctx.localVarDeclStmt());
-        } else if (ctx.exprStmt() != null) {
-            return adaptExprStmt(ctx.exprStmt());
-        } else if (ctx.emptyStmt() != null) {
+        if (ctx instanceof ASTParser.BlockStmtContext) {
+            ASTParser.BlockStmtContext blockCtx = (ASTParser.BlockStmtContext) ctx;
+            return adaptBlock(blockCtx.block());
+        } else if (ctx instanceof ASTParser.IfStmtContext) {
+            ASTParser.IfStmtContext ifCtx = (ASTParser.IfStmtContext) ctx;
+            return adaptIf(ifCtx);
+        } else if (ctx instanceof ASTParser.WhileStmtContext) {
+            ASTParser.WhileStmtContext whileCtx = (ASTParser.WhileStmtContext) ctx;
+            return adaptWhile(whileCtx);
+        } else if (ctx instanceof ASTParser.ForStmtContext) {
+            ASTParser.ForStmtContext forCtx = (ASTParser.ForStmtContext) ctx;
+            return adaptFor(forCtx);
+        } else if (ctx instanceof ASTParser.ReturnStmtContext) {
+            ASTParser.ReturnStmtContext returnCtx = (ASTParser.ReturnStmtContext) ctx;
+            return adaptReturn(returnCtx);
+        } else if (ctx instanceof ASTParser.LocalVarDeclStmtContext) {
+            ASTParser.LocalVarDeclStmtContext localVarCtx = (ASTParser.LocalVarDeclStmtContext) ctx;
+            return adaptLocalVarDecl(localVarCtx);
+        } else if (ctx instanceof ASTParser.ExprStmtContext) {
+            ASTParser.ExprStmtContext exprCtx = (ASTParser.ExprStmtContext) ctx;
+            return adaptExprStmt(exprCtx);
+        } else if (ctx instanceof ASTParser.EmptyStmtContext) {
             return new EmptyStatement();
-        } else if (ctx.breakStmt() != null) {
+        } else if (ctx instanceof ASTParser.BreakStmtContext) {
             return new Break();
-        } else if (ctx.continueStmt() != null) {
+        } else if (ctx instanceof ASTParser.ContinueStmtContext) {
             return new Continue();
-        } else if (ctx.doWhileStmt() != null) {
-            return adaptDoWhile(ctx.doWhileStmt());
-        } else if (ctx.switchStmt() != null) {
-            return adaptSwitch(ctx.switchStmt());
+        } else if (ctx instanceof ASTParser.DoWhileStmtContext) {
+            ASTParser.DoWhileStmtContext doWhileCtx = (ASTParser.DoWhileStmtContext) ctx;
+            return adaptDoWhile(doWhileCtx);
+        } else if (ctx instanceof ASTParser.SwitchStmtContext) {
+            ASTParser.SwitchStmtContext switchCtx = (ASTParser.SwitchStmtContext) ctx;
+            return adaptSwitch(switchCtx);
         } else {
             // Default case for other statement types
             return new EmptyStatement();
