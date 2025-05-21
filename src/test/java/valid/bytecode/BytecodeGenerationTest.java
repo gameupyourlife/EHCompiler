@@ -43,7 +43,7 @@ public class BytecodeGenerationTest {
     }
 
     @Test
-    void testGenerateClassWithBooleanField() throws Exception {
+    void testGenerateClassWithFields() throws Exception {
         Field booleanField = new Field(
             "flag",               
             ast.Type.BOOLEAN,         
