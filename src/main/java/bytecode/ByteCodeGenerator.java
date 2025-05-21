@@ -1,9 +1,7 @@
 package bytecode;
 
+import ast.*;
 import ast.Class;
-import ast.Field;
-import ast.Method;
-import ast.Program;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -64,6 +62,12 @@ public class ByteCodeGenerator {
 
 
         return cw;
+    }
+
+    private String getDescriptor(Type type) {
+        switch (type) {
+
+        }
     }
 
     public ClassWriter generateByteCodeStandardConstructor(ClassWriter cw, Class cl) {
