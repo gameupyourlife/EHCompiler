@@ -1,24 +1,21 @@
 package bytecode;
 
+import ast.*;
 import ast.Class;
-import ast.Field;
-import ast.Method;
-import ast.Program;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class ByteCodeGenerator {
 
-    public HashMap<String, byte[]> generateByteCode(Program program, File outputDir) {
+    public HashMap<String, byte[]> generateByteCode(Program program) {
 
-        List<Class> classes = (List<Class>) program.classes;
+        List<Class> classes = program.classes;
         HashMap<String, byte[]> byteList = new HashMap<>();
 
         for(Class currentClass : classes){
@@ -35,44 +32,55 @@ public class ByteCodeGenerator {
                     null);
 
             //generate fields
-            cw = generateByteCodeFields(cw, currentClass.fields);
+            cw = generateBytecodeFields(cw, currentClass.fields);
 
             //generate constructors
-            cw = generateByteCodeStandardConstructor(cw, currentClass);
+            cw = generateBytecodeStandardConstructor(cw, currentClass);
 
             //generate methods
-            cw = generateByteCodeMethods(cw, currentClass.methods);
+            cw = generateBytecodeMethods(cw, currentClass.methods);
             cw.visitEnd();
 
             byte[] classBytes = cw.toByteArray();
 
             byteList.put(className, classBytes);
-
-            String outputFileName = className + ".class";
-            File outputFile = new File(outputDir, outputFileName);
-
-            try {
-                FileOutputStream f = new FileOutputStream(outputFile);
-                f.write(classBytes);
-                f.close();
-            }catch (Exception e){
-                System.out.println("Error occurred while writing to file:" + e);
-            }
         }
 
         return byteList;
     }
 
-    public ClassWriter generateByteCodeFields(ClassWriter cw, List<Field> fields) {
+    public ClassWriter generateBytecodeFields(ClassWriter cw, List<Field> fields) {
         if (fields.isEmpty()) {
             return cw;
         }
 
-        // Bytecode muss hier generiert werden
+        for (Field field : fields) {
+            String descriptor = getDescriptor(field);
+            int access = Opcodes.ACC_PUBLIC;
+            FieldVisitor fv = cw.visitField(access, field.name, descriptor, null, null);
+            fv.visitEnd();
+        }
         return cw;
     }
 
-    public ClassWriter generateByteCodeStandardConstructor(ClassWriter cw, Class cl) {
+    private String getDescriptor(Field field) {
+        switch (field.type) {
+            case INT:
+                return "I";
+            case BOOLEAN:
+                return "Z";
+            case CHAR:
+                return "C";
+            case VOID:
+                return "V";
+            default:
+                if (field.customTypeName == null)
+                    throw new IllegalStateException("CUSTOM type requires customTypeName");
+                return "L" + field.customTypeName.replace('.', '/') + ";";
+        }
+    }
+
+    public ClassWriter generateBytecodeStandardConstructor(ClassWriter cw, Class cl) {
 
         cw.visit(Opcodes.V1_8,
                 Opcodes.ACC_PUBLIC,
@@ -98,11 +106,10 @@ public class ByteCodeGenerator {
         constructor.visitMaxs(0, 0);
         constructor.visitEnd();
 
-        // return cw.toByteArray();
         return cw;
     }
 
-    public ClassWriter generateByteCodeMethods(ClassWriter cw, List<Method> methods) {
+    public ClassWriter generateBytecodeMethods(ClassWriter cw, List<Method> methods) {
         if (methods.isEmpty()) {
             return cw;
         }
