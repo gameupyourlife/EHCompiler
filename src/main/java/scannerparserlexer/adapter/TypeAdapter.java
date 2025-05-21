@@ -19,8 +19,7 @@ public class TypeAdapter {
             case "void":
                 return Type.VOID;
             default:
-                // If it's not a primitive type, it's a custom type (class)
-                return Type.CUSTOM;
+                throw new IllegalArgumentException("Inkompatibler Typ");
         }
     }
 }

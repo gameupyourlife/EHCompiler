@@ -28,7 +28,7 @@ public class MethodAdapter {
         
         // Set method body (statement)
         if (ctx.block() != null) {
-            method.statement = StatementAdapter.adaptBlock(ctx.block());
+            // method.statement = StatementAdapter.adaptBlock(ctx.block());
         }
         
         // Set static flag (not supported in the grammar yet)
