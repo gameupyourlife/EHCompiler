@@ -6,6 +6,6 @@ public class Method {
     public Type type;
     public String name;
     public List<Parameter> parameters;
-    public Statement statement;
+    public List<Statement> statement;
     public Boolean staticFlag;
 }

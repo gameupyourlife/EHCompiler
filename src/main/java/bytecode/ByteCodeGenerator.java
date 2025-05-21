@@ -55,7 +55,7 @@ public class ByteCodeGenerator {
         }
 
         for (Field field : fields) {
-            String descriptor = getDescriptor(field);
+            String descriptor = getDescriptor(field.type);
             int access = Opcodes.ACC_PUBLIC;
             FieldVisitor fv = cw.visitField(access, field.name, descriptor, null, null);
             fv.visitEnd();
@@ -63,8 +63,8 @@ public class ByteCodeGenerator {
         return cw;
     }
 
-    private String getDescriptor(Field field) {
-        switch (field.type) {
+    private String getDescriptor(Type type) {
+        switch (type) {
             case INT:
                 return "I";
             case BOOLEAN:
@@ -74,9 +74,7 @@ public class ByteCodeGenerator {
             case VOID:
                 return "V";
             default:
-                if (field.customTypeName == null)
-                    throw new IllegalStateException("CUSTOM type requires customTypeName");
-                return "L" + field.customTypeName.replace('.', '/') + ";";
+                throw new IllegalArgumentException("Unsupported type: " + type);
         }
     }
 
@@ -114,8 +112,43 @@ public class ByteCodeGenerator {
             return cw;
         }
 
-        // Bytecode muss hier generiert werden
+        for (Method method : methods) {
+            String descriptor = getMethodDescriptor(method);
+            int access = Opcodes.ACC_PUBLIC;
+            MethodVisitor mv = cw.visitMethod(access, method.name, descriptor, null, null);
+            mv.visitCode();
+            emitDefaultReturn(mv, method.type);
+
+            mv.visitMaxs(0, 0);
+            mv.visitEnd();
+        }
 
         return cw;
+    }
+
+    // To Do: Einzelne Methoden für jeweilige Statement / Expressions mit visitor pattern
+
+    private void emitDefaultReturn(MethodVisitor mv, Type returnType) {
+        switch (returnType) {
+            case VOID:
+                mv.visitInsn(Opcodes.RETURN);
+            case INT, BOOLEAN, CHAR:
+                mv.visitInsn(Opcodes.ICONST_0);
+                mv.visitInsn(Opcodes.IRETURN);
+            default:
+                throw new IllegalArgumentException("Unknown return type: " + returnType);
+        }
+    }
+
+    private String getMethodDescriptor(Method method) {
+        StringBuilder descriptor = new StringBuilder();
+        descriptor.append('(');
+
+        for (Parameter param : method.parameters) {
+            descriptor.append(getDescriptor(param.type));
+        }
+        descriptor.append(')');
+        descriptor.append(getDescriptor(method.type));
+        return descriptor.toString();
     }
 }
