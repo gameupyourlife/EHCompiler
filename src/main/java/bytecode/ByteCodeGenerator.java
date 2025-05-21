@@ -68,6 +68,7 @@ public class ByteCodeGenerator {
         switch (type) {
 
         }
+        return "";
     }
 
     public ClassWriter generateByteCodeStandardConstructor(ClassWriter cw, Class cl) {
