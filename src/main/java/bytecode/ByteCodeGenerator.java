@@ -9,8 +9,6 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,7 +16,7 @@ public class ByteCodeGenerator {
 
     public HashMap<String, byte[]> generateByteCode(Program program, File outputDir) {
 
-        List<Class> classes = (List<Class>) program.classes;
+        List<Class> classes = program.classes;
         HashMap<String, byte[]> byteList = new HashMap<>();
 
         for(Class currentClass : classes){
@@ -47,17 +45,6 @@ public class ByteCodeGenerator {
             byte[] classBytes = cw.toByteArray();
 
             byteList.put(className, classBytes);
-
-            String outputFileName = className + ".class";
-            File outputFile = new File(outputDir, outputFileName);
-
-            try {
-                FileOutputStream f = new FileOutputStream(outputFile);
-                f.write(classBytes);
-                f.close();
-            }catch (Exception e){
-                System.out.println("Error occurred while writing to file:" + e);
-            }
         }
 
         return byteList;
@@ -68,7 +55,14 @@ public class ByteCodeGenerator {
             return cw;
         }
 
-        // Bytecode muss hier generiert werden
+        for (Field field : fields) {
+            String descriptor = getDescriptor(field.type);
+        }
+
+
+
+
+
         return cw;
     }
 
@@ -98,7 +92,6 @@ public class ByteCodeGenerator {
         constructor.visitMaxs(0, 0);
         constructor.visitEnd();
 
-        // return cw.toByteArray();
         return cw;
     }
 
