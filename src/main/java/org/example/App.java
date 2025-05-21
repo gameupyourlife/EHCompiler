@@ -1,7 +1,5 @@
 package org.example;
-
 import java.util.List;
-
 import org.example.semantic.semanticCheck;
 import org.example.semantic.exceptions.semanticError;
 import org.example.syntaxtree.structure.classDecl;
