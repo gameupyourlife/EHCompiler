@@ -1,4 +1,26 @@
 package ast;
 
 public enum Type {
+    Continue,
+    DoWhile,
+    Block,
+    While,
+    For,
+    LocalVarDecl,
+    Return,
+    If,
+    Unary,
+    Assign,
+    New,
+    MethodCall,
+    BooleanConst,
+    IntConst,
+    CharConst,
+    StringConst,
+    Null,
+    This,
+    Super,
+    Binary,
+    IdentVar,
+    LocalOrFieldVar
 }
