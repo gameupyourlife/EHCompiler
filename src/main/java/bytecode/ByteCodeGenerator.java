@@ -71,12 +71,8 @@ public class ByteCodeGenerator {
                 return "Z";
             case CHAR:
                 return "C";
-            case VOID:
-                return "V";
             default:
-                if (field.customTypeName == null)
-                    throw new IllegalStateException("CUSTOM type requires customTypeName");
-                return "L" + field.customTypeName.replace('.', '/') + ";";
+                return "V";
         }
     }
 
