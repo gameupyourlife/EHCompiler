@@ -1,15 +1,15 @@
 package org.example.context;
 
-import org.example.syntaxtree.structure.program;
+import ast.Program;
 
 public class context {
-    private program program;
+    private Program program;
 
-    public context(program program) {
+    public context(Program program) {
         this.program = program;
     }
 
-    public program getProgram() {
+    public Program getProgram() {
         return program;
     }
 }

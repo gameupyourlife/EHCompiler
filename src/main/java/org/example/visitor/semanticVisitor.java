@@ -1,14 +1,14 @@
 package org.example.visitor;
 
+import ast.Class;
+import ast.Field;
+import ast.Method;
+import ast.Program;
 import org.example.semantic.typeCheckResult;
-import org.example.syntaxtree.structure.classDecl;
-import org.example.syntaxtree.structure.methodDecl;
-import org.example.syntaxtree.structure.program;
-import org.example.syntaxtree.structure.varDecl;
 
 public interface semanticVisitor {
-    typeCheckResult typeCheck(program program);
-    typeCheckResult typeCheck(classDecl classDecl);
-    typeCheckResult typeCheck(varDecl varDecl);
-    typeCheckResult typeCheck(methodDecl methodDecl);
+    typeCheckResult typeCheck(Program program);
+    typeCheckResult typeCheck(Class classDecl);
+    typeCheckResult typeCheck(Field varDecl);
+    typeCheckResult typeCheck(Method methodDecl);
 }
