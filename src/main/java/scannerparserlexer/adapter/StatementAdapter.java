@@ -3,7 +3,6 @@ package scannerparserlexer.adapter;
 import ast.Expression;
 import ast.Statement;
 import ast.statements.*;
-import ast.statements.SwitchStatement.SwitchCase;
 import scannerparserlexer.parser.ASTParser;
 
 import java.util.ArrayList;
@@ -55,9 +54,6 @@ public class StatementAdapter {
         } else if (ctx instanceof ASTParser.DoWhileStmtContext) {
             ASTParser.DoWhileStmtContext doWhileCtx = (ASTParser.DoWhileStmtContext) ctx;
             return adaptDoWhile(doWhileCtx);
-        } else if (ctx instanceof ASTParser.SwitchStmtContext) {
-            ASTParser.SwitchStmtContext switchCtx = (ASTParser.SwitchStmtContext) ctx;
-            return adaptSwitch(switchCtx);
         } else {
             // Default case for other statement types
             return new EmptyStatement();
@@ -144,45 +140,4 @@ public class StatementAdapter {
         return doWhileStmt;
     }
 
-    private static Statement adaptSwitch(ASTParser.SwitchStmtContext ctx) {
-        SwitchStatement switchStmt = new SwitchStatement();
-
-        if (ctx.expression() != null) {
-            switchStmt.expression = ExpressionAdapter.adapt(ctx.expression());
-        }
-
-        if (ctx.switchBlockStatementGroup() != null) {
-            List<SwitchCase> cases = new ArrayList<>();
-
-            for (ASTParser.SwitchBlockStatementGroupContext groupCtx : ctx.switchBlockStatementGroup()) {
-                SwitchCase switchCase = new SwitchCase();
-
-                // Get the case expressions
-                if (groupCtx.switchLabel() != null && !groupCtx.switchLabel().isEmpty()) {
-                    // We'll use the first case expression as the case value
-                    // (In a full implementation, we'd handle multiple case labels differently)
-                    ASTParser.SwitchLabelContext firstLabel = groupCtx.switchLabel(0);
-
-                    if (firstLabel.expression() != null) {
-                        switchCase.caseValue = ExpressionAdapter.adapt(firstLabel.expression());
-                    }
-                }
-
-                // Get the case statements
-                if (groupCtx.statement() != null) {
-                    List<Statement> statements = new ArrayList<>();
-                    for (ASTParser.StatementContext stmtCtx : groupCtx.statement()) {
-                        statements.add(adapt(stmtCtx));
-                    }
-                    switchCase.statements = statements;
-                }
-
-                cases.add(switchCase);
-            }
-
-            switchStmt.cases = cases;
-        }
-
-        return switchStmt;
-    }
 }
