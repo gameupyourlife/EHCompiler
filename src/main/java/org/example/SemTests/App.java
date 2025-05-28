@@ -1,27 +1,27 @@
 package org.example.SemTests;
-import java.util.Collections;
-import java.util.List;
+
+import ast.Class;
+import ast.Program;
 import org.example.semantic.semanticCheck;
 import org.example.semantic.exceptions.semanticError;
-import org.example.syntaxtree.structure.classDecl;
-import org.example.syntaxtree.structure.program;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
+
+import java.util.Collections;
+import java.util.List;
 
 public class App {
     public static void main(String[] args) {
-        CharStream input = CharStreams.fromString("class emptyClass {}");
+        // Zwei Klassen mit dem gleichen Namen → sollte Fehler erzeugen
+        Class classA = new Class("A", Collections.emptyList(), Collections.emptyList(), null, null);
+        Class classB = new Class("A", Collections.emptyList(), Collections.emptyList(), null, null);
 
-        classDecl classA = new classDecl("A", Collections.emptyList(), Collections.emptyList());
-        classDecl classB = new classDecl("A", Collections.emptyList(), Collections.emptyList());
-        // gleiche Namen!
-
-        program program = new program(List.of(classA, classB));
+        // Beide Klassen dem Programm hinzufügen
+        Program program = new Program(List.of(classA, classB));
 
         try {
             semanticCheck.generateTast(program);
             System.out.println("Semantic check successful");
         } catch (semanticError e) {
+            System.err.println("Fehler bei der Semantikprüfung:");
             System.err.println(e.getMessage());
         }
     }
