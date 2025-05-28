@@ -1,9 +1,6 @@
 package ast.exprStatements;
 
 import ast.Expression;
-import bytecode.interfaces.IExpressionBytecodeGenerator;
-import org.objectweb.asm.MethodVisitor;
-import java.util.Map;
 
 public class Assign {
     public Expression target;

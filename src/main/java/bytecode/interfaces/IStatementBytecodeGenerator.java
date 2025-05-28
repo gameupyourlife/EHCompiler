@@ -1,9 +1,6 @@
 package bytecode.interfaces;
 
-import ast.Type;
 import ast.statements.*;
-import org.objectweb.asm.MethodVisitor;
-import java.util.Map;
 
 public interface IStatementBytecodeGenerator {
     void visitBlock(Block stmt);

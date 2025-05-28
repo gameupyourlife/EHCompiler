@@ -1,4 +1,4 @@
-package ast.expressions;
+package ast.exprStatements;
 
 import ast.Expression;
 import bytecode.interfaces.IExpressionBytecodeGenerator;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class MethodCall implements Expression {
+public class MethodCall {
     public Expression target;  // The object on which the method is called
     public String methodName;
     public List<Expression> arguments;
@@ -21,10 +21,5 @@ public class MethodCall implements Expression {
         this.target = target;
         this.methodName = methodName;
         this.arguments = arguments;
-    }
-
-    @Override
-    public void accept(IExpressionBytecodeGenerator visitor, MethodVisitor mv, Map<String, Integer> locals) {
-        visitor.visitMethodCall(this, mv, locals);
     }
 }

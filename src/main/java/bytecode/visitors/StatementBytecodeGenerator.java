@@ -1,13 +1,7 @@
 package bytecode.visitors;
 
-import ast.Type;
 import ast.statements.*;
 import bytecode.interfaces.IStatementBytecodeGenerator;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-
-import java.util.Map;
 
 public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
     private final ExpressionBytecodeGenerator generator;
