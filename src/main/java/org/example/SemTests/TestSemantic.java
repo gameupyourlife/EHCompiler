@@ -24,9 +24,9 @@ public class TestSemantic {
             program testProgram = new program(List.of(testClass));
 
             semanticCheck.generateTast(testProgram);
-            System.out.println("✅ Semantikprüfung erfolgreich!");
+            System.out.println("Semantikprüfung erfolgreich!");
         } catch (semanticError e) {
-            System.out.println("❌ Fehler bei der Semantikprüfung:");
+            System.out.println("Fehler bei der Semantikprüfung:");
             System.out.println(e.getMessage());
         }
     }

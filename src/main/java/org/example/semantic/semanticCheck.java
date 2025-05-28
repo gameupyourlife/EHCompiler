@@ -52,14 +52,8 @@ public class semanticCheck implements semanticVisitor {
             valid = valid && classRes.isValid();
         }
 
-        return new typeCheckResult(valid, null);
+        return new typeCheckResult(valid, toCheck);
     }
-
-    /*@Override
-    public typeCheckResult typeCheck(classDecl toCheck) {
-        System.out.println("Checking class: " + toCheck.getIdentifier());
-        return new typeCheckResult(true, null);
-    }*/
 
     @Override
     public typeCheckResult typeCheck(classDecl toCheck) {
@@ -92,20 +86,20 @@ public class semanticCheck implements semanticVisitor {
             valid = valid && methodResult.isValid();
         }
 
-        return new typeCheckResult(valid, null);
+        return new typeCheckResult(valid, toCheck);
     }
 
     @Override
     public typeCheckResult typeCheck(varDecl varDecl) {
         // Hier könntest du z. B. prüfen, ob der Typ existiert oder erlaubt ist
         System.out.println("Checking field: " + varDecl.getIdentifier());
-        return new typeCheckResult(true, null); // Noch kein Typ-Check vorhanden
+        return new typeCheckResult(true, varDecl); // Noch kein Typ-Check vorhanden
     }
 
     @Override
     public typeCheckResult typeCheck(methodDecl methodDecl) {
         // Du könntest später Parameter und Rückgabetyp prüfen
         System.out.println("Checking method: " + methodDecl.getIdentifier());
-        return new typeCheckResult(true, null); // Noch kein Fehler
+        return new typeCheckResult(true, methodDecl); // Noch kein Fehler
     }
 }
