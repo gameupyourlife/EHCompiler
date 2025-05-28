@@ -1,8 +1,9 @@
-package ast.expressions;
+package ast.exprStatements;
 
 import ast.Expression;
+import ast.Statement;
 
-public class Assign implements Expression {
+public class Assign implements Expression, Statement {
     public Expression target;
     public Expression value;
     

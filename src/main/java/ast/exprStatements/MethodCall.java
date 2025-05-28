@@ -1,10 +1,12 @@
-package ast.expressions;
+package ast.exprStatements;
 
 import ast.Expression;
+import ast.Statement;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class MethodCall implements Expression {
+public class MethodCall implements Expression, Statement {
     public Expression target;  // The object on which the method is called
     public String methodName;
     public List<Expression> arguments;
