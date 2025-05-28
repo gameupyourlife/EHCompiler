@@ -1,8 +1,7 @@
-package valid.bytecode;
+package bytecode;
 
 import ast.Program;
 import ast.Field;
-import bytecode.ByteCodeGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -13,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BytecodeGenerationTest {
 
-    static class ByteArrayClassLoader extends ClassLoader {
+    public static class ByteArrayClassLoader extends ClassLoader {
         public java.lang.Class<?> defineClass(String name, byte[] b) {
             return super.defineClass(name, b, 0, b.length);
         }
