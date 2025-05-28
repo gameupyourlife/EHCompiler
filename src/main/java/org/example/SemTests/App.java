@@ -1,4 +1,5 @@
-package org.example;
+package org.example.SemTests;
+import java.util.Collections;
 import java.util.List;
 import org.example.semantic.semanticCheck;
 import org.example.semantic.exceptions.semanticError;
@@ -10,10 +11,10 @@ import org.antlr.v4.runtime.CharStreams;
 public class App {
     public static void main(String[] args) {
         CharStream input = CharStreams.fromString("class emptyClass {}");
-      
-      
-        classDecl classA = new classDecl("A");
-        classDecl classB = new classDecl("A"); // gleiche Namen!
+
+        classDecl classA = new classDecl("A", Collections.emptyList(), Collections.emptyList());
+        classDecl classB = new classDecl("A", Collections.emptyList(), Collections.emptyList());
+        // gleiche Namen!
 
         program program = new program(List.of(classA, classB));
 
