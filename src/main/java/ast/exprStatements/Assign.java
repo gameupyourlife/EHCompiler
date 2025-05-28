@@ -1,11 +1,11 @@
-package ast.expressions;
+package ast.exprStatements;
 
 import ast.Expression;
-import bytecode.interfaces.IExpressionVisitor;
+import bytecode.interfaces.IExpressionBytecodeGenerator;
 import org.objectweb.asm.MethodVisitor;
 import java.util.Map;
 
-public class Assign implements Expression {
+public class Assign {
     public Expression target;
     public Expression value;
     
@@ -14,10 +14,5 @@ public class Assign implements Expression {
     public Assign(Expression target, Expression value) {
         this.target = target;
         this.value = value;
-    }
-
-    @Override
-    public void accept(IExpressionVisitor visitor, MethodVisitor mv, Map<String, Integer> locals) {
-        visitor.visitAssign(this, mv, locals);
     }
 }

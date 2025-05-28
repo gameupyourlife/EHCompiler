@@ -3,7 +3,7 @@ package ast.statements;
 import ast.Expression;
 import ast.Statement;
 import ast.Type;
-import bytecode.interfaces.IStatementVisitor;
+import bytecode.interfaces.IStatementBytecodeGenerator;
 import org.objectweb.asm.MethodVisitor;
 
 import java.util.Map;
@@ -22,7 +22,7 @@ public class LocalVarDecl implements Statement {
     }
 
     @Override
-    public void accept(IStatementVisitor visitor, MethodVisitor mv, Map<String, Integer> locals, Type returnType) {
-        visitor.visitLocalVarDecl(this, mv, locals, returnType);
+    public void accept(IStatementBytecodeGenerator visitor) {
+        visitor.visitLocalVarDecl(this);
     }
 }

@@ -1,7 +1,7 @@
 package ast.expressions;
 
 import ast.Expression;
-import bytecode.interfaces.IExpressionVisitor;
+import bytecode.interfaces.IExpressionBytecodeGenerator;
 import org.objectweb.asm.MethodVisitor;
 
 import java.util.Map;
@@ -14,7 +14,7 @@ public class CharConst implements Expression {
     }
 
     @Override
-    public void accept(IExpressionVisitor visitor, MethodVisitor mv, Map<String, Integer> locals) {
-        visitor.visitCharConst(this, mv, locals);
+    public void accept(IExpressionBytecodeGenerator visitor) {
+        visitor.visitCharConst(this);
     }
 }

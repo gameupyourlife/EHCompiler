@@ -3,7 +3,7 @@ package ast.statements;
 import ast.Expression;
 import ast.Statement;
 import ast.Type;
-import bytecode.interfaces.IStatementVisitor;
+import bytecode.interfaces.IStatementBytecodeGenerator;
 import org.objectweb.asm.MethodVisitor;
 
 import java.util.ArrayList;
@@ -24,8 +24,8 @@ public class SwitchStatement implements Statement {
     }
 
     @Override
-    public void accept(IStatementVisitor visitor, MethodVisitor mv, Map<String, Integer> locals, Type returnType) {
-        visitor.visitSwitchStatement(this, mv, locals, returnType);
+    public void accept(IStatementBytecodeGenerator visitor) {
+        visitor.visitSwitchStatement(this);
     }
 
     public static class SwitchCase {

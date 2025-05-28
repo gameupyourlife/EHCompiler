@@ -1,9 +1,9 @@
 package ast;
 
-import bytecode.interfaces.IStatementVisitor;
+import bytecode.interfaces.IStatementBytecodeGenerator;
 import org.objectweb.asm.MethodVisitor;
 import java.util.Map;
 
 public interface Statement {
-    void accept(IStatementVisitor visitor, MethodVisitor mv, Map<String, Integer> locals, Type returnType);
+    void accept(IStatementBytecodeGenerator visitor);
 }

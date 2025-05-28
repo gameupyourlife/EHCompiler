@@ -1,9 +1,7 @@
 package ast;
 
-import bytecode.interfaces.IExpressionVisitor;
-import org.objectweb.asm.MethodVisitor;
-import java.util.Map;
+import bytecode.interfaces.IExpressionBytecodeGenerator;
 
 public interface Expression {
-    void accept(IExpressionVisitor visitor, MethodVisitor mv, Map<String, Integer> locals);
+    void accept(IExpressionBytecodeGenerator visitor);
 }
