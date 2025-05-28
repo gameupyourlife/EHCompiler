@@ -1,14 +1,7 @@
 package ast.statements;
 
-import ast.Expression;
-import ast.Type;
+import ast.Statement;
 
-public class Continue implements Expression {
-    private Type type;
-
-    @Override
-    public Type getType() { return type; }
-
-    @Override
-    public void setType(Type type) { this.type = type; }
+public class Continue implements Statement {
+    // Represents the 'continue' statement
 }

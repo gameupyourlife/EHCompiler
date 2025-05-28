@@ -1,4 +1,7 @@
 package ast.expressions;
 
-public class Null {
+import ast.Expression;
+
+public class Null implements Expression {
+    // Represents the null literal
 }

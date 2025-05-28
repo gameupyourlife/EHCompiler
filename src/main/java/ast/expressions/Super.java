@@ -1,4 +1,7 @@
 package ast.expressions;
 
-public class Super {
+import ast.Expression;
+
+public class Super implements Expression {
+    // Represents the 'super' keyword
 }

@@ -2,20 +2,19 @@ package ast.statements;
 
 import ast.Expression;
 import ast.Statement;
-import ast.Type;
 
 public class For implements Statement {
-    private Type type;
-
-    @Override
-    public Type getType() { return type; }
-
-    @Override
-    public void setType(Type type) { this.type = type; }
-
+    public Expression init;
     public Expression condition;
-
-    public Block block;
-
-    public Statement nextStatement;
+    public Expression update;
+    public Statement statement;
+    
+    public For() {}
+    
+    public For(Expression init, Expression condition, Expression update, Statement statement) {
+        this.init = init;
+        this.condition = condition;
+        this.update = update;
+        this.statement = statement;
+    }
 }

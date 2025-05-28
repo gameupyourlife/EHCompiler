@@ -22,5 +22,9 @@ public enum Type {
     Super,
     Binary,
     IdentVar,
-    LocalOrFieldVar
+    LocalOrFieldVar,
+    INT,
+    BOOLEAN,
+    CHAR,
+    VOID
 }
