@@ -1,8 +1,7 @@
-package valid.bytecode;
+package bytecode;
 
 import ast.Program;
 import ast.Field;
-import bytecode.ByteCodeGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
