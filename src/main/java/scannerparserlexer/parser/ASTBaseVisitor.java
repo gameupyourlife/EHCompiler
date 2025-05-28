@@ -1,4 +1,4 @@
-// Generated from /Users/olli/Studium/semester_4/Compilerbau/compiler/git/EHCompiler/src/antlr/AST.g4 by ANTLR 4.13.2
+// Generated from /Users/olli/Studium/semester_4/Compilerbau/compiler/git/EHCompiler/src/main/java/scannerparserlexer/AST.g4 by ANTLR 4.13.2
 package scannerparserlexer.parser;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -53,7 +53,7 @@ public class ASTBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements AS
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAccessModifier(ASTParser.AccessModifierContext ctx) { return visitChildren(ctx); }
+	@Override public T visitConstructorDeclaration(ASTParser.ConstructorDeclarationContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -117,13 +117,6 @@ public class ASTBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements AS
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitForStmt(ASTParser.ForStmtContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitSwitchStmt(ASTParser.SwitchStmtContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

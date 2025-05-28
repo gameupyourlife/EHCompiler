@@ -1,4 +1,4 @@
-// Generated from /Users/olli/Studium/semester_4/Compilerbau/compiler/git/EHCompiler/src/antlr/AST.g4 by ANTLR 4.13.2
+// Generated from /Users/olli/Studium/semester_4/Compilerbau/compiler/git/EHCompiler/src/main/java/scannerparserlexer/AST.g4 by ANTLR 4.13.2
 package scannerparserlexer.parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -41,11 +41,11 @@ public interface ASTVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMethodDeclaration(ASTParser.MethodDeclarationContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ASTParser#accessModifier}.
+	 * Visit a parse tree produced by {@link ASTParser#constructorDeclaration}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAccessModifier(ASTParser.AccessModifierContext ctx);
+	T visitConstructorDeclaration(ASTParser.ConstructorDeclarationContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ASTParser#formalParameters}.
 	 * @param ctx the parse tree
@@ -105,13 +105,6 @@ public interface ASTVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitForStmt(ASTParser.ForStmtContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code switchStmt}
-	 * labeled alternative in {@link ASTParser#statement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSwitchStmt(ASTParser.SwitchStmtContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code returnStmt}
 	 * labeled alternative in {@link ASTParser#statement}.

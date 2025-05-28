@@ -1,6 +1,8 @@
 package scannerparserlexer.adapter;
 
 import ast.Expression;
+import ast.exprStatements.Assign;
+import ast.exprStatements.MethodCall;
 import scannerparserlexer.parser.ASTParser;
 
 public class ExpressionAdapter {
@@ -54,7 +56,7 @@ public class ExpressionAdapter {
     }
     
     private static Expression adaptMethodCall(ASTParser.MethodCallExprContext ctx) {
-        ast.expressions.MethodCall methodCall = new ast.expressions.MethodCall();
+        MethodCall methodCall = new MethodCall();
         if (ctx.expression() != null) {
             methodCall.target = adapt(ctx.expression());
         }
@@ -71,7 +73,7 @@ public class ExpressionAdapter {
     }
 
     private static Expression adaptAssign(ASTParser.AssignExprContext ctx) {
-        ast.expressions.Assign assign = new ast.expressions.Assign();
+        Assign assign = new Assign();
         if (ctx.expression() != null && ctx.expression().size() >= 2) {
             assign.target = adapt(ctx.expression(0));
             assign.value = adapt(ctx.expression(1));
@@ -80,7 +82,7 @@ public class ExpressionAdapter {
     }
 
     private static Expression adaptNewExpr(ASTParser.NewExprContext ctx) {
-        ast.expressions.MethodCall constructor = new ast.expressions.MethodCall();
+        MethodCall constructor = new MethodCall();
         if (ctx.Identifier() != null) {
             constructor.methodName = ctx.Identifier().getText();
         }

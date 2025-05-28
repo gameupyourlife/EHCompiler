@@ -1,4 +1,4 @@
-// Generated from /Users/olli/Studium/semester_4/Compilerbau/compiler/git/EHCompiler/src/antlr/AST.g4 by ANTLR 4.13.2
+// Generated from /Users/olli/Studium/semester_4/Compilerbau/compiler/git/EHCompiler/src/main/java/scannerparserlexer/AST.g4 by ANTLR 4.13.2
 package scannerparserlexer.parser;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -77,13 +77,13 @@ public class ASTBaseListener implements ASTListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAccessModifier(ASTParser.AccessModifierContext ctx) { }
+	@Override public void enterConstructorDeclaration(ASTParser.ConstructorDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAccessModifier(ASTParser.AccessModifierContext ctx) { }
+	@Override public void exitConstructorDeclaration(ASTParser.ConstructorDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -192,18 +192,6 @@ public class ASTBaseListener implements ASTListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitForStmt(ASTParser.ForStmtContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterSwitchStmt(ASTParser.SwitchStmtContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitSwitchStmt(ASTParser.SwitchStmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -28,11 +28,27 @@ public class ScannerParserLexer {
 
     public static void main(String[] args) {
         try {
-            String input = "class emptyClass {}";
+            String input = "class TestClass { static void main() {} }";
             Program program = parse(input);
             System.out.println("Successfully parsed input: " + input);
             if (program.classes != null) {
                 System.out.println("Found " + program.classes.size() + " classes");
+                if (!program.classes.isEmpty()) {
+                    ast.Class firstClass = program.classes.get(0);
+                    System.out.println("Class name: " + firstClass.name);
+                    if (firstClass.methods != null && !firstClass.methods.isEmpty()) {
+                        System.out.println("Found " + firstClass.methods.size() + " methods");
+                        for (ast.Method method : firstClass.methods) {
+                            System.out.println("Method: " + method.name + " (static: " + method.staticFlag + ")");
+                            if (method.parameters != null) {
+                                System.out.println("  Parameters: " + method.parameters.size());
+                                for (ast.Parameter param : method.parameters) {
+                                    System.out.println("    - " + param.name + " (" + param.type + ")");
+                                }
+                            }
+                        }
+                    }
+                }
             }
         } catch (Exception e) {
             System.err.println(e.getMessage());
