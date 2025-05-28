@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BytecodeGenerationTest {
 
-    static class ByteArrayClassLoader extends ClassLoader {
+    public static class ByteArrayClassLoader extends ClassLoader {
         public java.lang.Class<?> defineClass(String name, byte[] b) {
             return super.defineClass(name, b, 0, b.length);
         }
