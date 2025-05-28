@@ -5,8 +5,6 @@ import ast.Field;
 import bytecode.ByteCodeGenerator;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
