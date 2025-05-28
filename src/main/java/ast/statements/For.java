@@ -2,6 +2,7 @@ package ast.statements;
 
 import ast.Expression;
 import ast.Statement;
+import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class For implements Statement {
     public Expression init;
@@ -16,5 +17,10 @@ public class For implements Statement {
         this.condition = condition;
         this.update = update;
         this.statement = statement;
+    }
+
+    @Override
+    public void accept(IStatementBytecodeGenerator visitor) {
+        visitor.visitFor(this);
     }
 }

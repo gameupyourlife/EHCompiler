@@ -1,7 +1,12 @@
 package ast.expressions;
 
 import ast.Expression;
+import bytecode.interfaces.IExpressionBytecodeGenerator;
 
 public class This implements Expression {
-    // Represents the 'this' keyword
+
+    @Override
+    public void accept(IExpressionBytecodeGenerator visitor) {
+        visitor.visitThis(this);
+    }
 }
