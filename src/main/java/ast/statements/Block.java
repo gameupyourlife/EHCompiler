@@ -22,6 +22,6 @@ public class Block implements Statement {
 
     @Override
     public void accept(IStatementVisitor visitor, MethodVisitor mv, Map<String, Integer> locals, Type returnType) {
-        visitor.
+        visitor.visitBlock(this, mv, locals, returnType);
     }
 }

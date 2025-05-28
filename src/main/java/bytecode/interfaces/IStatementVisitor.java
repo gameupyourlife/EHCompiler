@@ -9,7 +9,7 @@ public interface IStatementVisitor {
     void visitBlock(Block stmt, MethodVisitor mv, Map<String, Integer> locals, Type returnType);
     void visitBreak(Break stmt, MethodVisitor mv, Map<String, Integer> locals, Type returnType);
     void visitContinue(Continue stmt, MethodVisitor mv, Map<String, Integer> locals, Type returnType);
-    void visitDoWhile(While stmt, MethodVisitor mv, Map<String, Integer> locals, Type returnType);
+    void visitDoWhile(DoWhile stmt, MethodVisitor mv, Map<String, Integer> locals, Type returnType);
     void visitEmptyStatement(EmptyStatement stmt, MethodVisitor mv, Map<String, Integer> locals, Type returnType);
     void visitExpressionStatement(ExpressionStatement stmt, MethodVisitor mv, Map<String, Integer> locals, Type returnType);
     void visitFor(For stmt, MethodVisitor mv, Map<String, Integer> locals, Type returnType);
