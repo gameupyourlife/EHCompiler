@@ -2,6 +2,9 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/Flompiler" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/referenceRepos/Compilerbau2024AbsolutNichtHaskell" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/referenceRepos/Flompiler" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/referenceRepos/dhbw_compilerbau_wise22" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/referenceRepos/houseofcompiler" vcs="Git" />
   </component>
 </project>

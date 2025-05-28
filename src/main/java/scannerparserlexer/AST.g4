@@ -6,26 +6,25 @@ program
     ;
 
 classDeclaration
-    : 'class' Identifier '{' classBody '}'
+    : 'class' Identifier ('extends' Identifier)? '{' classBody '}'
     ;
 
 classBody
-    : (fieldDeclaration | methodDeclaration)*
+    : (fieldDeclaration | methodDeclaration | constructorDeclaration)*
     ;
 
 fieldDeclaration
-    : accessModifier? type Identifier ('=' expression)? ';'
+    : type Identifier ('=' expression)? ';'
     ;
 
 methodDeclaration
-    : accessModifier? type Identifier '(' formalParameters? ')' block
+    : 'static'? type Identifier '(' formalParameters? ')' block
     ;
 
-accessModifier
-    : 'public'
-    | 'private'
-    | 'protected'
+constructorDeclaration
+    : Identifier '(' formalParameters? ')' block
     ;
+
 
 formalParameters
     : formalParameter (',' formalParameter)*

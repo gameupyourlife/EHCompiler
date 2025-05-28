@@ -4,5 +4,6 @@ public enum Type {
     INT,
     BOOLEAN,
     CHAR,
-    VOID
+    VOID,
+    STRING_ARRAY  // Special type for main method String[] args
 }
