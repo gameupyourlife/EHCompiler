@@ -1,4 +1,4 @@
-// Generated from /Users/olli/Studium/semester_4/Compilerbau/compiler/git/EHCompiler/src/antlr/AST.g4 by ANTLR 4.13.2
+// Generated from /Users/olli/Studium/semester_4/Compilerbau/compiler/git/EHCompiler/src/main/java/scannerparserlexer/AST.g4 by ANTLR 4.13.2
 package scannerparserlexer.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -58,15 +58,15 @@ public interface ASTListener extends ParseTreeListener {
 	 */
 	void exitMethodDeclaration(ASTParser.MethodDeclarationContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ASTParser#accessModifier}.
+	 * Enter a parse tree produced by {@link ASTParser#constructorDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void enterAccessModifier(ASTParser.AccessModifierContext ctx);
+	void enterConstructorDeclaration(ASTParser.ConstructorDeclarationContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ASTParser#accessModifier}.
+	 * Exit a parse tree produced by {@link ASTParser#constructorDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void exitAccessModifier(ASTParser.AccessModifierContext ctx);
+	void exitConstructorDeclaration(ASTParser.ConstructorDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ASTParser#formalParameters}.
 	 * @param ctx the parse tree
@@ -167,18 +167,6 @@ public interface ASTListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitForStmt(ASTParser.ForStmtContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code switchStmt}
-	 * labeled alternative in {@link ASTParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void enterSwitchStmt(ASTParser.SwitchStmtContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code switchStmt}
-	 * labeled alternative in {@link ASTParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void exitSwitchStmt(ASTParser.SwitchStmtContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code returnStmt}
 	 * labeled alternative in {@link ASTParser#statement}.
