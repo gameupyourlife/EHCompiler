@@ -32,7 +32,7 @@ public class StatementVisitor implements IStatementVisitor {
     }
 
     @Override
-    public void visitDoWhile(While stmt, MethodVisitor mv, Map<String, Integer> locals, Type returnType) {
+    public void visitDoWhile(DoWhile stmt, MethodVisitor mv, Map<String, Integer> locals, Type returnType) {
 
     }
 
