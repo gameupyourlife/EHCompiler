@@ -1,7 +1,11 @@
 package ast.expressions;
 
 import ast.Expression;
+import bytecode.interfaces.IExpressionBytecodeGenerator;
 
 public class EmptyExpression implements Expression {
-    // Default expression for empty or unimplemented expressions
+    @Override
+    public void accept(IExpressionBytecodeGenerator visitor) {
+        visitor.visitEmptyExpression(this);
+    }
 }

@@ -7,5 +7,6 @@ public class Method {
     public String name;
     public List<Parameter> parameters;
     public List<Statement> statement;
+    // Block
     public Boolean staticFlag;
 }
