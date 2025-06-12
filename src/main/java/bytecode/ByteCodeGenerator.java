@@ -132,9 +132,13 @@ public class ByteCodeGenerator {
         switch (returnType) {
             case VOID:
                 mv.visitInsn(Opcodes.RETURN);
-            case INT, BOOLEAN, CHAR:
+                break;
+            case INT:
+            case BOOLEAN:
+            case CHAR:
                 mv.visitInsn(Opcodes.ICONST_0);
                 mv.visitInsn(Opcodes.IRETURN);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown return type: " + returnType);
         }

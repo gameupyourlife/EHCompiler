@@ -8,4 +8,14 @@ public class Method {
     public List<Parameter> parameters;
     public List<Statement> statement;
     public Boolean staticFlag;
+    public Method(Type type, String name, List<Parameter> parameters, List<Statement> statement, Boolean staticFlag) {
+        this.type = type;
+        this.name = name;
+        this.parameters = parameters;
+        this.statement = statement;
+        this.staticFlag = staticFlag;
+    }
+    public Method(){
+        
+    }
 }
