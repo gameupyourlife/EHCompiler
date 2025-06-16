@@ -2,7 +2,7 @@ package ast.statements;
 
 import ast.Expression;
 import ast.Statement;
-import ast.Type;
+import ast.types.Type;
 import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class LocalVarDecl implements Statement {

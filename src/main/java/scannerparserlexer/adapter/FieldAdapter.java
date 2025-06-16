@@ -1,7 +1,7 @@
 package scannerparserlexer.adapter;
 
 import ast.Field;
-import ast.Type;
+import ast.types.Type;
 import scannerparserlexer.parser.ASTParser;
 
 public class FieldAdapter {

@@ -1,6 +1,6 @@
 package scannerparserlexer.adapter;
 
-import ast.Type;
+import ast.types.Type;
 import scannerparserlexer.parser.ASTParser;
 
 public class TypeAdapter {

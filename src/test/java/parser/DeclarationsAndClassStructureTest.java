@@ -39,7 +39,7 @@ public class DeclarationsAndClassStructureTest {
         assertEquals(1, program.classes.get(0).methods.size(), "Class should have one method");
         assertEquals("exampleMethod", program.classes.get(0).methods.get(0).name,
                 "Method name should be 'exampleMethod'");
-        assertEquals(ast.Type.VOID, program.classes.get(0).methods.get(0).type, "Method return type should be 'void'");
+        assertEquals(ast.types.Type.VOID, program.classes.get(0).methods.get(0).type, "Method return type should be 'void'");
     }
 
     @Test
@@ -56,7 +56,7 @@ public class DeclarationsAndClassStructureTest {
         assertEquals(1, program.classes.get(0).methods.size(), "Class should have one method");
         assertEquals("exampleMethod", program.classes.get(0).methods.get(0).name,
                 "Method name should be 'exampleMethod'");
-        assertEquals(ast.Type.VOID, program.classes.get(0).methods.get(0).type, "Method return type should be 'void'");
+        assertEquals(ast.types.Type.VOID, program.classes.get(0).methods.get(0).type, "Method return type should be 'void'");
     }
 
     @Test
@@ -71,11 +71,11 @@ public class DeclarationsAndClassStructureTest {
         assertEquals(1, program.classes.get(0).methods.size(), "Class should have one method");
         assertEquals("exampleMethod", program.classes.get(0).methods.get(0).name,
                 "Method name should be 'exampleMethod'");
-        assertEquals(ast.Type.INT, program.classes.get(0).methods.get(0).type, "Method return type should be 'int'");
+        assertEquals(ast.types.Type.INT, program.classes.get(0).methods.get(0).type, "Method return type should be 'int'");
         assertEquals(1, program.classes.get(0).methods.get(0).parameters.size(), "Method should have one parameter");
         assertEquals("param", program.classes.get(0).methods.get(0).parameters.get(0).name,
                 "Parameter name should be 'param'");
-        assertEquals(ast.Type.INT, program.classes.get(0).methods.get(0).parameters.get(0).type,
+        assertEquals(ast.types.Type.INT, program.classes.get(0).methods.get(0).parameters.get(0).type,
                 "Parameter type should be 'int'");
     }
 }
