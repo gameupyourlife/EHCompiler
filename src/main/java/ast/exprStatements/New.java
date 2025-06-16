@@ -4,6 +4,10 @@ import ast.Expression;
 import ast.Statement;
 import bytecode.interfaces.IExpressionBytecodeGenerator;
 import bytecode.interfaces.IStatementBytecodeGenerator;
+import ast.types.ITypeResolver;
+import ast.types.Type;
+import bytecode.interfaces.IExpressionBytecodeGenerator;
+import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class New implements Expression, Statement {
     public String objectName;
@@ -21,4 +25,10 @@ public class New implements Expression, Statement {
     public void accept(IStatementBytecodeGenerator visitor) {
         visitor.visitNew(this);
     }
+
+    @Override
+    public Type resolveType(ITypeResolver resolver) {
+        return resolver.resolve(this);
+    }
+
 }

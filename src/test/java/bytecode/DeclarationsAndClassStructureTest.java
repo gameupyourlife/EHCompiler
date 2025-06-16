@@ -37,11 +37,11 @@ public class DeclarationsAndClassStructureTest {
     void testClassWithFields() throws Exception {
         Field booleanField = new Field(
                 "flag",
-                ast.Type.BOOLEAN,
+                ast.types.Type.BOOLEAN,
                 null);
         Field integerField = new Field(
                 "exampleInteger",
-                ast.Type.INT,
+                ast.types.Type.INT,
                 null);
         List<Field> fields = new ArrayList<Field>();
         fields.add(booleanField);
@@ -76,7 +76,7 @@ public class DeclarationsAndClassStructureTest {
         classWithMethod.fields = List.of();
         classWithMethod.methods = List.of(
                 new ast.Method(
-                        ast.Type.VOID,
+                        ast.types.Type.VOID,
                         "doSomething",
                         List.of(),
                         List.of(),
@@ -102,10 +102,10 @@ public class DeclarationsAndClassStructureTest {
     void testSingleFieldMethod() throws Exception {
         ast.Class classWithFieldMethod = new ast.Class("ClassWithFieldMethod");
         classWithFieldMethod.fields = List.of(
-                new Field("field", ast.Type.INT, null));
+                new Field("field", ast.types.Type.INT, null));
         classWithFieldMethod.methods = List.of(
                 new ast.Method(
-                        ast.Type.INT,
+                        ast.types.Type.INT,
                         "getField",
                         List.of(),
                         List.of(),
@@ -133,9 +133,9 @@ public class DeclarationsAndClassStructureTest {
         classWithParamAndReturn.fields = List.of();
         classWithParamAndReturn.methods = List.of(
                 new ast.Method(
-                        ast.Type.INT,
+                        ast.types.Type.INT,
                         "calculate",
-                        List.of(new ast.Parameter(ast.Type.INT, "input")),
+                        List.of(new ast.Parameter(ast.types.Type.INT, "input")),
                         List.of(),
                         false));
         classWithParamAndReturn.parentClass = null;

@@ -33,15 +33,15 @@ public class DeclarationsAndClassStructureTest {
     void testClassWithFields() throws Exception {
         Field booleanField = new Field(
                 "flag",
-                ast.Type.BOOLEAN,
+                ast.types.Type.BOOLEAN,
                 null);
         Field integerField = new Field(
                 "exampleInteger",
-                ast.Type.INT,
+                ast.types.Type.INT,
                 null);
         Field charField = new Field(
                 "exampleChar",
-                ast.Type.CHAR,
+                ast.types.Type.CHAR,
                 null);
         List<Field> fields = new ArrayList<Field>();
         fields.add(booleanField);
@@ -60,15 +60,15 @@ public class DeclarationsAndClassStructureTest {
         assertEquals("ClassWithFields", semanticProgram.classes.get(0).name, "Class name should be 'ClassWithFields'");
         assertEquals(3, semanticProgram.classes.get(0).fields.size(), "Class should have two fields");
         assertEquals("flag", semanticProgram.classes.get(0).fields.get(0).name, "First field name should be 'flag'");
-        assertEquals(ast.Type.BOOLEAN, semanticProgram.classes.get(0).fields.get(0).type,
+        assertEquals(ast.types.Type.BOOLEAN, semanticProgram.classes.get(0).fields.get(0).type,
                 "First field type should be BOOLEAN");
         assertEquals("exampleInteger", semanticProgram.classes.get(0).fields.get(1).name,
                 "Second field name should be 'exampleInteger'");
-        assertEquals(ast.Type.INT, semanticProgram.classes.get(0).fields.get(1).type,
+        assertEquals(ast.types.Type.INT, semanticProgram.classes.get(0).fields.get(1).type,
                 "Second field type should be INT");
         assertEquals("exampleChar", semanticProgram.classes.get(0).fields.get(2).name,
                 "Third field name should be 'exampleChar'");
-        assertEquals(ast.Type.CHAR, semanticProgram.classes.get(0).fields.get(2).type,
+        assertEquals(ast.types.Type.CHAR, semanticProgram.classes.get(0).fields.get(2).type,
                 "Third field type should be CHAR");
     }
 
@@ -78,7 +78,7 @@ public class DeclarationsAndClassStructureTest {
         classWithMethod.fields = List.of();
         classWithMethod.methods = List.of(
                 new ast.Method(
-                        ast.Type.VOID,
+                        ast.types.Type.VOID,
                         "doSomething",
                         List.of(),
                         List.of(),
@@ -95,7 +95,7 @@ public class DeclarationsAndClassStructureTest {
         assertEquals(1, semanticProgram.classes.get(0).methods.size(), "Class should have one method");
         assertEquals("exampleMethod", semanticProgram.classes.get(0).methods.get(0).name,
                 "Method name should be 'exampleMethod'");
-        assertEquals(ast.Type.VOID, semanticProgram.classes.get(0).methods.get(0).type,
+        assertEquals(ast.types.Type.VOID, semanticProgram.classes.get(0).methods.get(0).type,
                 "Method return type should be 'void'");
     }
 
@@ -103,10 +103,10 @@ public class DeclarationsAndClassStructureTest {
     void testSingleFieldMethod() throws Exception {
         ast.Class classWithFieldAndMethod = new ast.Class("ClassWithFieldAndMethod");
         classWithFieldAndMethod.fields = List.of(
-                new Field("exampleInteger", ast.Type.INT, null));
+                new Field("exampleInteger", ast.types.Type.INT, null));
         classWithFieldAndMethod.methods = List.of(
                 new ast.Method(
-                        ast.Type.VOID,
+                        ast.types.Type.VOID,
                         "exampleMethod",
                         List.of(),
                         List.of(),
@@ -123,12 +123,12 @@ public class DeclarationsAndClassStructureTest {
         assertEquals(1, semanticProgram.classes.get(0).fields.size(), "Class should have one field");
         assertEquals("exampleInteger", semanticProgram.classes.get(0).fields.get(0).name,
                 "Field name should be 'exampleInteger'");
-        assertEquals(ast.Type.INT, semanticProgram.classes.get(0).fields.get(0).type,
+        assertEquals(ast.types.Type.INT, semanticProgram.classes.get(0).fields.get(0).type,
                 "Field type should be INT");
         assertEquals(1, semanticProgram.classes.get(0).methods.size(), "Class should have one method");
         assertEquals("exampleMethod", semanticProgram.classes.get(0).methods.get(0).name,
                 "Method name should be 'exampleMethod'");
-        assertEquals(ast.Type.VOID, semanticProgram.classes.get(0).methods.get(0).type,
+        assertEquals(ast.types.Type.VOID, semanticProgram.classes.get(0).methods.get(0).type,
                 "Method return type should be 'void'");
     }
 
@@ -138,9 +138,9 @@ public class DeclarationsAndClassStructureTest {
         classWithParamAndReturn.fields = List.of();
         classWithParamAndReturn.methods = List.of(
                 new ast.Method(
-                        ast.Type.INT,
+                        ast.types.Type.INT,
                         "calculate",
-                        List.of(new ast.Parameter(ast.Type.INT, "input")),
+                        List.of(new ast.Parameter(ast.types.Type.INT, "input")),
                         List.of(),
                         false));
         classWithParamAndReturn.parentClass = null;
@@ -156,13 +156,13 @@ public class DeclarationsAndClassStructureTest {
         assertEquals(1, semanticProgram.classes.get(0).methods.size(), "Class should have one method");
         assertEquals("exampleMethod", semanticProgram.classes.get(0).methods.get(0).name,
                 "Method name should be 'exampleMethod'");
-        assertEquals(ast.Type.INT, semanticProgram.classes.get(0).methods.get(0).type,
+        assertEquals(ast.types.Type.INT, semanticProgram.classes.get(0).methods.get(0).type,
                 "Method return type should be 'int'");
         assertEquals(1, semanticProgram.classes.get(0).methods.get(0).parameters.size(),
                 "Method should have one parameter");
         assertEquals("param", semanticProgram.classes.get(0).methods.get(0).parameters.get(0).name,
                 "Parameter name should be 'param'");
-        assertEquals(ast.Type.INT, semanticProgram.classes.get(0).methods.get(0).parameters.get(0).type,
+        assertEquals(ast.types.Type.INT, semanticProgram.classes.get(0).methods.get(0).parameters.get(0).type,
                 "Parameter type should be 'int'");
     }
 }

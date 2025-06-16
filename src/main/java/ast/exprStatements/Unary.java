@@ -5,6 +5,8 @@ import ast.Operator;
 import ast.Statement;
 import bytecode.interfaces.IExpressionBytecodeGenerator;
 import bytecode.interfaces.IStatementBytecodeGenerator;
+import ast.types.ITypeResolver;
+import ast.types.Type;
 
 public class Unary implements Expression, Statement {
     public Operator operator;
@@ -23,5 +25,10 @@ public class Unary implements Expression, Statement {
     @Override
     public void accept(IStatementBytecodeGenerator visitor) {
         visitor.visitUnary(this);
+    }
+
+    @Override
+    public Type resolveType(ITypeResolver resolver) {
+        return resolver.resolve(this);
     }
 }
