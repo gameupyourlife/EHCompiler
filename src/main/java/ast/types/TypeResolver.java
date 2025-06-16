@@ -52,9 +52,27 @@ public class TypeResolver implements ITypeResolver {
 
     @Override
     public Type resolve(Unary expr) {
+        Type inner = expr.expression.resolveType(this);
+        switch (expr.operator) {
+            case NEGATE:
+                if (inner == Type.BOOLEAN)
+                    return Type.BOOLEAN;
+                break;
+            case UMINUS:
+                if (inner == Type.INT)
+                    return Type.INT;
+                break;
+            case INCREMENT:
+            case DECREMENT:
+                if (inner == Type.INT)
+                    return Type.INT;
+                break;
+            default:
+                break;
+        }
         return Type.UNKNOWN;
     }
-    
+
     @Override
     public Type resolve(New expr) {
         return Type.CLASS;
