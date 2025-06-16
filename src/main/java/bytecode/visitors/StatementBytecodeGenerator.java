@@ -1,13 +1,25 @@
 package bytecode.visitors;
 
+import ast.exprStatements.Assign;
+import ast.exprStatements.MethodCall;
+import ast.exprStatements.New;
+import ast.exprStatements.Unary;
 import ast.statements.*;
 import bytecode.interfaces.IStatementBytecodeGenerator;
+import org.objectweb.asm.MethodVisitor;
+
+import java.util.Map;
 
 public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
-    private final ExpressionBytecodeGenerator generator;
 
-    public StatementBytecodeGenerator(ExpressionBytecodeGenerator generator) {
+    private final ExpressionBytecodeGenerator generator;
+    private final MethodVisitor mv;
+    private final Map<String, Integer> locals;
+
+    public StatementBytecodeGenerator(ExpressionBytecodeGenerator generator,  MethodVisitor mv, Map<String, Integer> locals) {
         this.generator = generator;
+        this.mv = mv;
+        this.locals = locals;
     }
 
 
@@ -68,6 +80,26 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
 
     @Override
     public void visitWhile(While stmt) {
+
+    }
+
+    @Override
+    public void visitAssign(Assign stmt) {
+
+    }
+
+    @Override
+    public void visitMethodCall(MethodCall stmt) {
+
+    }
+
+    @Override
+    public void visitNew(New stmt) {
+
+    }
+
+    @Override
+    public void visitUnary(Unary stmt) {
 
     }
 }

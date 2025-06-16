@@ -6,10 +6,9 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ByteCodeGenerator {
 
@@ -64,18 +63,13 @@ public class ByteCodeGenerator {
     }
 
     private String getDescriptor(Type type) {
-        switch (type) {
-            case INT:
-                return "I";
-            case BOOLEAN:
-                return "Z";
-            case CHAR:
-                return "C";
-            case VOID:
-                return "V";
-            default:
-                throw new IllegalArgumentException("Unsupported type: " + type);
-        }
+        return switch (type) {
+            case INT -> "I";
+            case BOOLEAN -> "Z";
+            case CHAR -> "C";
+            case VOID -> "V";
+            default -> throw new IllegalArgumentException("Unsupported type: " + type);
+        };
     }
 
     public ClassWriter generateBytecodeStandardConstructor(ClassWriter cw, Class cl) {
@@ -117,7 +111,10 @@ public class ByteCodeGenerator {
             int access = Opcodes.ACC_PUBLIC;
             MethodVisitor mv = cw.visitMethod(access, method.name, descriptor, null, null);
             mv.visitCode();
-            emitDefaultReturn(mv, method.type);
+
+            // To Do: Update bytecode generation
+
+            Map<String, Integer> locals = new HashMap<>();
 
             mv.visitMaxs(0, 0);
             mv.visitEnd();
