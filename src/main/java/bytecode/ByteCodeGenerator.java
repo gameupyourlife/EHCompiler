@@ -2,6 +2,8 @@ package bytecode;
 
 import ast.*;
 import ast.Class;
+import ast.types.Type;
+
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;

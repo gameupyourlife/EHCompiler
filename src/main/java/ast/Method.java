@@ -2,6 +2,8 @@ package ast;
 
 import java.util.List;
 
+import ast.types.Type;
+
 public class Method {
     public Type type;
     public String name;
