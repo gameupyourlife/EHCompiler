@@ -2,7 +2,7 @@ package ast.statements;
 
 import ast.Expression;
 import ast.Statement;
-import ast.Type;
+import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class If implements Statement {
     public Expression condition;
@@ -15,5 +15,10 @@ public class If implements Statement {
         this.condition = condition;
         this.thenStatement = thenStatement;
         this.elseStatement = elseStatement;
+    }
+
+    @Override
+    public void accept(IStatementBytecodeGenerator visitor) {
+        visitor.visitIf(this);
     }
 }

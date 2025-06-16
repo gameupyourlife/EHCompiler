@@ -7,6 +7,7 @@ public class Method {
     public String name;
     public List<Parameter> parameters;
     public List<Statement> statement;
+    // Block
     public Boolean staticFlag;
     public Method(Type type, String name, List<Parameter> parameters, List<Statement> statement, Boolean staticFlag) {
         this.type = type;
