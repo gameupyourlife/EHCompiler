@@ -133,6 +133,16 @@ public class semanticCheck implements semanticVisitor {
 
         // Statements prüfen
         if (method.statement != null) {
+            for(Statement stmt : method.statement){
+                if(stmt instanceof Return){
+                    Return returnStmt = (Return) stmt; // Expliziter Cast
+                    Expression returnExpr = returnStmt.expression;
+                    Type exprType = evaluateExpressionType(returnExpr);
+                    if(method.type != exprType){
+                        errors.add(new semanticError("Return type for '" + method.name + "' doesn't match the method type: '" + method.type + ", " + exprType + "'"));
+                    }
+                }
+            }
             for (Statement stmt : method.statement) {
                 // Hier brauchst du noch eine typeCheck(Statement, Type) Methode
                 typeCheckResult stmtRes = typeCheck(stmt, method.type);
@@ -183,6 +193,10 @@ public class semanticCheck implements semanticVisitor {
             return null;
         }
 
+        if (expr instanceof ast.expressions.BooleanConst || expr instanceof ast.expressions.BooleanLiteral) {
+            return Type.BOOLEAN;
+        }
+
         if (expr instanceof ast.exprStatements.MethodCall) {
             ast.exprStatements.MethodCall call = (ast.exprStatements.MethodCall) expr;
 
@@ -201,7 +215,6 @@ public class semanticCheck implements semanticVisitor {
             return method.type;
         }
 
-        // Rest deiner bisherigen Logik
         String className = expr.getClass().getSimpleName().toUpperCase();
         try {
             return Type.valueOf(className);
@@ -221,6 +234,4 @@ public class semanticCheck implements semanticVisitor {
             return null;
         }
     }
-
-
 }
