@@ -5,6 +5,7 @@ public enum Operator {
     MINUS("-"),
     MULTIPLY("*"),
     DIVIDE("/"),
+    MODULUS("%"),
 
     NEGATE("!"),      
     UMINUS("-"),     

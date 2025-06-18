@@ -12,4 +12,5 @@ public interface IExpressionBytecodeGenerator {
     void visitNull(Null expr);
     void visitSuper(Super expr);
     void visitThis(This expr);
+    void visitBinary(Binary expr);
 }

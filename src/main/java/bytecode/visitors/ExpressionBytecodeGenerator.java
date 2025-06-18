@@ -54,4 +54,9 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
     public void visitThis(This expr) {
 
     }
+
+    @Override
+    public void visitBinary(Binary expr) {
+    
+    }
 }
