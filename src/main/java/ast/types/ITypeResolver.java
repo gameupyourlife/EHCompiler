@@ -26,4 +26,6 @@ public interface ITypeResolver {
     Type resolve(Unary expr);
 
     Type resolve(New expr);
+
+    Type resolve(Binary expr);
 }

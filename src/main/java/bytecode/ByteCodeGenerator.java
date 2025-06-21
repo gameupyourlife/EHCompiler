@@ -4,6 +4,9 @@ import ast.*;
 import ast.Class;
 import ast.types.Type;
 
+import ast.types.TypeResolver;
+import bytecode.visitors.ExpressionBytecodeGenerator;
+import bytecode.visitors.StatementBytecodeGenerator;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -114,9 +117,23 @@ public class ByteCodeGenerator {
             MethodVisitor mv = cw.visitMethod(access, method.name, descriptor, null, null);
             mv.visitCode();
 
-            // To Do: Update bytecode generation
-
             Map<String, Integer> locals = new HashMap<>();
+            int index = 0;
+            locals.put("this", index);
+            index++;
+
+            for (Parameter p : method.parameters) {
+                locals.put(p.name, index);
+                index++;
+            }
+
+            TypeResolver resolver = new TypeResolver();
+            ExpressionBytecodeGenerator ex = new ExpressionBytecodeGenerator(mv, locals, resolver);
+            StatementBytecodeGenerator gen = new StatementBytecodeGenerator(ex, mv, locals, index, resolver);
+
+            for (Statement statement : method.statement) {
+                statement.accept(gen);
+            }
 
             mv.visitMaxs(0, 0);
             mv.visitEnd();

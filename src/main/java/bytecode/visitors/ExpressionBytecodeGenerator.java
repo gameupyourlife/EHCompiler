@@ -1,11 +1,15 @@
 package bytecode.visitors;
 
+import ast.Operator;
 import ast.exprStatements.Assign;
 import ast.exprStatements.MethodCall;
 import ast.exprStatements.New;
 import ast.exprStatements.Unary;
 import ast.expressions.*;
+import ast.types.Type;
+import ast.types.TypeResolver;
 import bytecode.interfaces.IExpressionBytecodeGenerator;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -15,10 +19,12 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
 
     private final MethodVisitor mv;
     private final Map<String, Integer> locals;
+    private final TypeResolver resolver;
 
-    public ExpressionBytecodeGenerator(MethodVisitor mv, Map<String, Integer> locals) {
+    public ExpressionBytecodeGenerator(MethodVisitor mv, Map<String, Integer> locals,  TypeResolver resolver) {
         this.mv = mv;
         this.locals = locals;
+        this.resolver = resolver;
     }
 
     @Override
@@ -53,13 +59,19 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
 
     @Override
     public void visitEmptyExpression(EmptyExpression expr) {
-        // no bytecode necessary
+        mv.visitInsn(Opcodes.NOP);
     }
 
     @Override
     public void visitIdentifier(Identifier expr) {
-        // Je nach Typ muss anderer bytecode erstellt werden
-        // -> SemantikCheck muss den Typ liefern
+        Type exprType = resolver.resolve(expr);
+        int varIndex = locals.get(expr.name);
+
+        if (exprType == Type.INT || exprType == Type.BOOLEAN || exprType == Type.CHAR) {
+            mv.visitVarInsn(Opcodes.ILOAD, varIndex);
+        } else {
+            mv.visitVarInsn(Opcodes.ALOAD, varIndex);
+        }
     }
 
     @Override
@@ -94,12 +106,71 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
 
     @Override
     public void visitBinary(Binary expr) {
-        // Typ nötig
+        expr.left.accept(this);
+        expr.right.accept(this);
+
+        Type type = resolver.resolve(expr);
+
+        generateBinaryOp(expr.operator, type);
+    }
+
+    private void generateBinaryOp(Operator op, Type type) {
+        Label trueLabel = new Label();
+        Label falseLabel = new Label();
+
+        switch (op) {
+            case PLUS: mv.visitInsn(Opcodes.IADD); break;
+            case MINUS: mv.visitInsn(Opcodes.ISUB); break;
+            case MULTIPLY: mv.visitInsn(Opcodes.IMUL); break;
+            case DIVIDE: mv.visitInsn(Opcodes.IDIV); break;
+            case MODULO: mv.visitInsn(Opcodes.IREM); break;
+
+            case EQUALS: mv.visitJumpInsn(Opcodes.IF_ICMPEQ, trueLabel); break;
+            case NOT_EQUALS:  mv.visitJumpInsn(Opcodes.IF_ICMPNE, trueLabel); break;
+            case LESS_THAN: mv.visitJumpInsn(Opcodes.IF_ICMPLT, trueLabel); break;
+        }
     }
 
     @Override
     public void visitUnary(Unary expr) {
-        // Typ nötig
+        expr.expression.accept(this);
+        Operator op = expr.operator;
+        Type type = resolver.resolve(expr);
+
+        switch (op) {
+            case UMINUS:
+                if (type != Type.INT) {
+                    throw new UnsupportedOperationException("- only supports int");
+                }
+                mv.visitInsn(Opcodes.INEG);
+                break;
+            case NEGATE:
+                if (type != Type.BOOLEAN) {
+                    throw new UnsupportedOperationException("! only supports boolean");
+                }
+                mv.visitInsn(Opcodes.ICONST_1);
+                mv.visitInsn(Opcodes.IXOR);
+                break;
+            case INCREMENT,  DECREMENT:
+                if (type != Type.INT) {
+                    throw new UnsupportedOperationException("++/-- only supports int");
+                }
+                if (!(expr.expression instanceof Identifier)) {
+                    throw new UnsupportedOperationException("! only supports identifier");
+                }
+                int varIndex = locals.get(((Identifier) expr.expression).name);
+                mv.visitVarInsn(Opcodes.ILOAD, varIndex);
+                if (op == Operator.INCREMENT) {
+                    mv.visitInsn(Opcodes.ICONST_1);
+                    mv.visitInsn(Opcodes.IADD);
+                } else {
+                    mv.visitInsn(Opcodes.ICONST_1);
+                    mv.visitInsn(Opcodes.ISUB);
+                }
+                mv.visitVarInsn(Opcodes.ISTORE, varIndex);
+                mv.visitVarInsn(Opcodes.ILOAD, varIndex);
+                break;
+        }
     }
 
     @Override

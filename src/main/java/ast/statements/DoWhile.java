@@ -6,13 +6,13 @@ import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class DoWhile implements Statement {
     public Expression condition;
-    public Statement statement;
+    public Block block;
     
     public DoWhile() {}
     
-    public DoWhile(Expression condition, Statement statement) {
+    public DoWhile(Expression condition, Block block) {
         this.condition = condition;
-        this.statement = statement;
+        this.block = block;
     }
 
     @Override

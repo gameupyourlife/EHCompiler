@@ -5,11 +5,21 @@ public enum Operator {
     MINUS("-"),
     MULTIPLY("*"),
     DIVIDE("/"),
+    MODULO("%"),
 
     NEGATE("!"),      
     UMINUS("-"),     
     INCREMENT("++"),  
-    DECREMENT("--");  
+    DECREMENT("--"),
+
+    EQUALS("=="),
+    NOT_EQUALS("!="),
+    LESS_THAN("<"),
+    LESS_OR_EQUALS("<="),
+    GREATER_THAN(">"),
+    GREATER_OR_EQUALS(">=");
+
+
 
     private final String symbol;
 

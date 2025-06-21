@@ -6,18 +6,17 @@ import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class While implements Statement {
     public Expression condition;
-    public Statement statement;
+    public Block block;
     
     public While() {}
     
-    public While(Expression condition, Statement statement) {
+    public While(Expression condition, Block block) {
         this.condition = condition;
-        this.statement = statement;
+        this.block = block;
     }
 
     @Override
     public void accept(IStatementBytecodeGenerator visitor) {
         visitor.visitWhile(this);
     }
-
 }

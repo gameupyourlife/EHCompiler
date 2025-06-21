@@ -8,11 +8,11 @@ public class For implements Statement {
     public Expression init;
     public Expression condition;
     public Expression update;
-    public Statement statement;
+    public Block statement;
     
     public For() {}
     
-    public For(Expression init, Expression condition, Expression update, Statement statement) {
+    public For(Expression init, Expression condition, Expression update, Block statement) {
         this.init = init;
         this.condition = condition;
         this.update = update;
