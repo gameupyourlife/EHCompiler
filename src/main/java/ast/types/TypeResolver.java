@@ -3,8 +3,6 @@ package ast.types;
 import ast.exprStatements.*;
 import ast.expressions.*;
 
-import javax.naming.OperationNotSupportedException;
-
 public class TypeResolver implements ITypeResolver {
 
     @Override
@@ -82,26 +80,37 @@ public class TypeResolver implements ITypeResolver {
 
     @Override
     public Type resolve(Binary expr) {
-        Type left = expr.left.resolveType(this);
-        Type right = expr.right.resolveType(this);
-        if (left != right) {
-            throw new IllegalStateException("Type mismatch: " + left + " vs " + right);
-        }
+        Type leftType = expr.left.resolveType(this);
+        Type rightType = expr.right.resolveType(this);
 
-        return switch (expr.operator) {
-            case PLUS, MINUS, MULTIPLY, DIVIDE, MODULO -> {
-                if (left != Type.INT) {
-                    throw new IllegalStateException("Arithmetic ops require int, got: " + left);
-                }
-                yield Type.INT;
-            }
-            case EQUALS, NOT_EQUALS, LESS_THAN, LESS_OR_EQUALS, GREATER_OR_EQUALS, GREATER_THAN -> {
-                if (left != Type.BOOLEAN) {
-                    throw new IllegalStateException("Arithmetic ops require boolean, got: " + left);
-                }
-                yield Type.BOOLEAN;
-            }
-            default -> throw new UnsupportedOperationException("No " + expr.operator + " on " + left);
-        };
+        switch (expr.operator) {
+            case PLUS:
+                if (leftType == Type.INT && rightType == Type.INT)
+                    return Type.INT;
+                break;
+            case MINUS:
+                if (leftType == Type.INT && rightType == Type.INT)
+                    return Type.INT;
+                break;
+            case MULTIPLY:
+                if (leftType == Type.INT && rightType == Type.INT)
+                    return Type.INT;
+                break;
+            case DIVIDE:
+                if (leftType == Type.INT && rightType == Type.INT)
+                    return Type.INT;
+                break;
+            case MODULUS:
+                if (leftType == Type.INT && rightType == Type.INT)
+                    return Type.INT;
+                break;
+            case NEGATE:
+                if (leftType == Type.BOOLEAN && rightType == Type.BOOLEAN)
+                    return Type.BOOLEAN;
+                break;
+            default:
+                break;
+        }
+        return Type.UNKNOWN;
     }
 }

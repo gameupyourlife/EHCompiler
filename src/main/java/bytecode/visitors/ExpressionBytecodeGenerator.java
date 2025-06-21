@@ -188,4 +188,9 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
     public void visitNew(New expr) {
 
     }
+
+    @Override
+    public void visitBinary(Binary expr) {
+    
+    }
 }
