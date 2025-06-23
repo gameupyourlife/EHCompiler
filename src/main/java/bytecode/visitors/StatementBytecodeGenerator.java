@@ -5,9 +5,11 @@ import ast.exprStatements.Assign;
 import ast.exprStatements.MethodCall;
 import ast.exprStatements.New;
 import ast.exprStatements.Unary;
+import ast.expressions.Identifier;
 import ast.statements.*;
 import ast.types.Type;
 import ast.types.TypeResolver;
+import bytecode.VarContext;
 import bytecode.interfaces.IStatementBytecodeGenerator;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -19,20 +21,17 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
 
     private final ExpressionBytecodeGenerator generator;
     private final MethodVisitor mv;
-    private final Map<String, Integer> locals;
-    private int varIndex;
+    private final VarContext context;
     private final TypeResolver resolver;
 
     public StatementBytecodeGenerator(
             ExpressionBytecodeGenerator generator,
             MethodVisitor mv,
-            Map<String, Integer> locals,
-            int varIndex,
+            VarContext context,
             TypeResolver resolver) {
         this.generator = generator;
         this.mv = mv;
-        this.locals = locals;
-        this.varIndex = varIndex;
+        this.context = context;
         this.resolver = resolver;
     }
 
@@ -107,19 +106,17 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
 
     @Override
     public void visitLocalVarDecl(LocalVarDecl stmt) {
-        locals.put(stmt.name, varIndex);
-        varIndex++;
+        context.declareVariable(stmt.name);
+        int index = context.getLocalIndex(stmt.name);
 
         if (stmt.init != null) {
             stmt.init.accept(generator);
             switch (stmt.type) {
                 case INT, BOOLEAN, CHAR:
-                    mv.visitVarInsn(Opcodes.ISTORE, varIndex);
-                    varIndex++;
+                    mv.visitVarInsn(Opcodes.ISTORE, index);
                     break;
                 case CLASS:
-                    mv.visitVarInsn(Opcodes.ASTORE, varIndex);
-                    varIndex++;
+                    mv.visitVarInsn(Opcodes.ASTORE, index);
                     break;
                 default:
                     throw new UnsupportedOperationException("Unsupported type: " + stmt.type);
@@ -137,6 +134,7 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
 
     }
 
+    // müssen wir das überhaupt können?
     @Override
     public void visitSwitchStatement(SwitchStatement stmt) {
 
@@ -160,9 +158,26 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
 
     @Override
     public void visitAssign(Assign stmt) {
+        if (!(stmt.target instanceof Identifier)) {
+            throw new UnsupportedOperationException("Assignment target must be a variable");
+        }
+
         stmt.value.accept(generator);
 
-        // unmöglich den Namen der Variablen zu bekommen
+        // Ich kann den Typ von Exression allgemein nicht auflösen
+        Type targetType = resolver.resolve(stmt.target);
+        Type valueType = resolver.resolve(stmt.value);
+
+        if (targetType != valueType) {
+            throw new UnsupportedOperationException("Type mismatch in assignment");
+        }
+
+        // unmöglich den Namen der Variablen zu bekommen || Expression in Identifier ändern!
+        int index = context.getLocalIndex(ident.name);
+        int index2 = context.getLocalIndex(((Identifier) stmt.target).name);
+        mv.visitVarInsn(Opcodes.ISTORE, index);
+
+
 
 //        Integer index = localVarIndex.get(stmt.variableName);
 //        if (index == null) {

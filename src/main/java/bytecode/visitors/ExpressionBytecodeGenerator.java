@@ -8,6 +8,7 @@ import ast.exprStatements.Unary;
 import ast.expressions.*;
 import ast.types.Type;
 import ast.types.TypeResolver;
+import bytecode.VarContext;
 import bytecode.interfaces.IExpressionBytecodeGenerator;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -18,12 +19,12 @@ import java.util.Map;
 public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator {
 
     private final MethodVisitor mv;
-    private final Map<String, Integer> locals;
+    private final VarContext context;
     private final TypeResolver resolver;
 
-    public ExpressionBytecodeGenerator(MethodVisitor mv, Map<String, Integer> locals,  TypeResolver resolver) {
+    public ExpressionBytecodeGenerator(MethodVisitor mv, VarContext context, TypeResolver resolver) {
         this.mv = mv;
-        this.locals = locals;
+        this.context = context;
         this.resolver = resolver;
     }
 
@@ -65,12 +66,12 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
     @Override
     public void visitIdentifier(Identifier expr) {
         Type exprType = resolver.resolve(expr);
-        int varIndex = locals.get(expr.name);
+        int index = context.getLocalIndex(expr.name);
 
         if (exprType == Type.INT || exprType == Type.BOOLEAN || exprType == Type.CHAR) {
-            mv.visitVarInsn(Opcodes.ILOAD, varIndex);
+            mv.visitVarInsn(Opcodes.ILOAD, index);
         } else {
-            mv.visitVarInsn(Opcodes.ALOAD, varIndex);
+            mv.visitVarInsn(Opcodes.ALOAD, index);
         }
     }
 
@@ -95,12 +96,13 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
 
     @Override
     public void visitSuper(Super expr) {
+        // muss man noch anpassen
         mv.visitVarInsn(Opcodes.ALOAD, 0);
-        // loads current instance like "this"
     }
 
     @Override
     public void visitThis(This expr) {
+        // nochmal anpassen
         mv.visitVarInsn(Opcodes.ALOAD, 0);
     }
 
@@ -117,23 +119,39 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
     private void generateBinaryOp(Operator op, Type type) {
         Label trueLabel = new Label();
         Label falseLabel = new Label();
+        Label endLabel = new Label();
 
         switch (op) {
             case PLUS: mv.visitInsn(Opcodes.IADD); break;
             case MINUS: mv.visitInsn(Opcodes.ISUB); break;
             case MULTIPLY: mv.visitInsn(Opcodes.IMUL); break;
             case DIVIDE: mv.visitInsn(Opcodes.IDIV); break;
-            case MODULO: mv.visitInsn(Opcodes.IREM); break;
+            case MODULUS: mv.visitInsn(Opcodes.IREM); break;
 
             case EQUALS: mv.visitJumpInsn(Opcodes.IF_ICMPEQ, trueLabel); break;
             case NOT_EQUALS:  mv.visitJumpInsn(Opcodes.IF_ICMPNE, trueLabel); break;
             case LESS_THAN: mv.visitJumpInsn(Opcodes.IF_ICMPLT, trueLabel); break;
+            case LESS_OR_EQUALS: mv.visitJumpInsn(Opcodes.IF_ICMPLE, trueLabel); break;
+            case GREATER_THAN: mv.visitJumpInsn(Opcodes.IF_ICMPGT, trueLabel); break;
+            case GREATER_OR_EQUALS: mv.visitJumpInsn(Opcodes.IF_ICMPGE, trueLabel); break;
+            default: throw new UnsupportedOperationException("operator " + op + " not supported");
         }
+
+        mv.visitLabel(falseLabel);
+        mv.visitInsn(Opcodes.ICONST_0); // false
+        mv.visitJumpInsn(Opcodes.GOTO, endLabel);
+
+        // Vergleich war richtig -> trueLabel
+        mv.visitLabel(trueLabel);
+        mv.visitInsn(Opcodes.ICONST_1); // true
+
+        // Endesprung
+        mv.visitLabel(endLabel);
     }
 
     @Override
     public void visitUnary(Unary expr) {
-        expr.expression.accept(this);
+        // expr.expression.accept(this);
         Operator op = expr.operator;
         Type type = resolver.resolve(expr);
 
@@ -142,12 +160,14 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
                 if (type != Type.INT) {
                     throw new UnsupportedOperationException("- only supports int");
                 }
+                expr.expression.accept(this);
                 mv.visitInsn(Opcodes.INEG);
                 break;
             case NEGATE:
                 if (type != Type.BOOLEAN) {
                     throw new UnsupportedOperationException("! only supports boolean");
                 }
+                expr.expression.accept(this);
                 mv.visitInsn(Opcodes.ICONST_1);
                 mv.visitInsn(Opcodes.IXOR);
                 break;
@@ -158,8 +178,8 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
                 if (!(expr.expression instanceof Identifier)) {
                     throw new UnsupportedOperationException("! only supports identifier");
                 }
-                int varIndex = locals.get(((Identifier) expr.expression).name);
-                mv.visitVarInsn(Opcodes.ILOAD, varIndex);
+                int index = context.getLocalIndex(((Identifier) expr.expression).name);
+                mv.visitVarInsn(Opcodes.ILOAD, index);
                 if (op == Operator.INCREMENT) {
                     mv.visitInsn(Opcodes.ICONST_1);
                     mv.visitInsn(Opcodes.IADD);
@@ -167,8 +187,8 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
                     mv.visitInsn(Opcodes.ICONST_1);
                     mv.visitInsn(Opcodes.ISUB);
                 }
-                mv.visitVarInsn(Opcodes.ISTORE, varIndex);
-                mv.visitVarInsn(Opcodes.ILOAD, varIndex);
+                mv.visitVarInsn(Opcodes.ISTORE, index);
+                mv.visitVarInsn(Opcodes.ILOAD, index);
                 break;
         }
     }
@@ -177,6 +197,9 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
     public void visitAssign(Assign expr) {
         expr.accept(this);
         mv.visitInsn(Opcodes.DUP);
+        // wie könnte man das mit dem Namen besser, robuster machen?
+        int index = context.getLocalIndex(((Identifier) expr.target).name);
+        mv.visitVarInsn(Opcodes.ISTORE, index);
     }
 
     @Override
@@ -187,10 +210,5 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
     @Override
     public void visitNew(New expr) {
 
-    }
-
-    @Override
-    public void visitBinary(Binary expr) {
-    
     }
 }

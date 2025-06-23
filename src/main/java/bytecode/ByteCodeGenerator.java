@@ -117,19 +117,16 @@ public class ByteCodeGenerator {
             MethodVisitor mv = cw.visitMethod(access, method.name, descriptor, null, null);
             mv.visitCode();
 
-            Map<String, Integer> locals = new HashMap<>();
-            int index = 0;
-            locals.put("this", index);
-            index++;
+            VarContext context = new VarContext();
+            context.declareVariable("this");
 
             for (Parameter p : method.parameters) {
-                locals.put(p.name, index);
-                index++;
+                context.declareVariable(p.name);
             }
 
             TypeResolver resolver = new TypeResolver();
-            ExpressionBytecodeGenerator ex = new ExpressionBytecodeGenerator(mv, locals, resolver);
-            StatementBytecodeGenerator gen = new StatementBytecodeGenerator(ex, mv, locals, index, resolver);
+            ExpressionBytecodeGenerator ex = new ExpressionBytecodeGenerator(mv, context, resolver);
+            StatementBytecodeGenerator gen = new StatementBytecodeGenerator(ex, mv, context, resolver);
 
             for (Statement statement : method.statement) {
                 statement.accept(gen);
