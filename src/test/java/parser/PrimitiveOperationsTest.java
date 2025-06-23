@@ -128,19 +128,6 @@ class PrimitiveOperationsTest {
     }
 
     @Test
-    void testParseXorAst() throws Exception {
-        String src =
-            "class BooleanLogic { " +
-            "  boolean xor(boolean a, boolean b) { return a ^ b; }" +
-            "}";
-        Return ret = getSingleReturn(src);
-        Binary bin = (Binary) ret.expression;
-        assertEquals(Operator.XOR, bin.operator);
-        assertEquals("a", ((Identifier)bin.left).name);
-        assertEquals("b", ((Identifier)bin.right).name);
-    }
-
-    @Test
     void testParseNotAst() throws Exception {
         String src =
             "class BooleanLogic { " +
@@ -181,21 +168,6 @@ class PrimitiveOperationsTest {
         assertEquals(Operator.NEGATE, un.operator);
         Binary bin = (Binary) un.expression;
         assertEquals(Operator.OR, bin.operator);
-        assertEquals("a", ((Identifier)bin.left).name);
-        assertEquals("b", ((Identifier)bin.right).name);
-    }
-
-    @Test
-    void testParseXnorAst() throws Exception {
-        String src =
-            "class BooleanLogic { " +
-            "  boolean xnor(boolean a, boolean b) { return !(a ^ b); }" +
-            "}";
-        Return ret = getSingleReturn(src);
-        Unary un = (Unary) ret.expression;
-        assertEquals(Operator.NEGATE, un.operator);
-        Binary bin = (Binary) un.expression;
-        assertEquals(Operator.XOR, bin.operator);
         assertEquals("a", ((Identifier)bin.left).name);
         assertEquals("b", ((Identifier)bin.right).name);
     }

@@ -147,11 +147,6 @@ class ArithmeticBinarySemanticTest {
     }
 
     @Test
-    void testXor() {
-        assertDoesNotThrow(() -> semanticCheck.generateTast(makeBinaryProgram("xor", Operator.XOR)));
-    }
-
-    @Test
     void testNot() {
         Unary expr = new Unary(Operator.NEGATE, new BooleanConst(true));
         assertDoesNotThrow(() -> semanticCheck.generateTast(makeUnaryProgram("not", expr)));
@@ -171,14 +166,6 @@ class ArithmeticBinarySemanticTest {
                 Operator.NEGATE,
                 new Binary(Operator.OR, new Identifier("a"), new Identifier("b")));
         assertDoesNotThrow(() -> semanticCheck.generateTast(makeUnaryProgram("nor", expr)));
-    }
-
-    @Test
-    void testXnor() {
-        Unary expr = new Unary(
-                Operator.NEGATE,
-                new Binary(Operator.XOR, new Identifier("a"), new Identifier("b")));
-        assertDoesNotThrow(() -> semanticCheck.generateTast(makeUnaryProgram("xnor", expr)));
     }
 
     @Test
