@@ -2,8 +2,6 @@ package parser;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import scannerparserlexer.ScannerParserLexer;
 
@@ -14,7 +12,6 @@ import ast.Method;
 import ast.statements.Return;
 import ast.expressions.Binary;
 import ast.expressions.Identifier;
-import ast.expressions.IntConst;
 import ast.Operator;
 
 class PrimitiveOperationsTest {
