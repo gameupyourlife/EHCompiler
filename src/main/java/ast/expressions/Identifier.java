@@ -7,9 +7,11 @@ import bytecode.interfaces.IExpressionBytecodeGenerator;
 
 public class Identifier implements Expression {
     public String name;
+    public String className;
 
-    public Identifier(String name) {
+    public Identifier(String name, String className) {
         this.name = name;
+        this.className = className;
     }
 
     @Override

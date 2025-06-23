@@ -2,6 +2,8 @@ package ast.exprStatements;
 
 import ast.Expression;
 import ast.Statement;
+import ast.types.ITypeResolver;
+import ast.types.Type;
 import bytecode.interfaces.IExpressionBytecodeGenerator;
 import bytecode.interfaces.IStatementBytecodeGenerator;
 import java.util.ArrayList;
@@ -25,6 +27,11 @@ public class MethodCall implements Expression, Statement {
     @Override
     public void accept(IExpressionBytecodeGenerator visitor) {
         visitor.visitMethodCall(this);
+    }
+
+    @Override
+    public Type resolveType(ITypeResolver resolver) {
+        return null;
     }
 
     @Override

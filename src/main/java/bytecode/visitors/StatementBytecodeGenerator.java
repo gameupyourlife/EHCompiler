@@ -1,5 +1,7 @@
 package bytecode.visitors;
 
+import ast.Expression;
+import ast.Operator;
 import ast.Statement;
 import ast.exprStatements.Assign;
 import ast.exprStatements.MethodCall;
@@ -7,6 +9,7 @@ import ast.exprStatements.New;
 import ast.exprStatements.Unary;
 import ast.expressions.Identifier;
 import ast.statements.*;
+import ast.types.ClassResolver;
 import ast.types.Type;
 import ast.types.TypeResolver;
 import bytecode.VarContext;
@@ -15,7 +18,8 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
 
@@ -129,9 +133,14 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
         if (stmt.expression != null) {
             stmt.expression.accept(generator);
             // Typ der expression muss mit resolver irgendwie ermittelt werden können
-
+            Type type = stmt.expression.resolveType(resolver);
+            if (type == Type.INT || type == Type.BOOLEAN || type == Type.CHAR) {
+                mv.visitInsn(Opcodes.IRETURN);
+            }
+            if (type == Type.CLASS) {
+                mv.visitInsn(Opcodes.ARETURN);
+            }
         }
-
     }
 
     // müssen wir das überhaupt können?
@@ -164,48 +173,65 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
 
         stmt.value.accept(generator);
 
-        // Ich kann den Typ von Exression allgemein nicht auflösen
-        Type targetType = resolver.resolve(stmt.target);
-        Type valueType = resolver.resolve(stmt.value);
+        Type targetType = stmt.target.resolveType(resolver);
+        Type valueType = stmt.value.resolveType(resolver);
 
         if (targetType != valueType) {
             throw new UnsupportedOperationException("Type mismatch in assignment");
         }
 
-        // unmöglich den Namen der Variablen zu bekommen || Expression in Identifier ändern!
-        int index = context.getLocalIndex(ident.name);
-        int index2 = context.getLocalIndex(((Identifier) stmt.target).name);
+        int index = context.getLocalIndex(((Identifier) stmt.target).name);
         mv.visitVarInsn(Opcodes.ISTORE, index);
 
-
-
-//        Integer index = localVarIndex.get(stmt.variableName);
-//        if (index == null) {
-//            throw new RuntimeException("Variable not defined: " + stmt.variableName);
-//        }
-//
-//        // 3. Variablentyp ermitteln
-//        Type type = resolver.resolve(stmt);
-//
-//        // 4. Je nach Typ Wert speichern
-//        switch (type) {
-//            case INT, BOOLEAN, CHAR -> mv.visitVarInsn(Opcodes.ISTORE, index);
-//            case OBJECT -> mv.visitVarInsn(Opcodes.ASTORE, index);
-//            default -> throw new UnsupportedOperationException("Unsupported type in assignment: " + type);
+        switch (targetType) {
+            case INT, BOOLEAN, CHAR -> mv.visitVarInsn(Opcodes.ISTORE, index);
+            case CLASS -> mv.visitVarInsn(Opcodes.ASTORE, index);
+            default -> throw new UnsupportedOperationException("Unsupported type in assignment: " + targetType);
+        }
     }
 
     @Override
     public void visitMethodCall(MethodCall stmt) {
+        stmt.target.accept(generator);
 
+        List<Type> argTypes = new ArrayList<>();
+        for (Expression arg : stmt.arguments) {
+            arg.accept(generator);
+            argTypes.add(arg.resolveType(resolver));
+        }
+
+        ClassResolver classResolver = new ClassResolver(resolver);
+
+        Type returnType = stmt.target.resolveType(resolver);
+        String owner = classResolver.resolveClassName(stmt.target);
+        String descriptor = classResolver.makeMethodDescriptor(returnType, argTypes, owner);
+
+        mv.visitMethodInsn(
+                Opcodes.INVOKEVIRTUAL,
+                owner,
+                stmt.methodName,
+                descriptor,
+                false
+        );
+
+        if (returnType != Type.VOID) {
+            mv.visitInsn(Opcodes.POP);
+        }
     }
 
     @Override
     public void visitNew(New stmt) {
-
+        generator.visitNew(stmt);
+        mv.visitInsn(Opcodes.POP);
     }
 
     @Override
     public void visitUnary(Unary stmt) {
+        Operator op = stmt.operator;
+        generator.visitUnary(stmt);
 
+        if (op == Operator.UMINUS || op == Operator.NEGATE) {
+            mv.visitInsn(Opcodes.POP);
+        }
     }
 }

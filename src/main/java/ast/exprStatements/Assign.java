@@ -32,7 +32,6 @@ public class Assign implements Expression, Statement {
 
     @Override
     public Type resolveType(ITypeResolver resolver) {
-        // Implementierung von Statements fehlt noch
         return null;
     }
 }

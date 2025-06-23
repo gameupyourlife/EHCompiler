@@ -8,15 +8,15 @@ public class For implements Statement {
     public Expression init;
     public Expression condition;
     public Expression update;
-    public Block statement;
+    public Block block;
     
     public For() {}
     
-    public For(Expression init, Expression condition, Expression update, Block statement) {
+    public For(Expression init, Expression condition, Expression update, Block block) {
         this.init = init;
         this.condition = condition;
         this.update = update;
-        this.statement = statement;
+        this.block = block;
     }
 
     @Override

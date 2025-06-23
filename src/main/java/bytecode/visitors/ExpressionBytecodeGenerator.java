@@ -1,11 +1,13 @@
 package bytecode.visitors;
 
+import ast.Expression;
 import ast.Operator;
 import ast.exprStatements.Assign;
 import ast.exprStatements.MethodCall;
 import ast.exprStatements.New;
 import ast.exprStatements.Unary;
 import ast.expressions.*;
+import ast.types.ClassResolver;
 import ast.types.Type;
 import ast.types.TypeResolver;
 import bytecode.VarContext;
@@ -14,7 +16,9 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator {
 
@@ -138,20 +142,17 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
         }
 
         mv.visitLabel(falseLabel);
-        mv.visitInsn(Opcodes.ICONST_0); // false
+        mv.visitInsn(Opcodes.ICONST_0);
         mv.visitJumpInsn(Opcodes.GOTO, endLabel);
 
-        // Vergleich war richtig -> trueLabel
         mv.visitLabel(trueLabel);
-        mv.visitInsn(Opcodes.ICONST_1); // true
+        mv.visitInsn(Opcodes.ICONST_1);
 
-        // Endesprung
         mv.visitLabel(endLabel);
     }
 
     @Override
     public void visitUnary(Unary expr) {
-        // expr.expression.accept(this);
         Operator op = expr.operator;
         Type type = resolver.resolve(expr);
 
@@ -190,6 +191,8 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
                 mv.visitVarInsn(Opcodes.ISTORE, index);
                 mv.visitVarInsn(Opcodes.ILOAD, index);
                 break;
+            default:
+                throw new UnsupportedOperationException("Unknown unary operator: " + op);
         }
     }
 
@@ -197,18 +200,50 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
     public void visitAssign(Assign expr) {
         expr.accept(this);
         mv.visitInsn(Opcodes.DUP);
-        // wie könnte man das mit dem Namen besser, robuster machen?
         int index = context.getLocalIndex(((Identifier) expr.target).name);
         mv.visitVarInsn(Opcodes.ISTORE, index);
     }
 
     @Override
     public void visitMethodCall(MethodCall expr) {
+        expr.target.accept(this);
 
+        ClassResolver classResolver = new ClassResolver(resolver);
+
+        List<Type> argTypes = new ArrayList<>();
+        for (Expression arg : expr.arguments) {
+            arg.accept(this);
+            argTypes.add(arg.resolveType(resolver));
+        }
+
+        Type returnType = resolver.resolve(expr);
+        String owner = classResolver.resolveClassName(expr.target);
+        String descriptor = classResolver.makeMethodDescriptor(returnType, argTypes, owner);
+
+        mv.visitMethodInsn(
+                Opcodes.INVOKEVIRTUAL,
+                owner,
+                expr.methodName,
+                descriptor,
+                false
+        );
     }
 
     @Override
     public void visitNew(New expr) {
+        ClassResolver classResolver = new ClassResolver(resolver);
+        // String internalName = classResolver.resolveClassName(expr.objectName);
+        String internalName = expr.objectName;
 
+        mv.visitTypeInsn(Opcodes.NEW, internalName);
+        mv.visitInsn(Opcodes.DUP);
+
+        mv.visitMethodInsn(
+                Opcodes.INVOKESPECIAL,
+                internalName,
+                "<init>",
+                "()V",
+                false
+        );
     }
 }
