@@ -1,6 +1,6 @@
 package JavaTestFiles.ControlStructures;
 
-class WhileLoop {
+class WhileAndForLoop {
     void whileLoop() {
         int i = 0;
         while (i < 10) {

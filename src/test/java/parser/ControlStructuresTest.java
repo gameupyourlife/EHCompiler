@@ -453,4 +453,59 @@ class IfElseParsingTest {
                 thenBlk.statements.stream().anyMatch(st -> st instanceof Continue),
                 "Then-Block muss ein Continue enthalten");
     }
+
+      @Test
+    void testParseDoWhile() throws Exception {
+        String src =
+            "class DoWhile {" +
+            "  private void doWhile() {" +
+            "    int i = 0;" +
+            "    do {" +
+            "      i++;" +
+            "    } while (i < 5);" +
+            "  }" +
+            "}";
+        Program program = ScannerParserLexer.parse(src);
+        assertNotNull(program, "Programm darf nicht null sein");
+        assertEquals(1, program.classes.size(), "Es muss genau eine Klasse geparst werden");
+        Class cls = program.classes.get(0);
+        assertEquals("DoWhile", cls.name, "Klassenname muss 'DoWhile' sein");
+        assertEquals(1, cls.methods.size(), "Klasse muss genau eine Methode haben");
+
+        Method m = cls.methods.get(0);
+        assertEquals("doWhile", m.name, "Methodenname muss 'doWhile' sein");
+        assertEquals(Type.VOID, m.type, "Rückgabetyp muss void sein");
+        assertTrue(m.parameters.isEmpty(), "Methode darf keine Parameter haben");
+        assertEquals(2, m.statement.size(), "Methode muss genau zwei Statements enthalten");
+
+        assertTrue(m.statement.get(0) instanceof LocalVarDecl, "Erstes Statement muss LocalVarDecl sein");
+        LocalVarDecl decl = (LocalVarDecl) m.statement.get(0);
+        assertEquals("i", decl.name, "Variable muss 'i' heißen");
+        assertEquals(Type.INT, decl.type, "Variablentyp muss INT sein");
+        assertTrue(decl.init instanceof IntConst, "Initializer muss IntConst sein");
+        assertEquals(0, ((IntConst) decl.init).value, "Initialwert muss 0 sein");
+
+        assertTrue(m.statement.get(1) instanceof DoWhile, "Zweites Statement muss DoWhile sein");
+        DoWhile dw = (DoWhile) m.statement.get(1);
+
+        assertTrue(dw.statement instanceof Block, "Body muss ein Block sein");
+        Block body = (Block) dw.statement;
+        assertEquals(1, body.statements.size(), "Body muss genau eine Anweisung enthalten");
+        assertTrue(body.statements.get(0) instanceof ExpressionStatement,
+                   "Body-Anweisung muss ExpressionStatement sein");
+        ExpressionStatement es = (ExpressionStatement) body.statements.get(0);
+        assertTrue(es.expression instanceof Unary, "Expression muss Unary sein");
+        Unary u = (Unary) es.expression;
+        assertEquals(Operator.INCREMENT, u.operator, "Operator muss '++' sein");
+        assertTrue(u.expression instanceof Identifier, "Ausdruck muss Identifier sein");
+        assertEquals("i", ((Identifier) u.expression).name, "Identifier muss 'i' sein");
+
+        assertTrue(dw.condition instanceof Binary, "Condition muss Binary sein");
+        Binary cond = (Binary) dw.condition;
+        assertEquals(Operator.LESS_THAN, cond.operator, "Operator muss '<' sein");
+        assertTrue(cond.left instanceof Identifier, "Linke Seite muss Identifier sein");
+        assertEquals("i", ((Identifier) cond.left).name, "Identifier muss 'i' sein");
+        assertTrue(cond.right instanceof IntConst, "Rechte Seite muss IntConst sein");
+        assertEquals(5, ((IntConst) cond.right).value, "Wert muss 5 sein");
+    }
 }

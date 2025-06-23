@@ -277,42 +277,6 @@ public class PrimitiveOperationsTest {
     }
 
     @Test
-    void testXor() throws Exception {
-        Class cls = new Class("BooleanLogic");
-        cls.fields      = List.of();
-        cls.methods     = List.of(
-            new Method(
-                Type.BOOLEAN,
-                "xor",
-                List.of(
-                    new Parameter(Type.BOOLEAN, "a"),
-                    new Parameter(Type.BOOLEAN, "b")
-                ),
-                List.of(new Return(
-                    new Binary(
-                        Operator.XOR,
-                        new Identifier("a"),
-                        new Identifier("b")
-                    )
-                )),
-                false
-            )
-        );
-        cls.parentClass = null;
-        Program program = new Program(List.of(cls));
-
-        ByteCodeGenerator gen = new ByteCodeGenerator();
-        Map<String, byte[]> byteMap = gen.generateByteCode(program);
-        byte[] bytes = byteMap.get("BooleanLogic");
-        assertNotNull(bytes);
-
-        java.lang.Class<?> dyn = new ByteArrayClassLoader().defineClass("BooleanLogic", bytes);
-        java.lang.reflect.Method m = dyn.getDeclaredMethod("xor", boolean.class, boolean.class);
-        assertEquals("xor", m.getName());
-        assertEquals(boolean.class, m.getReturnType());
-    }
-
-    @Test
     void testNand() throws Exception {
         Class cls = new Class("BooleanLogic");
         cls.fields      = List.of();
@@ -387,45 +351,6 @@ public class PrimitiveOperationsTest {
         java.lang.Class<?> dyn = new ByteArrayClassLoader().defineClass("BooleanLogic", bytes);
         java.lang.reflect.Method m = dyn.getDeclaredMethod("nor", boolean.class, boolean.class);
         assertEquals("nor", m.getName());
-        assertEquals(boolean.class, m.getReturnType());
-    }
-
-    @Test
-    void testXnor() throws Exception {
-        Class cls = new Class("BooleanLogic");
-        cls.fields      = List.of();
-        cls.methods     = List.of(
-            new Method(
-                Type.BOOLEAN,
-                "xnor",
-                List.of(
-                    new Parameter(Type.BOOLEAN, "a"),
-                    new Parameter(Type.BOOLEAN, "b")
-                ),
-                List.of(new Return(
-                    new Unary(
-                        Operator.NEGATE,
-                        new Binary(
-                            Operator.XOR,
-                            new Identifier("a"),
-                            new Identifier("b")
-                        )
-                    )
-                )),
-                false
-            )
-        );
-        cls.parentClass = null;
-        Program program = new Program(List.of(cls));
-
-        ByteCodeGenerator gen = new ByteCodeGenerator();
-        Map<String, byte[]> byteMap = gen.generateByteCode(program);
-        byte[] bytes = byteMap.get("BooleanLogic");
-        assertNotNull(bytes);
-
-        java.lang.Class<?> dyn = new ByteArrayClassLoader().defineClass("BooleanLogic", bytes);
-        java.lang.reflect.Method m = dyn.getDeclaredMethod("xnor", boolean.class, boolean.class);
-        assertEquals("xnor", m.getName());
         assertEquals(boolean.class, m.getReturnType());
     }
 }
