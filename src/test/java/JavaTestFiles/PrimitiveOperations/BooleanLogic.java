@@ -14,10 +14,6 @@ class BooleanLogic {
         return !a;
     }
 
-    boolean xor(boolean a, boolean b) {
-        return a ^ b;
-    }
-
     boolean nand(boolean a, boolean b) {
         return !(a && b);
     }
@@ -26,7 +22,4 @@ class BooleanLogic {
         return !(a || b);
     }
 
-    boolean xnor(boolean a, boolean b) {
-        return !(a ^ b);
-    }
 }
