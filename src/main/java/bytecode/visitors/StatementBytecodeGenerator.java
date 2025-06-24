@@ -80,11 +80,6 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
     }
 
     @Override
-    public void visitExpressionStatement(ExpressionStatement stmt) {
-        // Kann das weg?
-    }
-
-    @Override
     public void visitFor(For stmt) {
         // For hat nur ein Statement und keinen Block
     }
@@ -141,12 +136,6 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
                 mv.visitInsn(Opcodes.ARETURN);
             }
         }
-    }
-
-    // müssen wir das überhaupt können?
-    @Override
-    public void visitSwitchStatement(SwitchStatement stmt) {
-
     }
 
     @Override

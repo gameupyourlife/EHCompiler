@@ -232,8 +232,7 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
     @Override
     public void visitNew(New expr) {
         ClassResolver classResolver = new ClassResolver(resolver);
-        // String internalName = classResolver.resolveClassName(expr.objectName);
-        String internalName = expr.objectName;
+        String internalName = classResolver.resolveClassName(expr.objectName);
 
         mv.visitTypeInsn(Opcodes.NEW, internalName);
         mv.visitInsn(Opcodes.DUP);

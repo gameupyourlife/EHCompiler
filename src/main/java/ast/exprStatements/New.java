@@ -2,6 +2,7 @@ package ast.exprStatements;
 
 import ast.Expression;
 import ast.Statement;
+import ast.expressions.Identifier;
 import bytecode.interfaces.IExpressionBytecodeGenerator;
 import bytecode.interfaces.IStatementBytecodeGenerator;
 import ast.types.ITypeResolver;
@@ -10,9 +11,9 @@ import bytecode.interfaces.IExpressionBytecodeGenerator;
 import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class New implements Expression, Statement {
-    public String objectName;
+    public Identifier objectName;
 
-    public New(String objectName) {
+    public New(Identifier objectName) {
         this.objectName = objectName;
     }
 
