@@ -31,12 +31,12 @@ public class MethodAdapter {
         
         // Special handling for main method - automatically add String[] args parameter
         if (method.name.equals("main") && method.staticFlag && 
-            method.type != null && method.type == ast.Type.VOID && 
+            method.type != null && method.type == ast.types.Type.VOID && 
             method.parameters.isEmpty()) {
             // Create String[] args parameter for main method
             ast.Parameter stringArrayParam = new ast.Parameter();
             stringArrayParam.name = "args";
-            stringArrayParam.type = ast.Type.STRING_ARRAY;
+            stringArrayParam.type = ast.types.Type.STRING_ARRAY;
             method.parameters.add(stringArrayParam);
         }
         

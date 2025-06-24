@@ -2,7 +2,8 @@ package ast.statements;
 
 import ast.Expression;
 import ast.Statement;
-import ast.Type;
+import ast.types.Type;
+import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class LocalVarDecl implements Statement {
     public Type type;
@@ -15,5 +16,10 @@ public class LocalVarDecl implements Statement {
         this.type = type;
         this.name = name;
         this.init = init;
+    }
+
+    @Override
+    public void accept(IStatementBytecodeGenerator visitor) {
+        visitor.visitLocalVarDecl(this);
     }
 }

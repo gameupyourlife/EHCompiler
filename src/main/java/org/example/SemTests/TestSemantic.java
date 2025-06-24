@@ -4,7 +4,8 @@ import ast.Class;
 import ast.Field;
 import ast.Method;
 import ast.Program;
-import ast.Type;
+import ast.types.Type;
+
 import org.example.semantic.semanticCheck;
 import org.example.semantic.exceptions.semanticError;
 

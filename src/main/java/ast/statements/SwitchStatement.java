@@ -2,9 +2,13 @@ package ast.statements;
 
 import ast.Expression;
 import ast.Statement;
+import ast.types.Type;
+import bytecode.interfaces.IStatementBytecodeGenerator;
+import org.objectweb.asm.MethodVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SwitchStatement implements Statement {
     public Expression expression;
@@ -18,7 +22,12 @@ public class SwitchStatement implements Statement {
         this.expression = expression;
         this.cases = cases;
     }
-    
+
+    @Override
+    public void accept(IStatementBytecodeGenerator visitor) {
+        visitor.visitSwitchStatement(this);
+    }
+
     public static class SwitchCase {
         public Expression caseValue; // null for default
         public List<Statement> statements;

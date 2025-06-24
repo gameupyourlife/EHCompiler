@@ -1,7 +1,12 @@
 package ast.statements;
 
 import ast.Statement;
+import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class Continue implements Statement {
-    // Represents the 'continue' statement
+
+    @Override
+    public void accept(IStatementBytecodeGenerator visitor) {
+        visitor.visitContinue(this);
+    }
 }

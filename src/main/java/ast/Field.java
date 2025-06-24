@@ -1,5 +1,7 @@
 package ast;
 
+import ast.types.Type;
+
 public class Field {
     public String name;
     public Type type;

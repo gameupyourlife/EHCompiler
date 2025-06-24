@@ -2,6 +2,8 @@ package bytecode;
 
 import ast.*;
 import ast.Class;
+import ast.types.Type;
+
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -132,9 +134,13 @@ public class ByteCodeGenerator {
         switch (returnType) {
             case VOID:
                 mv.visitInsn(Opcodes.RETURN);
-            case INT, BOOLEAN, CHAR:
+                break;
+            case INT:
+            case BOOLEAN:
+            case CHAR:
                 mv.visitInsn(Opcodes.ICONST_0);
                 mv.visitInsn(Opcodes.IRETURN);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown return type: " + returnType);
         }

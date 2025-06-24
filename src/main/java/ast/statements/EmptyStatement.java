@@ -1,7 +1,12 @@
 package ast.statements;
 
 import ast.Statement;
+import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class EmptyStatement implements Statement {
-    // Empty statement represents a semicolon in the code
+
+    @Override
+    public void accept(IStatementBytecodeGenerator visitor) {
+        visitor.visitEmptyStatement(this);
+    }
 }
