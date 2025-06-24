@@ -1,5 +1,5 @@
-// Generated from /Users/olli/Studium/semester_4/Compilerbau/compiler/git/EHCompiler/src/main/java/scannerparserlexer/AST.g4 by ANTLR 4.13.2
-package scannerparserlexer.parser;
+// Generated from C:/Users/meist/OneDrive/STUDIUM/DHBW/4.Semester/Compilerbau/EHCompiler/src/main/java/scannerparserlexer/AST.g4 by ANTLR 4.13.2
+package parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -240,6 +240,30 @@ public interface ASTListener extends ParseTreeListener {
 	 */
 	void exitEmptyStmt(ASTParser.EmptyStmtContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code printStmt}
+	 * labeled alternative in {@link ASTParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrintStmt(ASTParser.PrintStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code printStmt}
+	 * labeled alternative in {@link ASTParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrintStmt(ASTParser.PrintStmtContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code printlnStmt}
+	 * labeled alternative in {@link ASTParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrintlnStmt(ASTParser.PrintlnStmtContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code printlnStmt}
+	 * labeled alternative in {@link ASTParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrintlnStmt(ASTParser.PrintlnStmtContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ASTParser#switchBlockStatementGroup}.
 	 * @param ctx the parse tree
 	 */
@@ -469,4 +493,24 @@ public interface ASTListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLiteral(ASTParser.LiteralContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ASTParser#print}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrint(ASTParser.PrintContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ASTParser#print}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrint(ASTParser.PrintContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ASTParser#println}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrintln(ASTParser.PrintlnContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ASTParser#println}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrintln(ASTParser.PrintlnContext ctx);
 }

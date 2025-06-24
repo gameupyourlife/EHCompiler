@@ -1,5 +1,5 @@
-// Generated from /Users/olli/Studium/semester_4/Compilerbau/compiler/git/EHCompiler/src/main/java/scannerparserlexer/AST.g4 by ANTLR 4.13.2
-package scannerparserlexer.parser;
+// Generated from C:/Users/meist/OneDrive/STUDIUM/DHBW/4.Semester/Compilerbau/EHCompiler/src/main/java/scannerparserlexer/AST.g4 by ANTLR 4.13.2
+package parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -148,6 +148,20 @@ public interface ASTVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitEmptyStmt(ASTParser.EmptyStmtContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code printStmt}
+	 * labeled alternative in {@link ASTParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrintStmt(ASTParser.PrintStmtContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code printlnStmt}
+	 * labeled alternative in {@link ASTParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrintlnStmt(ASTParser.PrintlnStmtContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ASTParser#switchBlockStatementGroup}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -282,4 +296,16 @@ public interface ASTVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitLiteral(ASTParser.LiteralContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ASTParser#print}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrint(ASTParser.PrintContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ASTParser#println}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrintln(ASTParser.PrintlnContext ctx);
 }
