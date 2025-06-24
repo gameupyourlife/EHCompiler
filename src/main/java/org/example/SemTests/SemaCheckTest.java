@@ -4,6 +4,9 @@ import ast.*;
 import ast.Class;
 import ast.exprStatements.Unary;
 import ast.statements.Return;
+import ast.types.ITypeResolver;
+import ast.types.Type;
+import bytecode.interfaces.IExpressionBytecodeGenerator;
 import org.example.semantic.semanticCheck;
 import org.example.semantic.exceptions.semanticError;
 
@@ -13,7 +16,7 @@ public class SemaCheckTest {
 
     public static void main(String[] args) {
         // Expression: i++
-        Unary returnExpr = new Unary(Operator.plusplus, new DummyIntExpression());
+        Unary returnExpr = new Unary(Operator.INCREMENT, new DummyIntExpression());
 
         // Return statement
         Return returnStmt = new Return(returnExpr);
@@ -53,6 +56,16 @@ public class SemaCheckTest {
         @Override
         public String toString() {
             return "DummyInt";
+        }
+
+        @Override
+        public void accept(IExpressionBytecodeGenerator visitor) {
+
+        }
+
+        @Override
+        public Type resolveType(ITypeResolver resolver) {
+            return null;
         }
     }
 }

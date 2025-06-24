@@ -5,6 +5,11 @@ import ast.Class;
 import ast.exprStatements.Unary;
 import ast.statements.LocalVarDecl;
 import ast.statements.Return;
+import ast.statements.If;
+import ast.statements.While;
+import ast.statements.For;
+import ast.statements.DoWhile;
+import ast.types.Type;
 import org.example.context.context;
 import org.example.semantic.exceptions.semanticError;
 import org.example.visitor.semanticVisitor;
@@ -169,6 +174,87 @@ public class semanticCheck implements semanticVisitor {
             return new typeCheckResult(valid, stmt);
         }
 
+        // Behandlung von if–Anweisungen
+        if (stmt instanceof If) {
+            If ifStmt = (If) stmt;
+            // 1) Bedingung auswerten muss boolean sein
+            Type condType = evaluateExpressionType(ifStmt.condition);
+            if (condType != Type.BOOLEAN) {
+                errors.add(new semanticError(
+                        "Bedingung in if muss BOOLEAN sein, aber gefunden: " + condType));
+                valid = false;
+            }
+            // 2) Then–Zweig prüfen
+            typeCheckResult thenRes = typeCheck(ifStmt.thenStatement, expectedReturnType);
+            valid = valid && thenRes.isValid();
+            // 3) Optional Else–Zweig prüfen
+            if (ifStmt.elseStatement != null) {
+                typeCheckResult elseRes = typeCheck(ifStmt.elseStatement, expectedReturnType);
+                valid = valid && elseRes.isValid();
+            }
+            return new typeCheckResult(valid, stmt);
+        }
+
+        // While–Schleife
+        if (stmt instanceof While) {
+            While w = (While) stmt;
+            // 1) Bedingung muss BOOLEAN sein
+            Type condType = evaluateExpressionType(w.condition);
+            if (condType != Type.BOOLEAN) {
+                errors.add(new semanticError(
+                        "Bedingung in while muss BOOLEAN sein, aber gefunden: " + condType));
+                valid = false;
+            }
+            // 2) Body prüfen
+            typeCheckResult bodyRes = typeCheck(w.statement, expectedReturnType);
+            valid = valid && bodyRes.isValid();
+            return new typeCheckResult(valid, stmt);
+        }
+
+        // For–Schleife
+        if (stmt instanceof For) {
+            For f = (For) stmt;
+            // 1) Init (Expression) prüfen, falls vorhanden
+            if (f.init != null) {
+                Type initType = evaluateExpressionType(f.init);
+                // hier evtl. weitergehende Checks, z.B. auf void o.Ä.
+            }
+            // 2) Bedingung muss BOOLEAN sein
+            if (f.condition != null) {
+                Type condType = evaluateExpressionType(f.condition);
+                if (condType != Type.BOOLEAN) {
+                    errors.add(new semanticError(
+                            "Bedingung in for muss BOOLEAN sein, aber gefunden: " + condType));
+                    valid = false;
+                }
+            }
+            // 3) Update (Expression) prüfen, falls vorhanden
+            if (f.update != null) {
+                Type updType = evaluateExpressionType(f.update);
+                // evtl. Check, dass updType nicht void ist
+            }
+            // 4) Body prüfen
+            typeCheckResult bodyRes = typeCheck(f.statement, expectedReturnType);
+            valid = valid && bodyRes.isValid();
+            return new typeCheckResult(valid, stmt);
+        }
+
+        // Do-While-Schleife
+        if (stmt instanceof DoWhile) {
+            DoWhile d = (DoWhile) stmt;
+            // 1) Body zuerst prüfen
+            typeCheckResult bodyRes = typeCheck(d.statement, expectedReturnType);
+            valid = valid && bodyRes.isValid();
+            // 2) Bedingung muss BOOLEAN sein
+            Type condType = evaluateExpressionType(d.condition);
+            if (condType != Type.BOOLEAN) {
+                errors.add(new semanticError(
+                        "Bedingung in do-while muss BOOLEAN sein, aber gefunden: " + condType));
+                valid = false;
+            }
+            return new typeCheckResult(valid, stmt);
+        }
+
         // Beispiel: VariableDeclaration
         if (stmt instanceof LocalVarDecl) {
             LocalVarDecl varDecl = (LocalVarDecl) stmt;
@@ -223,7 +309,7 @@ public class semanticCheck implements semanticVisitor {
                 Unary unary = (Unary) expr;
                 Type operandType = evaluateExpressionType(unary.expression);
                 if (operandType == Type.INT &&
-                        (unary.operator == Operator.plusplus || unary.operator == Operator.minusminus)) {
+                        (unary.operator == Operator.INCREMENT || unary.operator == Operator.DECREMENT)) {
                     return Type.INT;
                 }
                 errors.add(new semanticError("Unary operator '" + unary.operator + "' requires INT operand."));

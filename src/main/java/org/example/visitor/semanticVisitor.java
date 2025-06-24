@@ -5,7 +5,7 @@ import ast.Field;
 import ast.Method;
 import ast.Program;
 import ast.Statement;
-import ast.Type;
+import ast.types.Type;
 import org.example.semantic.typeCheckResult;
 
 public interface semanticVisitor {

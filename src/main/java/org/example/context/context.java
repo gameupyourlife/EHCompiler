@@ -2,7 +2,7 @@ package org.example.context;
 
 import ast.Method;
 import ast.Program;
-import ast.Type;
+import ast.types.Type;
 import ast.Class;
 
 import java.util.ArrayDeque;

@@ -49,7 +49,8 @@ public class ExpressionAdapter {
             String stringText = ctx.StringLiteral().getText();
             // Remove the quotes
             String stringValue = stringText.substring(1, stringText.length() - 1);
-            return new ast.expressions.StringConst(stringValue);
+            //return new ast.expressions.StringConst(stringValue);
+            return null;
         } else {
             return new ast.expressions.Null();
         }
@@ -69,7 +70,7 @@ public class ExpressionAdapter {
                 methodCall.arguments.add(adapt(exprCtx));
             }
         }
-        return methodCall;
+        return (Expression) methodCall;
     }
 
     private static Expression adaptAssign(ASTParser.AssignExprContext ctx) {
@@ -78,7 +79,7 @@ public class ExpressionAdapter {
             assign.target = adapt(ctx.expression(0));
             assign.value = adapt(ctx.expression(1));
         }
-        return assign;
+        return (Expression) assign;
     }
 
     private static Expression adaptNewExpr(ASTParser.NewExprContext ctx) {
@@ -92,6 +93,6 @@ public class ExpressionAdapter {
                 constructor.arguments.add(adapt(exprCtx));
             }
         }
-        return constructor;
+        return (Expression) constructor;
     }
 }
