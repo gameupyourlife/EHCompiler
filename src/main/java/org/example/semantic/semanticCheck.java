@@ -49,22 +49,40 @@ public class semanticCheck implements semanticVisitor {
 
     public typeCheckResult typeCheck(Program toCheck) {
         context = new context(toCheck);
-
         boolean valid = true;
         Set<String> seenClassNames = new HashSet<>();
-
         for (Class cls : toCheck.classes) {
             String name = cls.name;
             if (!seenClassNames.add(name)) {
                 errors.add(new semanticError("Duplicate class name: '" + name + "'"));
                 valid = false;
             }
-
             typeCheckResult classRes = typeCheck(cls);
             valid = valid && classRes.isValid();
         }
-
         return new typeCheckResult(valid, toCheck);
+    }
+
+    private ast.Class findClassByName(String name) {
+        if (name == null) return null;
+        for (ast.Class cls : context.getProgram().classes) {
+            if (cls.name.equals(name)) {
+                return cls;
+            }
+        }
+        return null;
+    }
+
+    private ast.Method findMethodInHierarchy(ast.Class cls, String methodName) {
+        while (cls != null) {
+            if (cls.methods != null) {
+                for (ast.Method m : cls.methods) {
+                    if (m.name.equals(methodName)) return m;
+                }
+            }
+            cls = findClassByName(cls.parentClass);
+        }
+        return null;
     }
 
     public typeCheckResult typeCheck(Class toCheck) {
@@ -72,6 +90,69 @@ public class semanticCheck implements semanticVisitor {
         String className = toCheck.name;
         System.out.println("Checking class: " + className);
 
+        // --- 1) Superklasse existiert?
+        if (toCheck.parentClass != null) {
+            ast.Class superCls = findClassByName(toCheck.parentClass);
+            if (superCls == null) {
+                errors.add(new semanticError(
+                        "Unbekannte Superklasse '" + toCheck.parentClass +
+                                "' in Klasse '" + className + "'"));
+                valid = false;
+            } else {
+                // --- 2) Zyklische Vererbung erkennen
+                Set<String> visited = new HashSet<>();
+                visited.add(className);
+                ast.Class cur = superCls;
+                while (cur != null && cur.parentClass != null) {
+                    if (!visited.add(cur.parentClass)) {
+                        errors.add(new semanticError(
+                                "Zirkuläre Vererbung bei Klasse '" + className + "'"));
+                        valid = false;
+                        break;
+                    }
+                    cur = findClassByName(cur.parentClass);
+                }
+
+                // --- 3) Override-Regeln prüfen
+                if (toCheck.methods != null) {
+                    for (ast.Method m : toCheck.methods) {
+                        ast.Method mSuper = findMethodInHierarchy(superCls, m.name);
+                        if (mSuper != null) {
+                            // Rückgabetyp muss gleich sein
+                            if (!m.type.equals(mSuper.type)) {
+                                errors.add(new semanticError(
+                                        "Return-Typ der überschreibenden Methode '" + m.name +
+                                                "' in Klasse '" + className +
+                                                "' stimmt nicht mit der Superklasse überein"));
+                                valid = false;
+                            }
+                            // Parameterzahl und Typen müssen übereinstimmen
+                            int n = m.parameters == null ? 0 : m.parameters.size();
+                            int ns = mSuper.parameters == null ? 0 : mSuper.parameters.size();
+                            if (n != ns) {
+                                errors.add(new semanticError(
+                                        "Parameterzahl der überschreibenden Methode '" + m.name +
+                                                "' in Klasse '" + className +
+                                                "' weicht ab"));
+                                valid = false;
+                            } else {
+                                for (int i = 0; i < n; i++) {
+                                    if (!m.parameters.get(i).type
+                                            .equals(mSuper.parameters.get(i).type)) {
+                                        errors.add(new semanticError(
+                                                "Parametertypen der überschreibenden Methode '" + m.name +
+                                                        "' in Klasse '" + className +
+                                                        "' stimmen nicht überein"));
+                                        valid = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         // Doppelte Felder prüfen
         Set<String> fieldNames = new HashSet<>();
         if (toCheck.fields != null) {
@@ -149,7 +230,7 @@ public class semanticCheck implements semanticVisitor {
         if (method.statement != null) {
             for(Statement stmt : method.statement){
                 if(stmt instanceof Return){
-                    Return returnStmt = (Return) stmt; // Expliziter Cast
+                    Return returnStmt = (Return) stmt;
                     Expression returnExpr = returnStmt.expression;
                     Type exprType = evaluateExpressionType(returnExpr);
                     if(method.type != exprType){
@@ -158,7 +239,6 @@ public class semanticCheck implements semanticVisitor {
                 }
             }
             for (Statement stmt : method.statement) {
-                // Hier brauchst du noch eine typeCheck(Statement, Type) Methode
                 typeCheckResult stmtRes = typeCheck(stmt, method.type);
                 valid = valid && stmtRes.isValid();
             }
@@ -173,7 +253,6 @@ public class semanticCheck implements semanticVisitor {
         boolean valid = true;
         if (stmt instanceof LocalVarDecl) {
             LocalVarDecl decl = (LocalVarDecl) stmt;
-            // Typ existiert?
             if (!context.typeExists(decl.type)) {
                 errors.add(new semanticError(
                         "Unbekannter Typ '" + decl.type + "' für Variable '" + decl.name + "'"));
@@ -195,7 +274,6 @@ public class semanticCheck implements semanticVisitor {
         }
         if (stmt instanceof ExpressionStatement) {
             ExpressionStatement es = (ExpressionStatement) stmt;
-            // z.B. "sumOfEvens += i;" oder "i = 0;"
             evaluateExpressionType(es.expression);
             return new typeCheckResult(true, stmt);
         }
@@ -229,7 +307,7 @@ public class semanticCheck implements semanticVisitor {
             return new typeCheckResult(valid, stmt);
         }
 
-        // Beispiel: Prüfen, ob Statement ein ReturnStatement ist
+        // Prüfen, ob Statement ein ReturnStatement ist
         if (stmt instanceof Return) {
             Return retStmt = (Return) stmt;
             Type actualReturnType = evaluateExpressionType(retStmt.expression);
@@ -282,20 +360,18 @@ public class semanticCheck implements semanticVisitor {
         if (stmt instanceof For) {
             For f = (For) stmt;
 
-            // 1) Neuer Scope für Init, Condition, Update und Body
+            // Neuer Scope für Init, Condition, Update und Body
             context.enterScope();
 
-            // 2) Init-Teil: Deklaration oder Zuweisung
+            //Init-Teil: Deklaration oder Zuweisung
             if (f.init instanceof LocalVarDecl) {
-                // "int i = 0;"
                 typeCheck((LocalVarDecl) f.init, expectedReturnType);
             } else if (f.init instanceof ExpressionStatement) {
-                // "i = 0;"
                 ExpressionStatement initStmt = (ExpressionStatement) f.init;
                 evaluateExpressionType(initStmt.expression);
             }
 
-            // 3) Condition prüfen
+            // Condition prüfen
             if (f.condition != null) {
                 Type condT = evaluateExpressionType(f.condition);
                 if (condT != Type.BOOLEAN) {
