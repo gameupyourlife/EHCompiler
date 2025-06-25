@@ -16,7 +16,6 @@ import ast.expressions.BooleanConst;
 import ast.expressions.IntConst;
 import ast.Operator;
 import ast.types.Type;
-import ast.statements.Block;
 import ast.statements.Break;
 import ast.statements.Continue;
 import org.example.context.context;
@@ -311,7 +310,7 @@ public class semanticCheck implements semanticVisitor {
         // if–Anweisungen
         if (stmt instanceof If) {
             If ifStmt = (If) stmt;
-            // 1) Bedingung auswerten muss boolean sein
+            // Bedingung auswerten muss boolean sein
             Type condType = evaluateExpressionType(ifStmt.condition);
             if (condType != Type.BOOLEAN) {
                 errors.add(new semanticError(
@@ -353,7 +352,7 @@ public class semanticCheck implements semanticVisitor {
             // Neuer Scope für Init, Condition, Update und Body
             context.enterScope();
 
-            //Init-Teil: Deklaration oder Zuweisung
+            //Deklaration oder Zuweisung
             if (f.init instanceof LocalVarDecl) {
                 typeCheck((LocalVarDecl) f.init, expectedReturnType);
             } else if (f.init instanceof ExpressionStatement) {
@@ -370,18 +369,17 @@ public class semanticCheck implements semanticVisitor {
                 }
             }
 
-            // 4) Update prüfen (z.B. i++)
+            // Update prüfen
             if (f.update != null) {
-                // Bei euch ist das direkt eine Expression, also:
                 evaluateExpressionType(f.update);
             }
 
-            // 5) Body prüfen, mit loopDepth für break/continue
+            // Body prüfen, mit loopDepth für break/continue
             loopDepth++;
             typeCheck(f.statement, expectedReturnType);
             loopDepth--;
 
-            // 6) Scope wieder verlassen
+            // Scope wieder verlassen
             context.exitScope();
 
             return new typeCheckResult(true, stmt);
@@ -391,7 +389,6 @@ public class semanticCheck implements semanticVisitor {
         if (stmt instanceof DoWhile) {
             DoWhile d = (DoWhile) stmt;
             loopDepth++;
-            // Body zuerst prüfen
             typeCheckResult bodyRes = typeCheck(d.statement, expectedReturnType);
             valid = valid && bodyRes.isValid();
             // Bedingung muss BOOLEAN sein
@@ -503,7 +500,7 @@ public class semanticCheck implements semanticVisitor {
             }
         }
 
-        // Method-Calls (dein bestehender Code)
+        // Method-Calls
         if (expr instanceof ast.exprStatements.MethodCall) {
             ast.exprStatements.MethodCall call = (ast.exprStatements.MethodCall) expr;
             Type targetType = evaluateExpressionType(call.target);
@@ -528,7 +525,7 @@ public class semanticCheck implements semanticVisitor {
             Unary unary = (Unary) expr;
             Type operand = evaluateExpressionType(unary.expression);
 
-            // Logisches NOT (Symbol z.B. "!")
+            // Logisches NOT
             if (unary.operator == Operator.NEGATE) {
                 if (operand != Type.BOOLEAN) {
                     errors.add(new semanticError(
