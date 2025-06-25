@@ -5,7 +5,7 @@ import ast.Operator;
 import ast.exprStatements.Assign;
 import ast.exprStatements.MethodCall;
 import ast.exprStatements.Unary;
-import scannerparserlexer.parser.ASTParser;
+import parser.ASTParser;
 
 public class ExpressionAdapter {
     public static Expression adapt(ASTParser.ExpressionContext ctx) {
