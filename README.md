@@ -57,7 +57,7 @@ Folgende Features werden von dem EHCompiler untestützt
 ### Statments
 - Branching (if, else)
 - Loops (For, while, do while)
-- return, continue, break
+- return
 
 ### Objektorientierung
 - Klassen mit Standartkonstruktoren
@@ -69,6 +69,7 @@ Folgende Features werden von dem EHCompiler untestützt
 ## Verwendung
 Nach dem komiliern des Compilers:
 ```
-java EHCompiler <path-to-file>
+mvn exec:java
 ```
+Dann Pfad zur Datei eingeben
 
