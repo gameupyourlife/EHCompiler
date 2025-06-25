@@ -59,6 +59,8 @@ statement
     | type Identifier ('=' expression)? ';'                       # localVarDeclStmt
     | expression ';'                                              # exprStmt
     | ';'                                                         # emptyStmt
+    | 'print' '(' expressionList? ')' ';'                         # printStmt
+    | 'println' '(' expressionList? ')' ';'                       # printlnStmt
     ;
 
 switchBlockStatementGroup
@@ -174,3 +176,7 @@ COMMENT
 LINE_COMMENT
     : '//' ~[\r\n]* -> skip
     ;
+
+    // Define print keywords IMMEDIATELY after skip rules
+ print : 'print';
+ println : 'println';
