@@ -1,5 +1,3 @@
-package JavaTestFiles.ControlStructures;
-
 class NestedBlocks {
     int nestedBlock(int x) {
     {
