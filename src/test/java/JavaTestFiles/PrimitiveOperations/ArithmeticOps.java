@@ -1,5 +1,3 @@
-package JavaTestFiles.PrimitiveOperations;
-
 class ArithmeticOps {
 
     int add(int a, int b) {

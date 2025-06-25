@@ -1,5 +1,3 @@
-package JavaTestFiles.ControlStructures;
-
 class WhileAndForLoop {
     void whileLoop() {
         int i = 0;
