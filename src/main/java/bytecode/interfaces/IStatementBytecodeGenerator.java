@@ -15,4 +15,9 @@ public interface IStatementBytecodeGenerator {
     void visitReturn(Return stmt);
     void visitSwitchStatement(SwitchStatement stmt);
     void visitWhile(While stmt);
+
+
+    void visitPrintStatementln(PrintlnStatement printlnStatement);
+
+    void visitPrintStatement(PrintStatement printStatement);
 }
