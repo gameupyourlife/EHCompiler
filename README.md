@@ -9,13 +9,10 @@
 | Tester | Max Bantle |
 | Projektleitung | Cedric Balzer |
 
+
+
 ## AST
 ![EHCopmiler - AST](https://github.com/user-attachments/assets/f0336004-0d68-4886-af63-a07cd893921e)
-
-### Einschränkungen
-Kein Else If
-Kein Switch
-Alles in einer Datei
 
 ## Aktueller Stand
 Datum: 12.06.2025
@@ -27,63 +24,51 @@ Datum: 12.06.2025
 | Klasse mit allen Expressions | ⚙️  |   |   
 | Klasse mit Methoden | ⚙️  |   |  
 
+Der Compiler ist ein Maven Projekt. Die Test sind in dem `src/test` Verzeichnis zu finden. Im `src/main` sind die drei Komponenten des Compilers, der `scannerparserlexer`, der `semantic`(check) und die `bytecode`generierung.
 
-### 12.06.2025
-#### Max
-- Testmethoden für die einzelnen Bereiche
---	Parser
---	Semantic
---  Bytecode
-- Test für gesamten Compiler angepasst
-- Möglichkeit wenn Compiler läuft wirklich Dateien zu compiliern
+### scannerparserlexer
+Der `scannerparserlexer` liest die Input Datei ein und wandelt diese in den AST um.
 
-#### Olli
-- Austausch mit Ayo 
+### semantic
+Der `semantic` nimmt den generierten AST und überprüft diesen auf semantische Korrektheit und liefert den typisierten AST.
 
-#### Julian
-- Klasse mit Feldern Semantik Check erfolgreich
+### bytecode
+Mit dem typisierten AST erstellt der `bytecode` dann schließlich den Bytecode, welcher dann von der JVM ausgeführt werden kann.
 
-#### Ayo
-- Parse Gramattik stimmt soweit
-- Klasse mit Feldern
+### Main
+Die Orchistrierung des Compilers wird in der Main Klasse vorgenommen. In diser werden die Konsolenargumente eingelsen und entsprechend an den scannerparserlexer weitergegeben. Der daraus resultierende AST an den semantic und der daraus resultierende typisierter AST an den bytecode.
 
-#### Din
-Bytecode Generierung für Expressions steht
-Bytecode Generierung für Methoden in Arbeit
-Struktur im Ast (accept Methode) steht
+## Unterstützte Features
+Folgende Features werden von dem EHCompiler untestützt
 
-#### Rebecca
-Felder Check Valide Typen
-Return Statements Valide check
+### Datentypen
+- boolean
+- int
+- char
+- String
+
+### Operationen
+- Arithmetische (+, -, *, /)
+- Boolsche (&&, ||, !, ==, >=, <=, <, >)
+- Unäre (++, --)
+- String Konkatination
+- Zuweisung
+
+### Statments
+- Branching (if, else)
+- Loops (For, while, do while)
+- return, continue, break
+
+### Objektorientierung
+- Klassen mit Standartkonstruktoren
+- Vererbung (this, super, extends)
+- Felder
+- Methoden mit Parametern
 
 
-### 23.06.2025
-#### MAX	
-Zusammenarbeit mit DIN
-Bytecode Auflösung von Expressions
-Fast Alle bis auf ein Test fertig
--> Kontrollstruktur Test
-
-#### DIN
-Bytecode für Expressions fertig
-Vererbung fehlt
-Statements fehlt nur noch break und continue
--> Da fehlt lable => Parser muss dieses noch mitliefern
-Neuer Classresolver eingeführt für Abbildung der Klassennahmen
-
-#### JULIAN
-If Else, While & Vererbung fehlt noch
-Test laufen soweit durch
-
-#### AYO
-War krank
-
-#### Generell
-Print muss noch eingefügt werden
-Neues hardcode AST Objekt welches vom Parser geparst wird
-Keine Ahnung ob casting (insb. explizites Casting funktioniert)
-	Das wird gemacht, wenn wir noch Zeit haben
-Funktionieren Referenzen auf andere Klassen? (Z.B. hund.bellen() in der Main)
-	Aus anderen Klassen vermutlich nicht (?)
-Standartkonstruktor automatisch im Bytecode
+## Verwendung
+Nach dem komiliern des Compilers:
+```
+java EHCompiler <path-to-file>
+```
 
