@@ -25,9 +25,14 @@ public class TypeResolver implements ITypeResolver {
         return Type.VOID;
     }
 
+    // Muss überarbeitet werden
     @Override
     public Type resolve(Identifier expr) {
-        return Type.UNKNOWN;
+        if (expr.className == null) {
+            return Type.INT;
+        } else {
+            return Type.CLASS;
+        }
     }
 
     @Override
@@ -82,15 +87,14 @@ public class TypeResolver implements ITypeResolver {
             case PLUS, MULTIPLY, MINUS, DIVIDE, MODULUS:
                 if (leftType == Type.INT && rightType == Type.INT)
                     return Type.INT;
-                break;
-            case NEGATE:
+                else throw new UnsupportedOperationException("Operator " + expr.operator + " not supported");
+            case NEGATE, AND, OR:
                 if (leftType == Type.BOOLEAN && rightType == Type.BOOLEAN)
                     return Type.BOOLEAN;
-                break;
+                else throw new UnsupportedOperationException("Operator " + expr.operator + " not supported");
             default:
-                break;
+                return Type.UNKNOWN;
         }
-        return Type.UNKNOWN;
     }
 
     @Override

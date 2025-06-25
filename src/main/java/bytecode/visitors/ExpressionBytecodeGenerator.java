@@ -112,36 +112,88 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
 
     @Override
     public void visitBinary(Binary expr) {
-        expr.left.accept(this);
-        expr.right.accept(this);
+        switch (expr.operator) {
 
-        Type type = resolver.resolve(expr);
 
-        generateBinaryOp(expr.operator, type);
+            case AND: {
+                Label falseLabel = new Label();
+                Label endLabel = new Label();
+
+                // Erste Bedingung
+                expr.left.accept(this);
+                mv.visitJumpInsn(Opcodes.IFEQ, falseLabel);
+
+                // Zweite Bedingung
+                expr.right.accept(this);
+                mv.visitJumpInsn(Opcodes.IFEQ, falseLabel);
+
+                // Wenn beide true sind
+                mv.visitInsn(Opcodes.ICONST_1);
+                mv.visitJumpInsn(Opcodes.GOTO, endLabel);
+
+                // False-Fall
+                mv.visitLabel(falseLabel);
+                // mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+                mv.visitInsn(Opcodes.ICONST_0);
+
+                mv.visitLabel(endLabel);
+                // mv.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[] { Opcodes.INTEGER });
+                break;
+            }
+
+            case OR: {
+                Label trueLabel = new Label();
+                Label endLabel = new Label();
+
+                expr.left.accept(this);
+                mv.visitJumpInsn(Opcodes.IFNE, trueLabel); // true? => zu trueLabel
+
+                expr.right.accept(this);
+                mv.visitJumpInsn(Opcodes.IFNE, trueLabel); // true? => trueLabel
+
+                // Beide false
+                mv.visitInsn(Opcodes.ICONST_0);
+                mv.visitJumpInsn(Opcodes.GOTO, endLabel);
+
+                mv.visitLabel(trueLabel);
+                mv.visitInsn(Opcodes.ICONST_1);
+
+                mv.visitLabel(endLabel);
+                break;
+            }
+
+            default: {
+                // alle anderen Operatoren wie +, ==, <= ...
+                expr.left.accept(this);
+                expr.right.accept(this);
+                Type type = resolver.resolve(expr);
+                generateBinaryOp(expr.operator, type);
+            }
+        }
     }
 
     private void generateBinaryOp(Operator op, Type type) {
         Label trueLabel = new Label();
-        Label falseLabel = new Label();
         Label endLabel = new Label();
 
         switch (op) {
-            case PLUS: mv.visitInsn(Opcodes.IADD); break;
-            case MINUS: mv.visitInsn(Opcodes.ISUB); break;
-            case MULTIPLY: mv.visitInsn(Opcodes.IMUL); break;
-            case DIVIDE: mv.visitInsn(Opcodes.IDIV); break;
-            case MODULUS: mv.visitInsn(Opcodes.IREM); break;
+            case PLUS: mv.visitInsn(Opcodes.IADD); return;
+            case MINUS: mv.visitInsn(Opcodes.ISUB); return;
+            case MULTIPLY: mv.visitInsn(Opcodes.IMUL); return;
+            case DIVIDE: mv.visitInsn(Opcodes.IDIV); return;
+            case MODULUS: mv.visitInsn(Opcodes.IREM); return;
 
             case EQUALS: mv.visitJumpInsn(Opcodes.IF_ICMPEQ, trueLabel); break;
-            case NOT_EQUALS:  mv.visitJumpInsn(Opcodes.IF_ICMPNE, trueLabel); break;
+            case NOT_EQUALS: mv.visitJumpInsn(Opcodes.IF_ICMPNE, trueLabel); break;
             case LESS_THAN: mv.visitJumpInsn(Opcodes.IF_ICMPLT, trueLabel); break;
-            case LESS_OR_EQUALS: mv.visitJumpInsn(Opcodes.IF_ICMPLE, trueLabel); break;
+            case LESS_THAN_OR_EQUAL: mv.visitJumpInsn(Opcodes.IF_ICMPLE, trueLabel); break;
             case GREATER_THAN: mv.visitJumpInsn(Opcodes.IF_ICMPGT, trueLabel); break;
-            case GREATER_OR_EQUALS: mv.visitJumpInsn(Opcodes.IF_ICMPGE, trueLabel); break;
-            default: throw new UnsupportedOperationException("operator " + op + " not supported");
+            case GREATER_THAN_OR_EQUAL: mv.visitJumpInsn(Opcodes.IF_ICMPGE, trueLabel); break;
+
+            default:
+                throw new UnsupportedOperationException("Operator " + op + " not supported");
         }
 
-        mv.visitLabel(falseLabel);
         mv.visitInsn(Opcodes.ICONST_0);
         mv.visitJumpInsn(Opcodes.GOTO, endLabel);
 
@@ -198,7 +250,7 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
 
     @Override
     public void visitAssign(Assign expr) {
-        expr.accept(this);
+        expr.value.accept(this);
         mv.visitInsn(Opcodes.DUP);
         int index = context.getLocalIndex(((Identifier) expr.target).name);
         mv.visitVarInsn(Opcodes.ISTORE, index);
@@ -216,6 +268,7 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
             argTypes.add(arg.resolveType(resolver));
         }
 
+        // MethodCall hat noch keinen Type
         Type returnType = resolver.resolve(expr);
         String owner = classResolver.resolveClassName(expr.target);
         String descriptor = classResolver.makeMethodDescriptor(returnType, argTypes, owner);

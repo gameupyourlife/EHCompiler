@@ -25,7 +25,7 @@ public class SwitchStatement implements Statement {
 
     @Override
     public void accept(IStatementBytecodeGenerator visitor) {
-        visitor.visitSwitchStatement(this);
+
     }
 
     public static class SwitchCase {

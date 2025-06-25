@@ -4,15 +4,17 @@ import ast.Expression;
 import ast.Statement;
 import bytecode.interfaces.IStatementBytecodeGenerator;
 
+import javax.swing.plaf.nimbus.State;
+
 public class DoWhile implements Statement {
     public Expression condition;
-    public Block block;
+    public Statement statement;
     
     public DoWhile() {}
     
-    public DoWhile(Expression condition, Block block) {
+    public DoWhile(Expression condition, Statement statement) {
         this.condition = condition;
-        this.block = block;
+        this.statement = statement;
     }
 
     @Override

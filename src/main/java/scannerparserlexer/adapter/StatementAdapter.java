@@ -80,7 +80,8 @@ public class StatementAdapter {
             whileStmt.condition = ExpressionAdapter.adapt(ctx.expression());
         }
         if (ctx.statement() != null) {
-            whileStmt.statement = adapt(ctx.statement());
+            // whileStmt.statement = adapt(ctx.statement());
+            System.out.println("Hier fehlt was!");
         }
         return whileStmt;
     }
@@ -88,12 +89,15 @@ public class StatementAdapter {
     private static Statement adaptFor(ASTParser.ForStmtContext ctx) {
         For forStmt = new For();
         if (ctx.expression() != null && ctx.expression().size() >= 3) {
-            forStmt.init = ExpressionAdapter.adapt(ctx.expression(0));
+            forStmt.init = StatementAdapter.adapt(ctx.statement());
+            // Diesen Part bitte überprüfen
+//            forStmt.init = ExpressionAdapter.adapt(ctx.expression(0));
             forStmt.condition = ExpressionAdapter.adapt(ctx.expression(1));
             forStmt.update = ExpressionAdapter.adapt(ctx.expression(2));
         }
         if (ctx.statement() != null) {
-            forStmt.statement = adapt(ctx.statement());
+            // forStmt.statement = adapt(ctx.statement());
+            System.out.println("Fehler nr. 2");
         }
         return forStmt;
     }
@@ -135,7 +139,8 @@ public class StatementAdapter {
             doWhileStmt.condition = ExpressionAdapter.adapt(ctx.expression());
         }
         if (ctx.statement() != null) {
-            doWhileStmt.statement = adapt(ctx.statement());
+            // doWhileStmt.statement = adapt(ctx.statement());
+            System.out.println("Fehler nr. 3");
         }
         return doWhileStmt;
     }

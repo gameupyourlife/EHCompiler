@@ -123,7 +123,7 @@ class InheritanceTest {
                 Type.INT,
                 "f",
                 List.of(new Parameter(Type.INT, "x")),
-                List.of(new Return(new Identifier("x"))),
+                List.of(new Return(new Identifier("x", null))),
                 false);
         ast.Class a = new ast.Class("A");
         a.fields = List.of();

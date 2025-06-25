@@ -42,8 +42,13 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
 
     @Override
     public void visitBlock(Block stmt) {
-        for (Statement statement : stmt.statements) {
-            statement.accept(this);
+        context.enterScope();
+        try {
+            for (Statement statement : stmt.statements) {
+                statement.accept(this);
+            }
+        } finally {
+            context.leaveScope();
         }
     }
 
@@ -64,7 +69,13 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
         Label end = new Label();
 
         mv.visitLabel(start);
-        stmt.block.accept(this);
+        context.enterScope();
+        try {
+            stmt.statement.accept(this);
+        } finally {
+            context.leaveScope();
+        }
+
 
         mv.visitLabel(condition);
         stmt.condition.accept(generator);
@@ -81,7 +92,37 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
 
     @Override
     public void visitFor(For stmt) {
-        // For hat nur ein Statement und keinen Block
+        Label start = new Label();
+        Label check = new Label();
+        Label end = new Label();
+
+        if (stmt.init != null) {
+            stmt.init.accept(this);
+        }
+
+        mv.visitJumpInsn(Opcodes.GOTO, check);
+
+        mv.visitLabel(start);
+        context.enterScope();
+        try {
+            stmt.statement.accept(this);
+        } finally {
+            context.leaveScope();
+        }
+
+        if (stmt.update != null) {
+            stmt.update.accept(generator);
+        }
+
+        mv.visitLabel(check);
+        if (stmt.condition != null) {
+            stmt.condition.accept(generator);
+            mv.visitJumpInsn(Opcodes.IFEQ, end);
+        }
+
+        mv.visitJumpInsn(Opcodes.GOTO, start);
+
+        mv.visitLabel(end);
     }
 
     @Override
@@ -92,12 +133,23 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
         stmt.condition.accept(generator);
         mv.visitJumpInsn(Opcodes.IFEQ, elseLabel);
 
-        stmt.thenStatement.accept(this);
+        context.enterScope();
+        try {
+            stmt.thenStatement.accept(this);
+        } finally {
+            context.leaveScope();
+        }
+
         mv.visitJumpInsn(Opcodes.GOTO, end);
 
         mv.visitLabel(elseLabel);
         if (stmt.elseStatement != null) {
-            stmt.elseStatement.accept(this);
+            context.enterScope();
+            try {
+                stmt.elseStatement.accept(this);
+            } finally {
+                context.leaveScope();
+            }
         }
 
         mv.visitLabel(end);
@@ -107,6 +159,9 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
     public void visitLocalVarDecl(LocalVarDecl stmt) {
         context.declareVariable(stmt.name);
         int index = context.getLocalIndex(stmt.name);
+        if (index < 0) {
+            System.out.println("Alarm!");
+        }
 
         if (stmt.init != null) {
             stmt.init.accept(generator);
@@ -127,14 +182,15 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
     public void visitReturn(Return stmt) {
         if (stmt.expression != null) {
             stmt.expression.accept(generator);
-            // Typ der expression muss mit resolver irgendwie ermittelt werden können
             Type type = stmt.expression.resolveType(resolver);
-            if (type == Type.INT || type == Type.BOOLEAN || type == Type.CHAR) {
-                mv.visitInsn(Opcodes.IRETURN);
+
+            switch (type) {
+                case INT, BOOLEAN, CHAR -> mv.visitInsn(Opcodes.IRETURN);
+                case CLASS -> mv.visitInsn(Opcodes.ARETURN);
+                default -> throw new UnsupportedOperationException("Unsupported return type: " + type);
             }
-            if (type == Type.CLASS) {
-                mv.visitInsn(Opcodes.ARETURN);
-            }
+        } else {
+            mv.visitInsn(Opcodes.RETURN);
         }
     }
 
@@ -148,7 +204,13 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
 
         mv.visitJumpInsn(Opcodes.IFEQ, end);
 
-        stmt.block.accept(this);
+        context.enterScope();
+        try {
+            stmt.statement.accept(this);
+        } finally {
+            context.leaveScope();
+        }
+
         mv.visitJumpInsn(Opcodes.GOTO, start);
 
         mv.visitLabel(end);
@@ -170,7 +232,10 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
         }
 
         int index = context.getLocalIndex(((Identifier) stmt.target).name);
-        mv.visitVarInsn(Opcodes.ISTORE, index);
+
+        if (index < 0) {
+            throw new IllegalStateException("Variable not declared: " + ((Identifier) stmt.target).name);
+        }
 
         switch (targetType) {
             case INT, BOOLEAN, CHAR -> mv.visitVarInsn(Opcodes.ISTORE, index);

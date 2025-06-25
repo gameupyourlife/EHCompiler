@@ -27,7 +27,7 @@ public class ExpressionAdapter {
     
     private static Expression adaptPrimary(ASTParser.PrimaryContext ctx) {
         if (ctx.Identifier() != null) {
-            return new ast.expressions.Identifier(ctx.Identifier().getText());
+            return new ast.expressions.Identifier(ctx.Identifier().getText(), null);
         } else if (ctx.literal() != null) {
             return adaptLiteral(ctx.literal());
         } else {
@@ -49,7 +49,8 @@ public class ExpressionAdapter {
             String stringText = ctx.StringLiteral().getText();
             // Remove the quotes
             String stringValue = stringText.substring(1, stringText.length() - 1);
-            return new ast.expressions.StringConst(stringValue);
+            // return new ast.expressions.StringConst(stringValue);
+            return null;
         } else {
             return new ast.expressions.Null();
         }

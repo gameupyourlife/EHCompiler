@@ -5,6 +5,7 @@ import ast.exprStatements.MethodCall;
 import ast.exprStatements.New;
 import ast.exprStatements.Unary;
 import ast.statements.*;
+import org.objectweb.asm.Label;
 
 public interface IStatementBytecodeGenerator {
     void visitBlock(Block stmt);

@@ -128,8 +128,27 @@ public class ByteCodeGenerator {
             ExpressionBytecodeGenerator ex = new ExpressionBytecodeGenerator(mv, context, resolver);
             StatementBytecodeGenerator gen = new StatementBytecodeGenerator(ex, mv, context, resolver);
 
+            boolean hasStatements = false;
             for (Statement statement : method.statement) {
+                hasStatements = true;
                 statement.accept(gen);
+            }
+
+            if (!hasStatements) {
+                switch (method.type) {
+                    case INT, BOOLEAN, CHAR -> {
+                        mv.visitInsn(Opcodes.ICONST_0); // default-Wert
+                        mv.visitInsn(Opcodes.IRETURN);
+                    }
+                    case CLASS -> {
+                        mv.visitInsn(Opcodes.ACONST_NULL); // default-Objektwert
+                        mv.visitInsn(Opcodes.ARETURN);
+                    }
+                    case VOID -> {
+                        mv.visitInsn(Opcodes.RETURN);
+                    }
+                    default -> throw new UnsupportedOperationException("Unknown return type: " + method.type);
+                }
             }
 
             mv.visitMaxs(0, 0);
@@ -137,24 +156,6 @@ public class ByteCodeGenerator {
         }
 
         return cw;
-    }
-
-    // To Do: Einzelne Methoden für jeweilige Statement / Expressions mit visitor pattern
-
-    private void emitDefaultReturn(MethodVisitor mv, Type returnType) {
-        switch (returnType) {
-            case VOID:
-                mv.visitInsn(Opcodes.RETURN);
-                break;
-            case INT:
-            case BOOLEAN:
-            case CHAR:
-                mv.visitInsn(Opcodes.ICONST_0);
-                mv.visitInsn(Opcodes.IRETURN);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown return type: " + returnType);
-        }
     }
 
     private String getMethodDescriptor(Method method) {
