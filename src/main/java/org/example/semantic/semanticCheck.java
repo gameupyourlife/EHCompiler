@@ -228,16 +228,6 @@ public class semanticCheck implements semanticVisitor {
 
         // Statements prüfen
         if (method.statement != null) {
-            for(Statement stmt : method.statement){
-                if(stmt instanceof Return){
-                    Return returnStmt = (Return) stmt;
-                    Expression returnExpr = returnStmt.expression;
-                    Type exprType = evaluateExpressionType(returnExpr);
-                    if(method.type != exprType){
-                        errors.add(new semanticError("Return type for '" + method.name + "' doesn't match the method type: '" + method.type + ", " + exprType + "'"));
-                    }
-                }
-            }
             for (Statement stmt : method.statement) {
                 typeCheckResult stmtRes = typeCheck(stmt, method.type);
                 valid = valid && stmtRes.isValid();
