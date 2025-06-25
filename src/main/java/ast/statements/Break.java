@@ -1,9 +1,10 @@
 package ast.statements;
 
+import ast.AbstractStatement;
 import ast.Statement;
 import bytecode.interfaces.IStatementBytecodeGenerator;
 
-public class Break implements Statement {
+public class Break extends AbstractStatement {
 
     @Override
     public void accept(IStatementBytecodeGenerator visitor) {

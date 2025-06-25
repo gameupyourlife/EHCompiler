@@ -1,6 +1,5 @@
 package ast.types;
 
-import ast.exprStatements.*;
 import ast.expressions.*;
 
 public class TypeResolver implements ITypeResolver {

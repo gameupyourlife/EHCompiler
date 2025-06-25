@@ -2,7 +2,9 @@ package org.example.semantic;
 
 import ast.*;
 import ast.Class;
-import ast.exprStatements.Unary;
+import ast.AbstractExpression;
+import ast.expressions.Unary;
+import ast.expressions.MethodCall;
 import ast.statements.ExpressionStatement;
 import ast.statements.LocalVarDecl;
 import ast.statements.Return;
@@ -299,7 +301,7 @@ public class semanticCheck implements semanticVisitor {
         // Prüfen, ob Statement ein ReturnStatement ist
         if (stmt instanceof Return) {
             Return retStmt = (Return) stmt;
-            Type actualReturnType = evaluateExpressionType(retStmt.expression);
+            Type actualReturnType = evaluateExpressionType((AbstractExpression) retStmt.expression);
             if (actualReturnType != expectedReturnType) {
                 errors.add(new semanticError("Return type mismatch: expected " + expectedReturnType + ", but got " + actualReturnType));
                 valid = false;
@@ -311,7 +313,7 @@ public class semanticCheck implements semanticVisitor {
         if (stmt instanceof If) {
             If ifStmt = (If) stmt;
             // Bedingung auswerten muss boolean sein
-            Type condType = evaluateExpressionType(ifStmt.condition);
+            Type condType = evaluateExpressionType((AbstractExpression) ifStmt.condition);
             if (condType != Type.BOOLEAN) {
                 errors.add(new semanticError(
                         "Bedingung in if muss BOOLEAN sein, aber gefunden: " + condType));
@@ -331,7 +333,7 @@ public class semanticCheck implements semanticVisitor {
         // While–Schleife
         if (stmt instanceof While) {
             While w = (While) stmt;
-            Type condType = evaluateExpressionType(w.condition);
+            Type condType = evaluateExpressionType((AbstractExpression) w.condition);
             if (condType != Type.BOOLEAN) {
                 errors.add(new semanticError(
                         "Bedingung in while muss BOOLEAN sein, aber gefunden: " + condType));
@@ -362,7 +364,7 @@ public class semanticCheck implements semanticVisitor {
 
             // Condition prüfen
             if (f.condition != null) {
-                Type condT = evaluateExpressionType(f.condition);
+                Type condT = evaluateExpressionType((AbstractExpression) f.condition);
                 if (condT != Type.BOOLEAN) {
                     errors.add(new semanticError(
                             "Bedingung in for muss BOOLEAN sein, aber gefunden: " + condT));
@@ -371,7 +373,7 @@ public class semanticCheck implements semanticVisitor {
 
             // Update prüfen
             if (f.update != null) {
-                evaluateExpressionType(f.update);
+                evaluateExpressionType((AbstractExpression) f.update);
             }
 
             // Body prüfen, mit loopDepth für break/continue
@@ -392,7 +394,7 @@ public class semanticCheck implements semanticVisitor {
             typeCheckResult bodyRes = typeCheck(d.statement, expectedReturnType);
             valid = valid && bodyRes.isValid();
             // Bedingung muss BOOLEAN sein
-            Type condType = evaluateExpressionType(d.condition);
+            Type condType = evaluateExpressionType((AbstractExpression) d.condition);
             if (condType != Type.BOOLEAN) {
                 errors.add(new semanticError(
                         "Bedingung in do-while muss BOOLEAN sein, aber gefunden: " + condType));
@@ -404,7 +406,8 @@ public class semanticCheck implements semanticVisitor {
         return new typeCheckResult(valid, stmt);
     }
 
-    public Type evaluateExpressionType(Expression expr) {
+    public Type evaluateExpressionType(AbstractExpression expr) {
+
         if (expr instanceof ast.expressions.Identifier) {
             String name = ((ast.expressions.Identifier) expr).name;
             Type t = context.lookupVariable(name);
@@ -428,6 +431,7 @@ public class semanticCheck implements semanticVisitor {
             return Type.BOOLEAN;
         }
         if (expr instanceof IntConst) {
+            expr.setType(Type.INT);
             return Type.INT;
         }
 
@@ -446,8 +450,8 @@ public class semanticCheck implements semanticVisitor {
         // Binäroperationen
         if (expr instanceof Binary) {
             Binary bin = (Binary) expr;
-            Type left  = evaluateExpressionType(bin.left);
-            Type right = evaluateExpressionType(bin.right);
+            Type left  = evaluateExpressionType((AbstractExpression) bin.left);
+            Type right = evaluateExpressionType((AbstractExpression) bin.right);
             Operator op = bin.operator;
 
             switch (op) {
@@ -459,6 +463,7 @@ public class semanticCheck implements semanticVisitor {
                                         left + " und " + right));
                         return null;
                     }
+                    expr.setType(Type.INT);
                     return Type.INT;
                 }
                 case AND, OR -> {
@@ -501,8 +506,8 @@ public class semanticCheck implements semanticVisitor {
         }
 
         // Method-Calls
-        if (expr instanceof ast.exprStatements.MethodCall) {
-            ast.exprStatements.MethodCall call = (ast.exprStatements.MethodCall) expr;
+        if (expr instanceof MethodCall) {
+            MethodCall call = (MethodCall) expr;
             Type targetType = evaluateExpressionType(call.target);
             if (targetType == null) {
                 errors.add(new semanticError(
@@ -523,7 +528,7 @@ public class semanticCheck implements semanticVisitor {
         // Unäre Operatoren
         if (expr instanceof Unary) {
             Unary unary = (Unary) expr;
-            Type operand = evaluateExpressionType(unary.expression);
+            Type operand = evaluateExpressionType((AbstractExpression) unary.expression);
 
             // Logisches NOT
             if (unary.operator == Operator.NEGATE) {
@@ -541,6 +546,7 @@ public class semanticCheck implements semanticVisitor {
                             "Unary operator 'UMINUS' erfordert INT operand, aber gefunden: " + operand));
                     return null;
                 }
+                expr.setType(Type.INT);
                 return Type.INT;
             }
             // Prä-/Post-Inkrement, -Dekrement
@@ -550,6 +556,7 @@ public class semanticCheck implements semanticVisitor {
                             "Unary operator '" + unary.operator + "' nur auf INT anwendbar, aber gefunden: " + operand));
                     return null;
                 }
+                expr.setType(Type.INT);
                 return Type.INT;
             }
 

@@ -1,16 +1,19 @@
 package ast.expressions;
 
 import ast.AbstractExpression;
-import ast.Expression;
 import ast.types.ITypeResolver;
 import ast.types.Type;
 import bytecode.interfaces.IExpressionBytecodeGenerator;
 import bytecode.interfaces.IStatementBytecodeGenerator;
 
-public class BooleanConst extends AbstractExpression {
-    public boolean value;
+public class Assign extends AbstractExpression{
+    public AbstractExpression target;
+    public AbstractExpression value;
     
-    public BooleanConst(boolean value) {
+    public Assign() {}
+    
+    public Assign(AbstractExpression target, AbstractExpression value) {
+        this.target = target;
         this.value = value;
     }
 
@@ -21,11 +24,11 @@ public class BooleanConst extends AbstractExpression {
 
     @Override
     public void accept(IExpressionBytecodeGenerator visitor) {
-        visitor.visitBooleanConst(this);
+
     }
 
     @Override
     public Type resolveType(ITypeResolver resolver) {
-        return resolver.resolve(this);
+        return null;
     }
 }

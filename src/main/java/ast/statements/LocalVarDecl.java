@@ -1,18 +1,20 @@
 package ast.statements;
 
+import ast.AbstractExpression;
+import ast.AbstractStatement;
 import ast.Expression;
 import ast.Statement;
 import ast.types.Type;
 import bytecode.interfaces.IStatementBytecodeGenerator;
 
-public class LocalVarDecl implements Statement {
+public class LocalVarDecl extends AbstractStatement {
     public Type type;
     public String name;
-    public Expression init;
+    public AbstractExpression init;
     
     public LocalVarDecl() {}
     
-    public LocalVarDecl(Type type, String name, Expression init) {
+    public LocalVarDecl(Type type, String name, AbstractExpression init) {
         this.type = type;
         this.name = name;
         this.init = init;

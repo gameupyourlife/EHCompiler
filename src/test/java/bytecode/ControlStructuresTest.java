@@ -21,7 +21,7 @@ import ast.statements.For;
 import ast.statements.LocalVarDecl;
 import ast.statements.Return;
 import ast.expressions.Binary;
-import ast.exprStatements.Unary;
+import ast.expressions.Unary;
 import ast.expressions.Identifier;
 import ast.expressions.IntConst;
 import ast.expressions.BooleanConst;

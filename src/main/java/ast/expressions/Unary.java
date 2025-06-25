@@ -1,6 +1,6 @@
-package ast.exprStatements;
+package ast.expressions;
 
-import ast.Expression;
+import ast.AbstractExpression;
 import ast.Operator;
 import ast.Statement;
 import ast.types.ITypeResolver;
@@ -8,11 +8,11 @@ import ast.types.Type;
 import bytecode.interfaces.IExpressionBytecodeGenerator;
 import bytecode.interfaces.IStatementBytecodeGenerator;
 
-public class Unary implements Expression, Statement {
+public class Unary extends AbstractExpression implements Statement {
     public Operator operator;
-    public Expression expression;
+    public AbstractExpression expression;
 
-    public Unary(Operator operator, Expression expression) {
+    public Unary(Operator operator, AbstractExpression expression) {
         this.operator = operator;
         this.expression = expression;
     }

@@ -1,7 +1,7 @@
 package ast.types;
 
-import ast.exprStatements.New;
-import ast.exprStatements.Unary;
+import ast.expressions.New;
+import ast.expressions.Unary;
 import ast.expressions.*;
 
 public interface ITypeResolver {

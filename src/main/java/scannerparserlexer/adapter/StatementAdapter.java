@@ -1,5 +1,6 @@
 package scannerparserlexer.adapter;
 
+import ast.AbstractExpression;
 import ast.Expression;
 import ast.Statement;
 import ast.statements.*;
@@ -124,7 +125,7 @@ public class StatementAdapter {
         // Create an ExpressionStatement that wraps the expression
         if (ctx.expression() != null) {
             Expression expr = ExpressionAdapter.adapt(ctx.expression());
-            return new ExpressionStatement(expr);
+            return new ExpressionStatement((AbstractExpression) expr);
         }
         return new EmptyStatement();
     }

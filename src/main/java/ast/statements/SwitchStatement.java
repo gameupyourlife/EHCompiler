@@ -1,5 +1,6 @@
 package ast.statements;
 
+import ast.AbstractStatement;
 import ast.Expression;
 import ast.Statement;
 import ast.types.Type;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class SwitchStatement implements Statement {
+public class SwitchStatement extends AbstractStatement {
     public Expression expression;
     public List<SwitchCase> cases;
     

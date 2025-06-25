@@ -1,10 +1,11 @@
 package ast.statements;
 
+import ast.AbstractStatement;
 import ast.Expression;
 import ast.Statement;
 import bytecode.interfaces.IStatementBytecodeGenerator;
 
-public class DoWhile implements Statement {
+public class DoWhile extends AbstractStatement {
     public Expression condition;
     public Statement statement;
     
