@@ -14,6 +14,7 @@ import org.objectweb.asm.Opcodes;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class ByteCodeGenerator {
 
@@ -28,11 +29,14 @@ public class ByteCodeGenerator {
             String className = currentClass.name;
             int visibility = Opcodes.ACC_PUBLIC;
 
+            String parentClass;
+            parentClass = Objects.requireNonNullElse(currentClass.parentClass, "java/lang/Object");
+
             cw.visit(Opcodes.V1_8,
                     visibility,
                     className,
                     null,
-                    "java/lang/Object",
+                    parentClass,
                     null);
 
             //generate fields
@@ -79,11 +83,13 @@ public class ByteCodeGenerator {
 
     public ClassWriter generateBytecodeStandardConstructor(ClassWriter cw, Class cl) {
 
+        String parentClass = Objects.requireNonNullElse(cl.parentClass, "java/lang/Object");
+
         cw.visit(Opcodes.V1_8,
                 Opcodes.ACC_PUBLIC,
                 cl.name,
                 null,
-                "java/lang/Object",
+                parentClass,
                 null);
 
         MethodVisitor constructor = cw.visitMethod(Opcodes.ACC_PUBLIC,
@@ -95,7 +101,7 @@ public class ByteCodeGenerator {
         constructor.visitCode();
         constructor.visitVarInsn(Opcodes.ALOAD, 0);
         constructor.visitMethodInsn(Opcodes.INVOKESPECIAL,
-                "java/lang/Object",
+                parentClass,
                 "<init>",
                 "()V",
                 false);
