@@ -1,5 +1,3 @@
-package JavaTestFiles.PrimitiveOperations;
-
 class BooleanLogic {
 
     boolean and(boolean a, boolean b) {

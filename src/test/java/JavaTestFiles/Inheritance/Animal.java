@@ -1,5 +1,3 @@
-package JavaTestFiles.Inheritance;
-
 class Animal {
     String name;
 
