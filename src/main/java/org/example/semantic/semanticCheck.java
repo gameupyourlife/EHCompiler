@@ -3,13 +3,22 @@ package org.example.semantic;
 import ast.*;
 import ast.Class;
 import ast.exprStatements.Unary;
+import ast.statements.ExpressionStatement;
 import ast.statements.LocalVarDecl;
 import ast.statements.Return;
 import ast.statements.If;
 import ast.statements.While;
 import ast.statements.For;
 import ast.statements.DoWhile;
+import ast.expressions.Identifier;
+import ast.expressions.Binary;
+import ast.expressions.BooleanConst;
+import ast.expressions.IntConst;
+import ast.Operator;
 import ast.types.Type;
+import ast.statements.Block;
+import ast.statements.Break;
+import ast.statements.Continue;
 import org.example.context.context;
 import org.example.semantic.exceptions.semanticError;
 import org.example.visitor.semanticVisitor;
@@ -23,6 +32,7 @@ public class semanticCheck implements semanticVisitor {
 
     private context context;
     private final List<Exception> errors = new ArrayList<>();
+    private int loopDepth = 0;
 
     public static Program generateTast(Program program) throws semanticError {
         semanticCheck checker = new semanticCheck();
@@ -39,7 +49,6 @@ public class semanticCheck implements semanticVisitor {
 
     public typeCheckResult typeCheck(Program toCheck) {
         context = new context(toCheck);
-        //toCheck.setContext(context); // falls vorhanden
 
         boolean valid = true;
         Set<String> seenClassNames = new HashSet<>();
@@ -162,6 +171,63 @@ public class semanticCheck implements semanticVisitor {
 
     public typeCheckResult typeCheck(Statement stmt, Type expectedReturnType) {
         boolean valid = true;
+        if (stmt instanceof LocalVarDecl) {
+            LocalVarDecl decl = (LocalVarDecl) stmt;
+            // Typ existiert?
+            if (!context.typeExists(decl.type)) {
+                errors.add(new semanticError(
+                        "Unbekannter Typ '" + decl.type + "' für Variable '" + decl.name + "'"));
+            }
+            // Variable deklarieren
+            if (!context.declareVariable(decl.name, decl.type)) {
+                errors.add(new semanticError(
+                        "Variable '" + decl.name + "' bereits deklariert"));
+            }
+            // Initialisierer prüfen
+            if (decl.init != null) {
+                Type initT = evaluateExpressionType(decl.init);
+                if (initT != decl.type) {
+                    errors.add(new semanticError(
+                            "Typ-Mismatch: erwartete " + decl.type + ", aber erhalten: " + initT));
+                }
+            }
+            return new typeCheckResult(errors.isEmpty(), stmt);
+        }
+        if (stmt instanceof ExpressionStatement) {
+            ExpressionStatement es = (ExpressionStatement) stmt;
+            // z.B. "sumOfEvens += i;" oder "i = 0;"
+            evaluateExpressionType(es.expression);
+            return new typeCheckResult(true, stmt);
+        }
+
+        // Neuer Scope für Blöcke
+        if (stmt instanceof ast.statements.Block) {
+            ast.statements.Block b = (ast.statements.Block) stmt;
+            context.enterScope();
+            boolean blockValid = true;
+            for (Statement inner : b.statements) {
+                typeCheckResult r = typeCheck(inner, expectedReturnType);
+                blockValid &= r.isValid();
+            }
+            context.exitScope();
+            return new typeCheckResult(blockValid, stmt);
+        }
+
+        // break/continue nur innerhalb einer Schleife
+        if (stmt instanceof Break) {
+            if (loopDepth == 0) {
+                errors.add(new semanticError("Break außerhalb einer Schleife"));
+                return new typeCheckResult(false, stmt);
+                }
+            return new typeCheckResult(valid, stmt);
+        }
+        if (stmt instanceof Continue) {
+            if (loopDepth == 0) {
+                errors.add(new semanticError("Continue außerhalb einer Schleife"));
+                return new typeCheckResult(false, stmt);
+                }
+            return new typeCheckResult(valid, stmt);
+        }
 
         // Beispiel: Prüfen, ob Statement ein ReturnStatement ist
         if (stmt instanceof Return) {
@@ -174,7 +240,7 @@ public class semanticCheck implements semanticVisitor {
             return new typeCheckResult(valid, stmt);
         }
 
-        // Behandlung von if–Anweisungen
+        // if–Anweisungen
         if (stmt instanceof If) {
             If ifStmt = (If) stmt;
             // 1) Bedingung auswerten muss boolean sein
@@ -184,10 +250,10 @@ public class semanticCheck implements semanticVisitor {
                         "Bedingung in if muss BOOLEAN sein, aber gefunden: " + condType));
                 valid = false;
             }
-            // 2) Then–Zweig prüfen
+            // Then–Zweig prüfen
             typeCheckResult thenRes = typeCheck(ifStmt.thenStatement, expectedReturnType);
             valid = valid && thenRes.isValid();
-            // 3) Optional Else–Zweig prüfen
+            // Optional Else–Zweig prüfen
             if (ifStmt.elseStatement != null) {
                 typeCheckResult elseRes = typeCheck(ifStmt.elseStatement, expectedReturnType);
                 valid = valid && elseRes.isValid();
@@ -198,125 +264,243 @@ public class semanticCheck implements semanticVisitor {
         // While–Schleife
         if (stmt instanceof While) {
             While w = (While) stmt;
-            // 1) Bedingung muss BOOLEAN sein
             Type condType = evaluateExpressionType(w.condition);
             if (condType != Type.BOOLEAN) {
                 errors.add(new semanticError(
                         "Bedingung in while muss BOOLEAN sein, aber gefunden: " + condType));
                 valid = false;
             }
-            // 2) Body prüfen
+            loopDepth++;
+            // Body prüfen
             typeCheckResult bodyRes = typeCheck(w.statement, expectedReturnType);
             valid = valid && bodyRes.isValid();
+            loopDepth--;
             return new typeCheckResult(valid, stmt);
         }
 
         // For–Schleife
         if (stmt instanceof For) {
             For f = (For) stmt;
-            // 1) Init (Expression) prüfen, falls vorhanden
-            if (f.init != null) {
-                Type initType = evaluateExpressionType(f.init);
-                // hier evtl. weitergehende Checks, z.B. auf void o.Ä.
+
+            // 1) Neuer Scope für Init, Condition, Update und Body
+            context.enterScope();
+
+            // 2) Init-Teil: Deklaration oder Zuweisung
+            if (f.init instanceof LocalVarDecl) {
+                // "int i = 0;"
+                typeCheck((LocalVarDecl) f.init, expectedReturnType);
+            } else if (f.init instanceof ExpressionStatement) {
+                // "i = 0;"
+                ExpressionStatement initStmt = (ExpressionStatement) f.init;
+                evaluateExpressionType(initStmt.expression);
             }
-            // 2) Bedingung muss BOOLEAN sein
+
+            // 3) Condition prüfen
             if (f.condition != null) {
-                Type condType = evaluateExpressionType(f.condition);
-                if (condType != Type.BOOLEAN) {
+                Type condT = evaluateExpressionType(f.condition);
+                if (condT != Type.BOOLEAN) {
                     errors.add(new semanticError(
-                            "Bedingung in for muss BOOLEAN sein, aber gefunden: " + condType));
-                    valid = false;
+                            "Bedingung in for muss BOOLEAN sein, aber gefunden: " + condT));
                 }
             }
-            // 3) Update (Expression) prüfen, falls vorhanden
+
+            // 4) Update prüfen (z.B. i++)
             if (f.update != null) {
-                Type updType = evaluateExpressionType(f.update);
-                // evtl. Check, dass updType nicht void ist
+                // Bei euch ist das direkt eine Expression, also:
+                evaluateExpressionType(f.update);
             }
-            // 4) Body prüfen
-            typeCheckResult bodyRes = typeCheck(f.statement, expectedReturnType);
-            valid = valid && bodyRes.isValid();
-            return new typeCheckResult(valid, stmt);
+
+            // 5) Body prüfen, mit loopDepth für break/continue
+            loopDepth++;
+            typeCheck(f.statement, expectedReturnType);
+            loopDepth--;
+
+            // 6) Scope wieder verlassen
+            context.exitScope();
+
+            return new typeCheckResult(true, stmt);
         }
 
         // Do-While-Schleife
         if (stmt instanceof DoWhile) {
             DoWhile d = (DoWhile) stmt;
-            // 1) Body zuerst prüfen
+            loopDepth++;
+            // Body zuerst prüfen
             typeCheckResult bodyRes = typeCheck(d.statement, expectedReturnType);
             valid = valid && bodyRes.isValid();
-            // 2) Bedingung muss BOOLEAN sein
+            // Bedingung muss BOOLEAN sein
             Type condType = evaluateExpressionType(d.condition);
             if (condType != Type.BOOLEAN) {
                 errors.add(new semanticError(
                         "Bedingung in do-while muss BOOLEAN sein, aber gefunden: " + condType));
                 valid = false;
             }
+            loopDepth--;
             return new typeCheckResult(valid, stmt);
         }
-
-        // Beispiel: VariableDeclaration
-        if (stmt instanceof LocalVarDecl) {
-            LocalVarDecl varDecl = (LocalVarDecl) stmt;
-            // Typ prüfen, Variable in Scope eintragen usw.
-            // ...
-            return new typeCheckResult(valid, stmt);
-        }
-
-        // Weitere Statement-Typen prüfen...
-
         return new typeCheckResult(valid, stmt);
     }
 
     public Type evaluateExpressionType(Expression expr) {
+        if (expr instanceof ast.expressions.Identifier) {
+            String name = ((ast.expressions.Identifier) expr).name;
+            Type t = context.lookupVariable(name);
+            if (t == null) {
+                errors.add(new semanticError("Variable '" + name + "' nicht deklariert"));
+                return null;
+            }
+            return t;
+        }
+        // Null-Ausdruck
         if (expr == null) {
             errors.add(new semanticError("Null expression"));
             return null;
         }
 
+        // Literale
         if (expr instanceof ast.expressions.Null) {
-            // Null-Typ, ggf. als VOID oder spezieller NULL-Type behandeln
+            return null;
+        }
+        if (expr instanceof BooleanConst) {
+            return Type.BOOLEAN;
+        }
+        if (expr instanceof IntConst) {
+            return Type.INT;
+        }
+
+        // Identifier (Variable oder Parameter)
+        if (expr instanceof Identifier) {
+            Identifier id = (Identifier) expr;
+            Type varType = context.lookupVariable(id.name);
+            if (varType == null) {
+                // ggf. auch Felder prüfen: varType = context.lookupField(id.name);
+                errors.add(new semanticError("Variable '" + id.name + "' nicht deklariert"));
+                return null;
+            }
+            return varType;
+        }
+
+        // Binäroperationen
+        if (expr instanceof Binary) {
+            Binary bin = (Binary) expr;
+            Type left  = evaluateExpressionType(bin.left);
+            Type right = evaluateExpressionType(bin.right);
+            Operator op = bin.operator;
+
+            switch (op) {
+                case PLUS, MINUS, MULTIPLY, DIVIDE, MODULUS -> {
+                    if (left != Type.INT || right != Type.INT) {
+                        errors.add(new semanticError(
+                                "Operator '" + op.getSymbol() +
+                                        "' nur auf INT anwendbar, aber gefunden: " +
+                                        left + " und " + right));
+                        return null;
+                    }
+                    return Type.INT;
+                }
+                case AND, OR -> {
+                    if (left != Type.BOOLEAN || right != Type.BOOLEAN) {
+                        errors.add(new semanticError(
+                                "Operator '" + op.getSymbol() +
+                                        "' nur auf BOOLEAN anwendbar, aber gefunden: " +
+                                        left + " und " + right));
+                        return null;
+                    }
+                    return Type.BOOLEAN;
+                }
+                case EQUALS, NOT_EQUALS -> {
+                    if (left == right &&
+                            (left == Type.INT || left == Type.BOOLEAN)) {
+                        return Type.BOOLEAN;
+                    }
+                    errors.add(new semanticError(
+                            "Operator '" + op.getSymbol() +
+                                    "' nur auf gleich typisierten INT oder BOOLEAN anwendbar, aber gefunden: " +
+                                    left + " und " + right));
+                    return null;
+                }
+                case LESS_THAN, LESS_THAN_OR_EQUAL,
+                     GREATER_THAN, GREATER_THAN_OR_EQUAL -> {
+                    if (left != Type.INT || right != Type.INT) {
+                        errors.add(new semanticError(
+                                "Operator '" + op.getSymbol() +
+                                        "' nur auf INT anwendbar, aber gefunden: " +
+                                        left + " und " + right));
+                        return null;
+                    }
+                    return Type.BOOLEAN;
+                }
+                default -> {
+                    errors.add(new semanticError("Unbekannter Operator: " + op.getSymbol()));
+                    return null;
+                }
+            }
+        }
+
+        // Method-Calls (dein bestehender Code)
+        if (expr instanceof ast.exprStatements.MethodCall) {
+            ast.exprStatements.MethodCall call = (ast.exprStatements.MethodCall) expr;
+            Type targetType = evaluateExpressionType(call.target);
+            if (targetType == null) {
+                errors.add(new semanticError(
+                        "Cannot determine type of target in method call '" +
+                                call.methodName + "'"));
+                return null;
+            }
+            Method m = context.findMethod(targetType, call.methodName);
+            if (m == null) {
+                errors.add(new semanticError(
+                        "Method '" + call.methodName +
+                                "' not found in type '" + targetType + "'"));
+                return null;
+            }
+            return m.type;
+        }
+
+        // Unäre Operatoren
+        if (expr instanceof Unary) {
+            Unary unary = (Unary) expr;
+            Type operand = evaluateExpressionType(unary.expression);
+
+            // Logisches NOT (Symbol z.B. "!")
+            if (unary.operator == Operator.NEGATE) {
+                if (operand != Type.BOOLEAN) {
+                    errors.add(new semanticError(
+                            "Unary operator 'NEGATE' erfordert BOOLEAN operand, aber gefunden: " + operand));
+                    return null;
+                }
+                return Type.BOOLEAN;
+            }
+            // Arithmetisches Minus
+            if (unary.operator == Operator.UMINUS) {
+                if (operand != Type.INT) {
+                    errors.add(new semanticError(
+                            "Unary operator 'UMINUS' erfordert INT operand, aber gefunden: " + operand));
+                    return null;
+                }
+                return Type.INT;
+            }
+            // Prä-/Post-Inkrement, -Dekrement
+            if (unary.operator == Operator.INCREMENT || unary.operator == Operator.DECREMENT) {
+                if (operand != Type.INT) {
+                    errors.add(new semanticError(
+                            "Unary operator '" + unary.operator + "' nur auf INT anwendbar, aber gefunden: " + operand));
+                    return null;
+                }
+                return Type.INT;
+            }
+
+            errors.add(new semanticError("Unsupported unary operator: " + unary.operator));
             return null;
         }
 
-        if (expr instanceof ast.expressions.BooleanConst || expr instanceof ast.expressions.BooleanLiteral) {
-            return Type.BOOLEAN;
-        }
-
-        if (expr instanceof ast.exprStatements.MethodCall) {
-            ast.exprStatements.MethodCall call = (ast.exprStatements.MethodCall) expr;
-
-            Type targetType = evaluateExpressionType(call.target);
-            if (targetType == null) {
-                errors.add(new semanticError("Cannot determine type of target in method call '" + call.methodName + "'"));
-                return null;
-            }
-
-            Method method = context.findMethod(targetType, call.methodName);
-            if (method == null) {
-                errors.add(new semanticError("Method '" + call.methodName + "' not found in type '" + targetType + "'"));
-                return null;
-            }
-
-            return method.type;
-        }
-
+        // Fallback über Enum-Namen
         String className = expr.getClass().getSimpleName().toUpperCase();
         try {
             return Type.valueOf(className);
         } catch (IllegalArgumentException e) {
-            if (expr instanceof ast.exprStatements.Unary) {
-                Unary unary = (Unary) expr;
-                Type operandType = evaluateExpressionType(unary.expression);
-                if (operandType == Type.INT &&
-                        (unary.operator == Operator.INCREMENT || unary.operator == Operator.DECREMENT)) {
-                    return Type.INT;
-                }
-                errors.add(new semanticError("Unary operator '" + unary.operator + "' requires INT operand."));
-                return null;
-            }
-
-            errors.add(new semanticError("Unsupported expression type: " + expr.getClass().getSimpleName()));
+            errors.add(new semanticError(
+                    "Unsupported expression type: " + expr.getClass().getSimpleName()));
             return null;
         }
     }
