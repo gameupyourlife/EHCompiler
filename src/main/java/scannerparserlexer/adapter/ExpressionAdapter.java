@@ -69,7 +69,7 @@ public class ExpressionAdapter {
             char charValue = charText.substring(1, charText.length() - 1).charAt(0);
             return new ast.expressions.CharConst(charValue);
         } else if (ctx.StringLiteral() != null) {
-           // String stringText = ctx.StringLiteral().getText();
+            String stringText = ctx.StringLiteral().getText();
             // Remove the quotes
             String stringValue = stringText.substring(1, stringText.length() - 1);
             System.out.println("DEBUG: StringConst class missing, using EmptyExpression for string: " + stringValue);
