@@ -31,10 +31,10 @@ public class MethodAdapter {
                 method.type != null && method.type == ast.types.Type.VOID &&
                 method.parameters.isEmpty()) {
             // Create String[] args parameter for main method
-            ast.Parameter stringArrayParam = new ast.Parameter();
-            stringArrayParam.name = "args";
-            stringArrayParam.type = ast.types.Type.STRING_ARRAY;
-            method.parameters.add(stringArrayParam);
+            // ast.Parameter stringArrayParam = new ast.Parameter();
+            // stringArrayParam.name = "args";
+            // stringArrayParam.type = ast.types.Type.STRING_ARRAY;
+            // method.parameters.add(stringArrayParam);
         }
 
         // Set method body (statement)

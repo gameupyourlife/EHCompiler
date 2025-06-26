@@ -69,8 +69,8 @@ statement
     | type Identifier ('=' expression)? ';'                       # localVarDeclStmt
     | expression ';'                                              # exprStmt
     | ';'                                                         # emptyStmt
-    | 'print' '(' expressionList? ')' ';'                         # printStmt
-    | 'println' '(' expressionList? ')' ';'                       # printlnStmt
+    | 'print' '(' expression? ')' ';'                         # printStmt
+    | 'println' '(' expression? ')' ';'                       # printlnStmt
     ;
 
 switchBlockStatementGroup
