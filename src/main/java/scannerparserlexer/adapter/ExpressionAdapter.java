@@ -71,18 +71,9 @@ public class ExpressionAdapter {
         } else if (ctx.StringLiteral() != null) {
            // String stringText = ctx.StringLiteral().getText();
             // Remove the quotes
-<<<<<<< semCheck
-            //String stringValue = stringText.substring(1, stringText.length() - 1);
-            //return new ast.expressions.StringConst(stringValue);
-            String charText = ctx.CharacterLiteral().getText();
-            // Remove the quotes
-            char charValue = charText.substring(1, charText.length() - 1).charAt(0);
-            return new ast.expressions.CharConst(charValue);
-=======
             String stringValue = stringText.substring(1, stringText.length() - 1);
             System.out.println("DEBUG: StringConst class missing, using EmptyExpression for string: " + stringValue);
             return new ast.expressions.EmptyExpression();
->>>>>>> main
         } else {
             return new ast.expressions.Null();
         }
@@ -109,10 +100,7 @@ public class ExpressionAdapter {
             System.out.println("DEBUG: MethodCall doesn't implement Expression interface properly, using EmptyExpression");
             return new ast.expressions.EmptyExpression();
         }
-<<<<<<< semCheck
         return (Expression) methodCall;
-=======
->>>>>>> main
     }
 
     private static Expression adaptAssign(ASTParser.AssignExprContext ctx) {
@@ -127,10 +115,7 @@ public class ExpressionAdapter {
             System.out.println("DEBUG: Assign doesn't implement Expression interface properly, using EmptyExpression");
             return new ast.expressions.EmptyExpression();
         }
-<<<<<<< semCheck
         return (Expression) assign;
-=======
->>>>>>> main
     }
 
     private static Expression adaptNewExpr(ASTParser.NewExprContext ctx) {
@@ -231,9 +216,6 @@ public class ExpressionAdapter {
                     throw new IllegalArgumentException("Unknown operator: " + name);
             }
         }
-<<<<<<< semCheck
         return (Expression) constructor;
-=======
->>>>>>> main
     }
 }
