@@ -1,10 +1,12 @@
 package scannerparserlexer.adapter;
+import parser.ASTParser;
+
+import scannerparserlexer.parser.ASTLexer;
 
 import ast.Class;
 import ast.Constructor;
 import ast.Field;
 import ast.Method;
-import parser.ASTParser;
 
 import java.util.ArrayList;
 import java.util.List;
