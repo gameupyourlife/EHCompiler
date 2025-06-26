@@ -14,6 +14,6 @@ public class ExpressionStatement implements Statement {
 
     @Override
     public void accept(IStatementBytecodeGenerator visitor) {
-
+        visitor.visitExpressionStatement(this);
     }
 }

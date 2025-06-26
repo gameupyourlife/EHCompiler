@@ -1,4 +1,21 @@
 class WhileAndForLoop {
+
+    void basicForLoop() {
+        for (int i = 0; i < 10; i++) {
+            // Do something
+        }
+    }
+
+    int forLoopTest() {
+        int sumOfEvens = 0;
+        for (int i = 0; i < 10; i++) {
+            if (i % 2 == 0) {
+                sumOfEvens += i;
+            }
+        }
+        return sumOfEvens;
+    }
+
     void whileLoop() {
         int i = 0;
         while (i < 10) {
@@ -35,33 +52,5 @@ class WhileAndForLoop {
             }
             i++;
         }
-    }
-
-    void basicForLoop() {
-        for (int i = 0; i < 10; i++) {
-            // Do something
-        }
-    }
-
-    int forLoopWithBreak() {
-        int result = 0;
-        for (int i = 0; i < 10; i++) {
-            if (i == 5) {
-                result = i;
-                break;
-            }
-        }
-        return result;
-    }
-
-    int forLoopWithContinue() {
-        int sumOfEvens = 0;
-        for (int i = 0; i < 10; i++) {
-            if (i % 2 == 0) {
-                sumOfEvens += i;
-                continue;
-            }
-        }
-        return sumOfEvens;
     }
 }

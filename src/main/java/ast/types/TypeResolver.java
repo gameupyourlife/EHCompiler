@@ -81,8 +81,20 @@ public class TypeResolver implements ITypeResolver {
 
     @Override
     public Type resolve(Binary expr) {
-        Type leftType = expr.left.resolveType(this);
-        Type rightType = expr.right.resolveType(this);
+
+        Type leftType;
+        if (expr.left instanceof Identifier) {
+            leftType =  ((Identifier) expr.left).getType();
+        }else {
+            leftType = expr.left.resolveType(this);
+        }
+
+        Type rightType;
+        if (expr.right instanceof Identifier) {
+            rightType =  ((Identifier) expr.right).getType();
+        }else {
+            rightType = expr.right.resolveType(this);
+        }
 
         switch (expr.operator) {
             case PLUS, MULTIPLY, MINUS, DIVIDE, MODULUS:

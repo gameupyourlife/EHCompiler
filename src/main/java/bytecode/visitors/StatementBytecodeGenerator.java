@@ -310,4 +310,9 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
     public void visitPrintStatement(PrintStatement printStatement) {
 
     }
+
+    @Override
+    public void visitExpressionStatement(ExpressionStatement stmt) {
+        stmt.expression.accept(generator);
+    }
 }

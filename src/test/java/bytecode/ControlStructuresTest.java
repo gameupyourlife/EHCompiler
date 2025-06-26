@@ -5,13 +5,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 import java.util.Map;
 
+import ast.*;
+import ast.Class;
 import ast.exprStatements.Assign;
 import org.junit.jupiter.api.Test;
 
-import ast.Program;
-import ast.Class;
-import ast.Method;
-import ast.Parameter;
 import ast.statements.Block;
 import ast.statements.If;
 import ast.statements.While;
@@ -27,7 +25,6 @@ import ast.expressions.Identifier;
 import ast.expressions.IntConst;
 import ast.expressions.BooleanConst;
 import ast.types.Type;
-import ast.Operator;
 import org.w3c.dom.ls.LSOutput;
 
 public class ControlStructuresTest {
@@ -92,7 +89,6 @@ public class ControlStructuresTest {
                                         new Return(new BooleanConst(false)))),
                         false));
         cls.parentClass = null;
-
         Program program = new Program(List.of(cls));
         ByteCodeGenerator gen = new ByteCodeGenerator();
         Map<String, byte[]> byteMap = gen.generateByteCode(program);
