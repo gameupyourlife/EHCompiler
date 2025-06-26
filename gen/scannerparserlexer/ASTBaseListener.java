@@ -1,4 +1,4 @@
-// Generated from /Users/olli/Studium/semester_4/Compilerbau/compiler/git/EHCompiler/src/main/java/scannerparserlexer/AST.g4 by ANTLR 4.13.2
+// Generated from C:/Users/T10336A/OneDrive - DATEV eG/Dokumente/Uni/Compilerbau/EHCompiler/src/main/java/scannerparserlexer/AST.g4 by ANTLR 4.13.2
 package scannerparserlexer;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -137,6 +137,30 @@ public class ASTBaseListener implements ASTListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterForInit(ASTParser.ForInitContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitForInit(ASTParser.ForInitContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLocalVarDecl(ASTParser.LocalVarDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLocalVarDecl(ASTParser.LocalVarDeclContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterBlockStmt(ASTParser.BlockStmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -264,6 +288,30 @@ public class ASTBaseListener implements ASTListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitEmptyStmt(ASTParser.EmptyStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPrintStmt(ASTParser.PrintStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPrintStmt(ASTParser.PrintStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPrintlnStmt(ASTParser.PrintlnStmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPrintlnStmt(ASTParser.PrintlnStmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -504,6 +552,30 @@ public class ASTBaseListener implements ASTListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitLiteral(ASTParser.LiteralContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPrint(ASTParser.PrintContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPrint(ASTParser.PrintContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPrintln(ASTParser.PrintlnContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPrintln(ASTParser.PrintlnContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

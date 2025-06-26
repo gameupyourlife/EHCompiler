@@ -9,6 +9,7 @@ import bytecode.interfaces.IStatementBytecodeGenerator;
 public class Identifier implements Expression {
     public String name;
     public String className;
+    private Type type;
 
     public Identifier(String name, String className) {
         this.name = name;
@@ -27,6 +28,14 @@ public class Identifier implements Expression {
 
     @Override
     public Type resolveType(ITypeResolver resolver) {
-        return resolver.resolve(this);
+        return null;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public Type getType() {
+        return type;
     }
 }

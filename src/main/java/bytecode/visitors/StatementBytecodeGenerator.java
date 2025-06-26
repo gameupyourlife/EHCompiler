@@ -151,7 +151,12 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
     public void visitReturn(Return stmt) {
         if (stmt.expression != null) {
             stmt.expression.accept(generator);
-            Type type = stmt.expression.resolveType(resolver);
+            Type type;
+            if (stmt.expression instanceof Identifier) {
+                type = ((Identifier) stmt.expression).getType();
+            }else {
+                type = stmt.expression.resolveType(resolver);
+            }
 
             switch (type) {
                 case INT, BOOLEAN, CHAR -> mv.visitInsn(Opcodes.IRETURN);

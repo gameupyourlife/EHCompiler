@@ -14,7 +14,6 @@ public interface ITypeResolver {
 
     Type resolve(EmptyExpression expr);
 
-    Type resolve(Identifier expr);
 
     Type resolve(IntConst expr);
 

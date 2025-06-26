@@ -92,8 +92,12 @@ public class semanticCheck implements semanticVisitor {
         String className = toCheck.name;
         System.out.println("Checking class: " + className);
 
-        // --- 1) Superklasse existiert?
-        if (toCheck.parentClass != null) {
+        // Superklasse existiert?
+        String parent = toCheck.parentClass != null
+                ? toCheck.parentClass.trim()
+                : null;
+
+        if (parent != null && !parent.equals("Object")) {
             ast.Class superCls = findClassByName(toCheck.parentClass);
             if (superCls == null) {
                 errors.add(new semanticError(
@@ -101,7 +105,7 @@ public class semanticCheck implements semanticVisitor {
                                 "' in Klasse '" + className + "'"));
                 valid = false;
             } else {
-                // --- 2) Zyklische Vererbung erkennen
+                // Zyklische Vererbung erkennen
                 Set<String> visited = new HashSet<>();
                 visited.add(className);
                 ast.Class cur = superCls;
@@ -115,7 +119,7 @@ public class semanticCheck implements semanticVisitor {
                     cur = findClassByName(cur.parentClass);
                 }
 
-                // --- 3) Override-Regeln prüfen
+                // Override-Regeln prüfen
                 if (toCheck.methods != null) {
                     for (ast.Method m : toCheck.methods) {
                         ast.Method mSuper = findMethodInHierarchy(superCls, m.name);
@@ -416,6 +420,7 @@ public class semanticCheck implements semanticVisitor {
                 errors.add(new semanticError("Variable '" + name + "' nicht deklariert"));
                 return null;
             }
+            ((Identifier) expr).setType(t);
             return t;
         }
         // Null-Ausdruck
@@ -444,6 +449,7 @@ public class semanticCheck implements semanticVisitor {
                 errors.add(new semanticError("Variable '" + id.name + "' nicht deklariert"));
                 return null;
             }
+
             return varType;
         }
 

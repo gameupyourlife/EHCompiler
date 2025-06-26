@@ -8,7 +8,7 @@ import org.example.context.Context;
 
 public class TypeResolver implements ITypeResolver {
 
-    private final Context ctx;
+    public static Context ctx;
 
     public TypeResolver(Context ctx) {
         this.ctx = ctx;
@@ -34,14 +34,7 @@ public class TypeResolver implements ITypeResolver {
         return Type.VOID;
     }
 
-    @Override
-    public Type resolve(Identifier expr) {
-        Type t = ctx.lookupVariable(expr.getName());
-        if (t == null) {
-            throw new RuntimeException("Unbekannte Variable: " + expr.getName());
-        }
-        return t;
-    }
+
 
     @Override
     public Type resolve(IntConst expr) {

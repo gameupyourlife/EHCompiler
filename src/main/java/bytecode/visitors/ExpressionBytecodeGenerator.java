@@ -69,7 +69,7 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
 
     @Override
     public void visitIdentifier(Identifier expr) {
-        Type exprType = resolver.resolve(expr);
+        Type exprType = expr.getType();
         int index = context.getLocalIndex(expr.name);
 
         if (exprType == Type.INT || exprType == Type.BOOLEAN || exprType == Type.CHAR) {
