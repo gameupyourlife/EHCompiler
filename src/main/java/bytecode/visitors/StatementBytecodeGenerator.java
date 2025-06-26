@@ -270,4 +270,14 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
     public void visitPrintStatement(PrintStatement printStatement) {
 
     }
+
+    @Override
+    public void visitPrintStatementln(PrintlnStatement printlnStatement) {
+
+    }
+
+    @Override
+    public void visitPrintStatement(PrintStatement printStatement) {
+
+    }
 }

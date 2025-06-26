@@ -1,8 +1,10 @@
 package scannerparserlexer.adapter;
 
 import ast.Expression;
+import ast.Operator;
 import ast.exprStatements.Assign;
 import ast.exprStatements.MethodCall;
+import ast.exprStatements.Unary;
 import scannerparserlexer.parser.ASTParser;
 
 public class ExpressionAdapter {
@@ -19,6 +21,27 @@ public class ExpressionAdapter {
         } else if (ctx instanceof ASTParser.NewExprContext) {
             ASTParser.NewExprContext newCtx = (ASTParser.NewExprContext) ctx;
             return adaptNewExpr(newCtx);
+        } else if (ctx instanceof ASTParser.UnaryExprContext) {
+            ASTParser.UnaryExprContext unaryCtx = (ASTParser.UnaryExprContext) ctx;
+            return adaptUnary(unaryCtx);
+        } else if (ctx instanceof ASTParser.MultiplicativeExprContext) {
+            ASTParser.MultiplicativeExprContext multCtx = (ASTParser.MultiplicativeExprContext) ctx;
+            return adaptBinary(multCtx.expression(0), multCtx.getChild(1).getText(), multCtx.expression(1));
+        } else if (ctx instanceof ASTParser.AdditiveExprContext) {
+            ASTParser.AdditiveExprContext addCtx = (ASTParser.AdditiveExprContext) ctx;
+            return adaptBinary(addCtx.expression(0), addCtx.getChild(1).getText(), addCtx.expression(1));
+        } else if (ctx instanceof ASTParser.RelationalExprContext) {
+            ASTParser.RelationalExprContext relCtx = (ASTParser.RelationalExprContext) ctx;
+            return adaptBinary(relCtx.expression(0), relCtx.getChild(1).getText(), relCtx.expression(1));
+        } else if (ctx instanceof ASTParser.EqualityExprContext) {
+            ASTParser.EqualityExprContext eqCtx = (ASTParser.EqualityExprContext) ctx;
+            return adaptBinary(eqCtx.expression(0), eqCtx.getChild(1).getText(), eqCtx.expression(1));
+        } else if (ctx instanceof ASTParser.LogicalAndExprContext) {
+            ASTParser.LogicalAndExprContext andCtx = (ASTParser.LogicalAndExprContext) ctx;
+            return adaptBinary(andCtx.expression(0), "&&", andCtx.expression(1));
+        } else if (ctx instanceof ASTParser.LogicalOrExprContext) {
+            ASTParser.LogicalOrExprContext orCtx = (ASTParser.LogicalOrExprContext) ctx;
+            return adaptBinary(orCtx.expression(0), "||", orCtx.expression(1));
         } else {
             // Default case for other expression types
             return new ast.expressions.EmptyExpression();
@@ -49,8 +72,8 @@ public class ExpressionAdapter {
             String stringText = ctx.StringLiteral().getText();
             // Remove the quotes
             String stringValue = stringText.substring(1, stringText.length() - 1);
-            // return new ast.expressions.StringConst(stringValue);
-            return null;
+            System.out.println("DEBUG: StringConst class missing, using EmptyExpression for string: " + stringValue);
+            return new ast.expressions.EmptyExpression();
         } else {
             return new ast.expressions.Null();
         }
