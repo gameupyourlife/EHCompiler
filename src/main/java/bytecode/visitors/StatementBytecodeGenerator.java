@@ -71,6 +71,7 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
 
     }
 
+<<<<<<< testing/emptyClassCompile
 
     @Override
     public void visitPrintStatementln(PrintlnStatement printlnStatement) {
@@ -83,5 +84,15 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
     public void visitPrintStatement(PrintStatement printStatement) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'visitPrintStatement'");
+=======
+    @Override
+    public void visitPrintStatementln(PrintlnStatement printlnStatement) {
+
+    }
+
+    @Override
+    public void visitPrintStatement(PrintStatement printStatement) {
+
+>>>>>>> main
     }
 }

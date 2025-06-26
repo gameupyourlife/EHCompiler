@@ -5,8 +5,12 @@ import ast.Operator;
 import ast.exprStatements.Assign;
 import ast.exprStatements.MethodCall;
 import ast.exprStatements.Unary;
+<<<<<<< testing/emptyClassCompile
 import ast.expressions.Binary;
 import scannerparserlexer.parser.ASTParser;
+=======
+import parser.ASTParser;
+>>>>>>> main
 
 public class ExpressionAdapter {
     public static Expression adapt(ASTParser.ExpressionContext ctx) {

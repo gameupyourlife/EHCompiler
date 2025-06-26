@@ -2,7 +2,7 @@ package scannerparserlexer.adapter;
 
 import ast.Field;
 import ast.types.Type;
-import scannerparserlexer.parser.ASTParser;
+import parser.ASTParser;
 
 public class FieldAdapter {
     public static Field adapt(ASTParser.FieldDeclarationContext ctx) {

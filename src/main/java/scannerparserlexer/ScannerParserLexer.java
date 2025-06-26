@@ -5,8 +5,8 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import scannerparserlexer.adapter.ProgramAdapter;
-import scannerparserlexer.parser.ASTLexer;
-import scannerparserlexer.parser.ASTParser;
+import parser.ASTLexer;
+import parser.ASTParser;
 
 public class ScannerParserLexer {
     public static Program parse(String input) throws Exception {
