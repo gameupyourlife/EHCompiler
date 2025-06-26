@@ -11,7 +11,6 @@ import java.util.List;
 public class StatementAdapter {
     public static Block adaptBlock(ASTParser.BlockContext ctx) {
         Block block = new Block();
-
         if (ctx.statement() != null && !ctx.statement().isEmpty()) {
             List<Statement> statements = new ArrayList<>();
             for (ASTParser.StatementContext stmtCtx : ctx.statement()) {
@@ -19,7 +18,6 @@ public class StatementAdapter {
             }
             block.statements = statements;
         }
-
         return block;
     }
 
@@ -28,23 +26,17 @@ public class StatementAdapter {
             ASTParser.BlockStmtContext blockCtx = (ASTParser.BlockStmtContext) ctx;
             return adaptBlock(blockCtx.block());
         } else if (ctx instanceof ASTParser.IfStmtContext) {
-            ASTParser.IfStmtContext ifCtx = (ASTParser.IfStmtContext) ctx;
-            return adaptIf(ifCtx);
+            return adaptIf((ASTParser.IfStmtContext) ctx);
         } else if (ctx instanceof ASTParser.WhileStmtContext) {
-            ASTParser.WhileStmtContext whileCtx = (ASTParser.WhileStmtContext) ctx;
-            return adaptWhile(whileCtx);
+            return adaptWhile((ASTParser.WhileStmtContext) ctx);
         } else if (ctx instanceof ASTParser.ForStmtContext) {
-            ASTParser.ForStmtContext forCtx = (ASTParser.ForStmtContext) ctx;
-            return adaptFor(forCtx);
+            return adaptFor((ASTParser.ForStmtContext) ctx);
         } else if (ctx instanceof ASTParser.ReturnStmtContext) {
-            ASTParser.ReturnStmtContext returnCtx = (ASTParser.ReturnStmtContext) ctx;
-            return adaptReturn(returnCtx);
+            return adaptReturn((ASTParser.ReturnStmtContext) ctx);
         } else if (ctx instanceof ASTParser.LocalVarDeclStmtContext) {
-            ASTParser.LocalVarDeclStmtContext localVarCtx = (ASTParser.LocalVarDeclStmtContext) ctx;
-            return adaptLocalVarDecl(localVarCtx);
+            return adaptLocalVarDecl((ASTParser.LocalVarDeclStmtContext) ctx);
         } else if (ctx instanceof ASTParser.ExprStmtContext) {
-            ASTParser.ExprStmtContext exprCtx = (ASTParser.ExprStmtContext) ctx;
-            return adaptExprStmt(exprCtx);
+            return adaptExprStmt((ASTParser.ExprStmtContext) ctx);
         } else if (ctx instanceof ASTParser.EmptyStmtContext) {
             return new EmptyStatement();
         } else if (ctx instanceof ASTParser.BreakStmtContext) {
@@ -52,25 +44,24 @@ public class StatementAdapter {
         } else if (ctx instanceof ASTParser.ContinueStmtContext) {
             return new Continue();
         } else if (ctx instanceof ASTParser.DoWhileStmtContext) {
-            ASTParser.DoWhileStmtContext doWhileCtx = (ASTParser.DoWhileStmtContext) ctx;
-            return adaptDoWhile(doWhileCtx);
+            return adaptDoWhile((ASTParser.DoWhileStmtContext) ctx);
         } else {
-            // Default case for other statement types
             return new EmptyStatement();
         }
     }
 
     private static Statement adaptIf(ASTParser.IfStmtContext ctx) {
         If ifStmt = new If();
-        if (ctx.expression() != null) {
-            ifStmt.condition = ExpressionAdapter.adapt(ctx.expression());
+        ifStmt.condition = ExpressionAdapter.adapt(ctx.expression());
+
+        Statement thenRaw = adapt(ctx.statement(0));
+        ifStmt.thenStatement = unwrapSingleStatementBlock(thenRaw);
+
+        if (ctx.statement().size() > 1) {
+            Statement elseRaw = adapt(ctx.statement(1));
+            ifStmt.elseStatement = unwrapSingleStatementBlock(elseRaw);
         }
-        if (ctx.statement() != null && !ctx.statement().isEmpty()) {
-            ifStmt.thenStatement = adapt(ctx.statement(0));
-            if (ctx.statement().size() > 1) {
-                ifStmt.elseStatement = adapt(ctx.statement(1));
-            }
-        }
+
         return ifStmt;
     }
 
@@ -79,24 +70,38 @@ public class StatementAdapter {
         if (ctx.expression() != null) {
             whileStmt.condition = ExpressionAdapter.adapt(ctx.expression());
         }
-        if (ctx.statement() != null) {
-            whileStmt.statement = adapt(ctx.statement());
-        }
+        whileStmt.statement = adapt(ctx.statement());
         return whileStmt;
     }
 
     private static Statement adaptFor(ASTParser.ForStmtContext ctx) {
-        For forStmt = new For();
-        if (ctx.expression() != null && ctx.expression().size() >= 3) {
-            forStmt.init = ExpressionAdapter.adapt(ctx.expression(0));
-            forStmt.condition = ExpressionAdapter.adapt(ctx.expression(1));
-            forStmt.update = ExpressionAdapter.adapt(ctx.expression(2));
+    For forStmt = new For();
+
+    // --- 1) Init (ctx.forInit() statt ctx.localVariableDeclaration())
+    ASTParser.ForInitContext initCtx = ctx.forInit();
+    if (initCtx != null) {
+        if (initCtx.localVarDecl() != null) {
+            ASTParser.LocalVarDeclContext lv = initCtx.localVarDecl();
+            if (lv.expression() != null) {
+                forStmt.init = ExpressionAdapter.adapt(lv.expression());
+            }
+        } else if (initCtx.expressionList() != null) {
+            forStmt.init = ExpressionAdapter.adapt(initCtx.expressionList().expression(0));
         }
-        if (ctx.statement() != null) {
-            forStmt.statement = adapt(ctx.statement());
-        }
-        return forStmt;
     }
+
+    if (ctx.expression().size() > 0) {
+        forStmt.condition = ExpressionAdapter.adapt(ctx.expression(0));
+    }
+
+    if (ctx.expression().size() > 1) {
+        forStmt.update = ExpressionAdapter.adapt(ctx.expression(1));
+    }
+
+    forStmt.statement = adapt(ctx.statement());
+    return forStmt;
+}
+
 
     private static Statement adaptReturn(ASTParser.ReturnStmtContext ctx) {
         Return returnStmt = new Return();
@@ -121,23 +126,30 @@ public class StatementAdapter {
     }
 
     private static Statement adaptExprStmt(ASTParser.ExprStmtContext ctx) {
-        // Create an ExpressionStatement that wraps the expression
-        if (ctx.expression() != null) {
-            Expression expr = ExpressionAdapter.adapt(ctx.expression());
-            return new ExpressionStatement(expr);
-        }
-        return new EmptyStatement();
+    if (ctx.expression() != null) {
+        Expression expr = ExpressionAdapter.adapt(ctx.expression());
+        return new ExpressionStatement(expr); // Immer wrap in ExpressionStatement
     }
+    return new EmptyStatement();
+}
+
 
     private static Statement adaptDoWhile(ASTParser.DoWhileStmtContext ctx) {
         DoWhile doWhileStmt = new DoWhile();
         if (ctx.expression() != null) {
             doWhileStmt.condition = ExpressionAdapter.adapt(ctx.expression());
         }
-        if (ctx.statement() != null) {
-            doWhileStmt.statement = adapt(ctx.statement());
-        }
+        doWhileStmt.statement = adapt(ctx.statement());
         return doWhileStmt;
     }
 
+    private static Statement unwrapSingleStatementBlock(Statement stmt) {
+        if (stmt instanceof Block) {
+            Block b = (Block) stmt;
+            if (b.statements.size() == 1) {
+                return b.statements.get(0);
+            }
+        }
+        return stmt;
+    }
 }

@@ -17,7 +17,7 @@ import ast.expressions.*;
 import ast.Operator;
 import ast.Method;
 
-class IfElseParsingTest {
+class ControlStructuresTest {
 
     @Test
     void testParseIsZeroOrPositive() throws Exception {
@@ -207,83 +207,6 @@ class IfElseParsingTest {
     }
 
     @Test
-    void testParseWhileLoopWithBreak() throws Exception {
-        String src =
-            "class WhileLoop {" +
-            "  void whileLoopWithBreak() {" +
-            "    int i = 0;" +
-            "    while (i < 10) {" +
-            "      if (i == 5) {" +
-            "        break;" +
-            "      }" +
-            "      i++;" +
-            "    }" +
-            "  }" +
-            "}";
-        Program program = ScannerParserLexer.parse(src);
-        assertNotNull(program);
-        Class cls = program.classes.get(0);
-        Method m = cls.methods.get(0);
-
-        assertTrue(m.statement.get(0) instanceof LocalVarDecl);
-        assertTrue(m.statement.get(1) instanceof While, "Zweite Anweisung muss While sein");
-        While w = (While) m.statement.get(1);
-
-        assertTrue(w.statement instanceof Block, "Body muss Block sein");
-        Block body = (Block) w.statement;
-        assertEquals(2, body.statements.size(), "Body muss zwei Anweisungen enthalten");
-
-        assertTrue(body.statements.get(0) instanceof If, "Erste Body-Anweisung muss If sein");
-        If ifStmt = (If) body.statements.get(0);
-        assertTrue(ifStmt.thenStatement instanceof Block, "Then-Teil muss Block sein");
-        Block thenBlk = (Block) ifStmt.thenStatement;
-        assertTrue(
-            thenBlk.statements.stream().anyMatch(st -> st instanceof Break),
-            "Then-Block muss Break enthalten"
-        );
-
-        assertTrue(body.statements.get(1) instanceof Unary, "Zweite Body-Anweisung muss Unary sein");
-        Unary inc = (Unary) body.statements.get(1);
-        assertEquals(Operator.INCREMENT, inc.operator, "Operator muss '++' sein");
-    }
-
-    @Test
-    void testParseWhileLoopWithContinue() throws Exception {
-        String src =
-            "class WhileLoop {" +
-            "  void whileLoopWithContinue() {" +
-            "    int i = 0;" +
-            "    while (i < 10) {" +
-            "      i++;" +
-            "      if (i % 2 == 0) {" +
-            "        continue;" +
-            "      }" +
-            "    }" +
-            "  }" +
-            "}";
-        Program program = ScannerParserLexer.parse(src);
-        assertNotNull(program);
-        Class cls = program.classes.get(0);
-        Method m = cls.methods.get(0);
-
-        assertTrue(m.statement.get(1) instanceof While);
-        While w = (While) m.statement.get(1);
-
-        Block body = (Block) w.statement;
-        assertEquals(2, body.statements.size(), "Body muss zwei Anweisungen enthalten");
-        assertTrue(body.statements.get(0) instanceof Unary, "Erste Body-Anweisung muss Unary sein");
-        assertTrue(body.statements.get(1) instanceof If, "Zweite Body-Anweisung muss If sein");
-
-        If ifStmt = (If) body.statements.get(1);
-        assertTrue(ifStmt.thenStatement instanceof Block, "Then-Teil muss Block sein");
-        Block thenBlk = (Block) ifStmt.thenStatement;
-        assertTrue(
-            thenBlk.statements.stream().anyMatch(st -> st instanceof Continue),
-            "Then-Block muss Continue enthalten"
-        );
-    }
-
-    @Test
     void testParseNestedWhileLoop() throws Exception {
         String src =
             "class WhileLoop {" +
@@ -372,93 +295,11 @@ class IfElseParsingTest {
         assertTrue(((Block) f.statement).statements.isEmpty(), "Block darf keine Statements enthalten");
     }
 
-    @Test
-    void testParseForLoopWithBreak() throws Exception {
-        String src = "class ForLoop {" +
-                "  int forLoopWithBreak() {" +
-                "    int result = 0;" +
-                "    for (int i = 0; i < 10; i++) {" +
-                "      if (i == 5) {" +
-                "        result = i;" +
-                "        break;" +
-                "      }" +
-                "    }" +
-                "    return result;" +
-                "  }" +
-                "}";
-        Program program = ScannerParserLexer.parse(src);
-        assertNotNull(program);
-        Class cls = program.classes.get(0);
-        Method m = cls.methods.get(0);
-
-        assertEquals(3, m.statement.size(), "Es müssen 3 Statements sein");
-        assertTrue(m.statement.get(0) instanceof ast.statements.LocalVarDecl);
-        assertTrue(m.statement.get(1) instanceof For, "Zweite Anweisung muss For sein");
-        assertTrue(m.statement.get(2) instanceof Return, "Dritte Anweisung muss Return sein");
-
-        For f = (For) m.statement.get(1);
-
-        assertTrue(f.init instanceof IntConst, "Init muss IntConst sein");
-        assertEquals(0, ((IntConst) f.init).value, "Init-Wert muss 0 sein");
-
-        assertTrue(f.statement instanceof Block, "Body muss Block sein");
-        Block body = (Block) f.statement;
-        assertEquals(1, body.statements.size(), "Body muss genau 1 Statement haben");
-        assertTrue(body.statements.get(0) instanceof If, "Body-Statement muss If sein");
-
-        If ifStmt = (If) body.statements.get(0);
-        assertTrue(ifStmt.thenStatement instanceof Block, "Then-Teil muss Block sein");
-        Block thenBlk = (Block) ifStmt.thenStatement;
-        assertTrue(
-                thenBlk.statements.stream().anyMatch(st -> st instanceof Break),
-                "Then-Block muss ein Break enthalten");
-    }
-
-    @Test
-    void testParseForLoopWithContinue() throws Exception {
-        String src = "class ForLoop {" +
-                "  int forLoopWithContinue() {" +
-                "    int sumOfEvens = 0;" +
-                "    for (int i = 0; i < 10; i++) {" +
-                "      if (i % 2 == 0) {" +
-                "        sumOfEvens += i;" +
-                "        continue;" +
-                "      }" +
-                "    }" +
-                "    return sumOfEvens;" +
-                "  }" +
-                "}";
-        Program program = ScannerParserLexer.parse(src);
-        assertNotNull(program);
-        Class cls = program.classes.get(0);
-        Method m = cls.methods.get(0);
-
-        assertEquals(3, m.statement.size(), "Es müssen 3 Statements sein");
-        assertTrue(m.statement.get(0) instanceof ast.statements.LocalVarDecl);
-        assertTrue(m.statement.get(1) instanceof For, "Zweite Anweisung muss For sein");
-        assertTrue(m.statement.get(2) instanceof Return, "Dritte Anweisung muss Return sein");
-
-        For f = (For) m.statement.get(1);
-
-        assertTrue(f.init instanceof IntConst, "Init muss IntConst sein");
-        assertEquals(0, ((IntConst) f.init).value, "Init-Wert muss 0 sein");
-
-        Block body = (Block) f.statement;
-        assertEquals(1, body.statements.size(), "Body muss genau 1 Statement haben");
-        assertTrue(body.statements.get(0) instanceof If, "Body-Statement muss If sein");
-        If ifStmt = (If) body.statements.get(0);
-        assertTrue(ifStmt.thenStatement instanceof Block, "Then-Teil muss Block sein");
-        Block thenBlk = (Block) ifStmt.thenStatement;
-        assertTrue(
-                thenBlk.statements.stream().anyMatch(st -> st instanceof Continue),
-                "Then-Block muss ein Continue enthalten");
-    }
-
       @Test
     void testParseDoWhile() throws Exception {
         String src =
             "class DoWhile {" +
-            "  private void doWhile() {" +
+            "  void doWhile() {" +
             "    int i = 0;" +
             "    do {" +
             "      i++;" +

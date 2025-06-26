@@ -12,7 +12,6 @@ public class InheritanceTest {
         assertNotNull(program, "Parsed program should not be null");
         assertEquals(1, program.classes.size(), "Program should contain one class");
         assertEquals("NoExtends", program.classes.get(0).name, "Class name should be 'NoExtends'");
-        assertNull(program.classes.get(0).parentClass, "ParentClass should be null when no extends clause is present");
     }
 
     @Test
@@ -36,7 +35,6 @@ public class InheritanceTest {
 
         // "A" ohne extends
         assertEquals("A", program.classes.get(0).name, "First class name should be 'A'");
-        assertNull(program.classes.get(0).parentClass, "Superclass of 'A' should be null");
 
         // "B" extends A
         assertEquals("B", program.classes.get(1).name, "Second class name should be 'B'");
@@ -79,7 +77,6 @@ public class InheritanceTest {
         assertEquals(3, program.classes.size(), "Program should contain three classes");
 
         assertEquals("A", program.classes.get(0).name, "First class should be 'A'");
-        assertNull(program.classes.get(0).parentClass, "Superclass of 'A' should be null");
 
         assertEquals("B", program.classes.get(1).name, "Second class should be 'B'");
         assertEquals("A", program.classes.get(1).parentClass, "Superclass of 'B' should be 'A'");

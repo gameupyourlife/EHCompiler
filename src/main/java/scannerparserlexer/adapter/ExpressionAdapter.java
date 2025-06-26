@@ -5,10 +5,16 @@ import ast.Operator;
 import ast.exprStatements.Assign;
 import ast.exprStatements.MethodCall;
 import ast.exprStatements.Unary;
+<<<<<<< testing/emptyClassCompile
+import ast.expressions.Binary;
+import scannerparserlexer.parser.ASTParser;
+=======
 import parser.ASTParser;
+>>>>>>> main
 
 public class ExpressionAdapter {
     public static Expression adapt(ASTParser.ExpressionContext ctx) {
+        System.out.println("DEBUG: ExpressionContext class = " + ctx.getClass().getSimpleName());
         if (ctx instanceof ASTParser.PrimaryExprContext) {
             ASTParser.PrimaryExprContext primaryCtx = (ASTParser.PrimaryExprContext) ctx;
             return adaptPrimary(primaryCtx.primary());
@@ -42,21 +48,34 @@ public class ExpressionAdapter {
         } else if (ctx instanceof ASTParser.LogicalOrExprContext) {
             ASTParser.LogicalOrExprContext orCtx = (ASTParser.LogicalOrExprContext) ctx;
             return adaptBinary(orCtx.expression(0), "||", orCtx.expression(1));
-        } else {
+        }else if (ctx instanceof ASTParser.PostfixExprContext) {
+    ASTParser.PostfixExprContext postCtx = (ASTParser.PostfixExprContext) ctx;
+    String operatorText = postCtx.getChild(1).getText(); // "++" oder "--"
+    Operator operator = getUnaryOperator(operatorText);
+    Expression expression = adapt(postCtx.expression());
+    return new Unary(operator, expression);
+}
+         else {
             // Default case for other expression types
             return new ast.expressions.EmptyExpression();
         }
     }
     
     private static Expression adaptPrimary(ASTParser.PrimaryContext ctx) {
-        if (ctx.Identifier() != null) {
-            return new ast.expressions.Identifier(ctx.Identifier().getText());
-        } else if (ctx.literal() != null) {
-            return adaptLiteral(ctx.literal());
-        } else {
-            return new ast.expressions.EmptyExpression();
-        }
+    if (ctx.Identifier() != null) {
+        return new ast.expressions.Identifier(ctx.Identifier().getText());
     }
+    else if (ctx.literal() != null) {
+        return adaptLiteral(ctx.literal());
+    }
+    else if (ctx.expression() != null) {
+        return adapt(ctx.expression());
+    }
+    else {
+        return new ast.expressions.EmptyExpression();
+    }
+}
+
     
     private static Expression adaptLiteral(ASTParser.LiteralContext ctx) {
         if (ctx.IntegerLiteral() != null) {
@@ -142,23 +161,45 @@ public class ExpressionAdapter {
         return new Unary(operator, expression);
     }
     
-    private static Expression adaptBinary(ASTParser.ExpressionContext leftCtx, String operatorText, ASTParser.ExpressionContext rightCtx) {
-        try {
-            // Try to use Binary class when it gets created
-            Expression left = adapt(leftCtx);
-            Expression right = adapt(rightCtx);
-            Operator operator = getBinaryOperator(operatorText);
-            
-            // This will work when ast.exprStatements.Binary class is created
-            Class<?> binaryClass = Class.forName("ast.exprStatements.Binary");
-            java.lang.reflect.Constructor<?> constructor = binaryClass.getConstructor(Expression.class, Operator.class, Expression.class);
-            return (Expression) constructor.newInstance(left, operator, right);
-        } catch (Exception e) {
-            // Binary class doesn't exist yet - return placeholder
-            System.out.println("DEBUG: Binary class missing for operator '" + operatorText + "', using EmptyExpression");
-            return new ast.expressions.EmptyExpression();
-        }
+    private static Expression adaptBinary(
+        ASTParser.ExpressionContext leftCtx,
+        String operatorText,
+        ASTParser.ExpressionContext rightCtx) {
+    Expression left  = adapt(leftCtx);
+    Expression right = adapt(rightCtx);
+
+    Operator op;
+    switch (operatorText) {
+        // Arithmetik
+        case "+":  op = Operator.PLUS;                     break;
+        case "-":  op = Operator.MINUS;                    break;
+        case "*":  op = Operator.MULTIPLY;                 break;
+        case "/":  op = Operator.DIVIDE;                   break;
+        case "%":  op = Operator.MODULUS;                  break;
+
+        // Vergleich
+        case "==": op = Operator.EQUALS;                   break;
+        case "!=": op = Operator.NOT_EQUALS;               break;
+        case "<":  op = Operator.LESS_THAN;                break;
+        case "<=": op = Operator.LESS_THAN_OR_EQUAL;       break;
+        case ">":  op = Operator.GREATER_THAN;             break;
+        case ">=": op = Operator.GREATER_THAN_OR_EQUAL;    break;
+
+        // Logik
+        case "&&": op = Operator.AND;                      break;
+        case "||": op = Operator.OR;                       break;
+        case "^":  op = Operator.XOR;                      break;
+
+        default:
+            throw new IllegalArgumentException(
+                "Unknown binary operator: " + operatorText
+            );
     }
+
+    // 3) Binary-Knoten bauen
+    return new Binary(op, left, right);
+}
+
     
     private static Operator getUnaryOperator(String operatorText) {
         switch (operatorText) {
