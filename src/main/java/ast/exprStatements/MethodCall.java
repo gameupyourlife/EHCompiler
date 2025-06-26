@@ -1,6 +1,8 @@
 package ast.exprStatements;
 
+import ast.Class;
 import ast.Expression;
+import ast.MethodCallStatement;
 import ast.Statement;
 import ast.types.ITypeResolver;
 import ast.types.Type;
@@ -9,7 +11,7 @@ import bytecode.interfaces.IStatementBytecodeGenerator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MethodCall implements Expression, Statement {
+public class MethodCall implements Expression, MethodCallStatement {
     public Expression target;  // The object on which the method is called
     public String methodName;
     public List<Expression> arguments;
@@ -36,6 +38,11 @@ public class MethodCall implements Expression, Statement {
 
     @Override
     public void accept(IStatementBytecodeGenerator visitor) {
-        visitor.visitMethodCall(this);
+
+    }
+
+    @Override
+    public void accept(IStatementBytecodeGenerator visitor, List<Class> classes) {
+        visitor.visitMethodCall(this, classes);
     }
 }

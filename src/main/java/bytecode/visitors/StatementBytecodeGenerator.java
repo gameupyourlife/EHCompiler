@@ -1,8 +1,7 @@
 package bytecode.visitors;
 
-import ast.Expression;
-import ast.Operator;
-import ast.Statement;
+import ast.*;
+import ast.Class;
 import ast.exprStatements.Assign;
 import ast.exprStatements.MethodCall;
 import ast.exprStatements.New;
@@ -91,6 +90,7 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
 
         if (stmt.update != null) {
             stmt.update.accept(generator);
+            mv.visitInsn(Opcodes.POP);
         }
 
         mv.visitLabel(check);
@@ -209,7 +209,7 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
     }
 
     @Override
-    public void visitMethodCall(MethodCall stmt) {
+    public void visitMethodCall(MethodCall stmt, List<Class> classes) {
         stmt.target.accept(generator);
 
         List<Type> argTypes = new ArrayList<>();
@@ -220,7 +220,25 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
 
         ClassResolver classResolver = new ClassResolver(resolver);
 
-        Type returnType = stmt.resolveType(resolver);
+
+        Type returnType = null;
+        boolean typeFound = false;
+
+        for (Class cls : classes) {
+            for (Method m : cls.methods) {
+                var parameters = m.parameters;
+                var arguments = stmt.arguments;
+                if (stmt.methodName.equals(m.name) && matchParameterTypes(parameters, arguments)) {
+                    returnType = m.type;
+                    typeFound = true;
+                    break;
+                }
+            }
+            if (typeFound) {
+                break;
+            }
+        }
+
         String owner = classResolver.resolveClassName(stmt.target);
         String descriptor = classResolver.makeMethodDescriptor(returnType, argTypes, owner);
 
@@ -235,6 +253,23 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
         if (returnType != Type.VOID) {
             mv.visitInsn(Opcodes.POP);
         }
+    }
+
+    private boolean matchParameterTypes(List<Parameter> parameters, List<Expression> expressions) {
+        if (parameters.size() != expressions.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < parameters.size(); i++) {
+            Type paramType = parameters.get(i).type;
+            Type argType = expressions.get(i).resolveType(resolver);
+
+            if (!paramType.equals(argType)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -264,16 +299,6 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
         mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
         printlnStatement.expression.accept(generator);
         mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println", "("+ descriptor + ")V", false);
-    }
-
-    @Override
-    public void visitPrintStatement(PrintStatement printStatement) {
-
-    }
-
-    @Override
-    public void visitPrintStatementln(PrintlnStatement printlnStatement) {
-
     }
 
     @Override

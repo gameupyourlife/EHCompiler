@@ -163,7 +163,6 @@ public class ExpressionBytecodeGenerator implements IExpressionBytecodeGenerator
             }
 
             default: {
-                // alle anderen Operatoren wie +, ==, <= ...
                 expr.left.accept(this);
                 expr.right.accept(this);
                 Type type = resolver.resolve(expr);

@@ -3,7 +3,7 @@ package scannerparserlexer.adapter;
 import ast.Expression;
 import ast.Statement;
 import ast.statements.*;
-import parser.ASTParser;
+import scannerparserlexer.parser.ASTParser;
 
 import java.util.ArrayList;
 import java.util.List;

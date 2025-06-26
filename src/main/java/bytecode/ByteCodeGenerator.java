@@ -2,6 +2,7 @@ package bytecode;
 
 import ast.*;
 import ast.Class;
+import ast.exprStatements.MethodCall;
 import ast.types.Type;
 
 import ast.types.TypeResolver;
@@ -46,7 +47,7 @@ public class ByteCodeGenerator {
             cw = generateBytecodeStandardConstructor(cw, currentClass);
 
             //generate methods
-            cw = generateBytecodeMethods(cw, currentClass.methods);
+            cw = generateBytecodeMethods(cw, currentClass.methods, classes);
             cw.visitEnd();
 
             byte[] classBytes = cw.toByteArray();
@@ -112,7 +113,7 @@ public class ByteCodeGenerator {
         return cw;
     }
 
-    public ClassWriter generateBytecodeMethods(ClassWriter cw, List<Method> methods) {
+    public ClassWriter generateBytecodeMethods(ClassWriter cw, List<Method> methods, List<Class> classes) {
         if (methods.isEmpty()) {
             return cw;
         }
@@ -137,7 +138,12 @@ public class ByteCodeGenerator {
             boolean hasStatements = false;
             for (Statement statement : method.statement) {
                 hasStatements = true;
-                statement.accept(gen);
+                if (statement instanceof MethodCall) {
+                    ((MethodCallStatement) statement).accept(gen, classes);
+                } else {
+                    statement.accept(gen);
+                }
+
             }
 
             if (!hasStatements) {
