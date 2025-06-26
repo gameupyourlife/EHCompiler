@@ -3,8 +3,8 @@ package scannerparserlexer;
 import ast.Program;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import parser.ASTLexer;
-import parser.ASTParser;
+import scannerparserlexer.parser.ASTLexer;
+import scannerparserlexer.parser.ASTParser;
 import scannerparserlexer.adapter.ProgramAdapter;
 
 public class ScannerParserLexer {

@@ -28,7 +28,7 @@ public class Identifier implements Expression {
 
     @Override
     public Type resolveType(ITypeResolver resolver) {
-        return null;
+        return type;
     }
 
     public void setType(Type type) {
