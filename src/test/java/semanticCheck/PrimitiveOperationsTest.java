@@ -19,7 +19,7 @@ import ast.expressions.Identifier;
 import ast.Operator;
 import ast.types.Type;
 
-class ArithmeticBinarySemanticTest {
+class PrimitiveOperationsTest {
 
     // =================================
     // Arithmetic Operations Tests

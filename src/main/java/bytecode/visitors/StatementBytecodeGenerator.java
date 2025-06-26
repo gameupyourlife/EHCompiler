@@ -10,7 +10,6 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
         this.generator = generator;
     }
 
-
     @Override
     public void visitBlock(Block stmt) {
 
@@ -71,28 +70,16 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
 
     }
 
-<<<<<<< testing/emptyClassCompile
-
     @Override
     public void visitPrintStatementln(PrintlnStatement printlnStatement) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'visitPrintStatementln'");
     }
 
-
     @Override
     public void visitPrintStatement(PrintStatement printStatement) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'visitPrintStatement'");
-=======
-    @Override
-    public void visitPrintStatementln(PrintlnStatement printlnStatement) {
 
-    }
-
-    @Override
-    public void visitPrintStatement(PrintStatement printStatement) {
-
->>>>>>> main
     }
 }

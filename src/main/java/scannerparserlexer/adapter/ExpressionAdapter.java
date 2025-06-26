@@ -5,12 +5,8 @@ import ast.Operator;
 import ast.exprStatements.Assign;
 import ast.exprStatements.MethodCall;
 import ast.exprStatements.Unary;
-<<<<<<< testing/emptyClassCompile
 import ast.expressions.Binary;
 import scannerparserlexer.parser.ASTParser;
-=======
-import parser.ASTParser;
->>>>>>> main
 
 public class ExpressionAdapter {
     public static Expression adapt(ASTParser.ExpressionContext ctx) {
@@ -119,7 +115,6 @@ public class ExpressionAdapter {
             System.out.println("DEBUG: MethodCall doesn't implement Expression interface properly, using EmptyExpression");
             return new ast.expressions.EmptyExpression();
         }
-        return (Expression) methodCall;
     }
 
     private static Expression adaptAssign(ASTParser.AssignExprContext ctx) {
@@ -134,7 +129,6 @@ public class ExpressionAdapter {
             System.out.println("DEBUG: Assign doesn't implement Expression interface properly, using EmptyExpression");
             return new ast.expressions.EmptyExpression();
         }
-        return (Expression) assign;
     }
 
     private static Expression adaptNewExpr(ASTParser.NewExprContext ctx) {
@@ -257,6 +251,5 @@ public class ExpressionAdapter {
                     throw new IllegalArgumentException("Unknown operator: " + name);
             }
         }
-        return (Expression) constructor;
     }
 }
