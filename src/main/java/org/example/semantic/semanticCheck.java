@@ -20,7 +20,7 @@ import ast.Operator;
 import ast.types.Type;
 import ast.statements.Break;
 import ast.statements.Continue;
-import org.example.context.context;
+import org.example.context.Context;
 import org.example.semantic.exceptions.semanticError;
 import org.example.visitor.semanticVisitor;
 
@@ -31,7 +31,7 @@ import java.util.List;
 
 public class semanticCheck implements semanticVisitor {
 
-    private context context;
+    private Context context;
     private final List<Exception> errors = new ArrayList<>();
     private int loopDepth = 0;
 
@@ -49,7 +49,7 @@ public class semanticCheck implements semanticVisitor {
     }
 
     public typeCheckResult typeCheck(Program toCheck) {
-        context = new context(toCheck);
+        context = new Context(toCheck);
         boolean valid = true;
         Set<String> seenClassNames = new HashSet<>();
         for (Class cls : toCheck.classes) {
@@ -444,6 +444,7 @@ public class semanticCheck implements semanticVisitor {
                 errors.add(new semanticError("Variable '" + id.name + "' nicht deklariert"));
                 return null;
             }
+            id.setType(varType);
             return varType;
         }
 

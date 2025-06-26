@@ -14,6 +14,10 @@ public class Identifier extends AbstractExpression {
         this.name = name;
     }
 
+    public String getName() {
+        return name;
+    }
+
     @Override
     public void accept(IStatementBytecodeGenerator visitor) {
 

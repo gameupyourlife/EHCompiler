@@ -10,12 +10,39 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
-public class context {
+public class Context {
     private Program program;
     private final Deque<Map<String, Type>> scopes = new ArrayDeque<>();
 
-    public context(Program program) {
+    private final Deque<String> classStack = new ArrayDeque<>();
+    private final Map<String, Map<String, Type>> classFields = new HashMap<>();
+
+    public Context(Program program) {
         this.program = program;
+        // globaler Scope
+        this.scopes.push(new HashMap<>());
+    }
+
+    public Type lookupField(String name) {
+        String cls = getCurrentClassName();
+        if (cls == null) {
+            return null;
+        }
+        Map<String, Type> fields = classFields.get(cls);
+        if (fields != null && fields.containsKey(name)) {
+            return fields.get(name);
+        }
+        return null;
+    }
+
+    public void registerField(String className, String fieldName, Type type) {
+        classFields
+                .computeIfAbsent(className, k -> new HashMap<>())
+                .put(fieldName, type);
+    }
+
+    private String getCurrentClassName() {
+        return classStack.peek();
     }
 
     public Program getProgram() {
@@ -24,6 +51,14 @@ public class context {
 
     public boolean typeExists(Type type) {
         return type != null;
+    }
+
+    public void enterClass(String className) {
+        classStack.push(className);
+    }
+
+    public void exitClass() {
+        classStack.pop();
     }
 
     public void enterScope() {
@@ -36,7 +71,6 @@ public class context {
 
     public boolean declareVariable(String name, Type type) {
         Map<String, Type> current = scopes.peek();
-        assert current != null;
         if (current.containsKey(name)) {
             return false;
         }
@@ -45,17 +79,15 @@ public class context {
     }
 
     public Method findMethod(Type type, String methodName) {
-        if (type == null || methodName == null) return null;
-
-        Class cls = findClassByType(type);
-        if (cls == null || cls.methods == null) return null;
-
+        ast.Class cls = findClassByType(type);
+        if (cls == null || cls.methods == null) {
+            return null;
+        }
         for (Method method : cls.methods) {
             if (method.name.equals(methodName)) {
                 return method;
             }
         }
-
         return null;
     }
 
@@ -70,15 +102,6 @@ public class context {
             }
         }
 
-        return null;
-    }
-
-    public Type lookupVariable(String name) {
-        for (Map<String, Type> scope : scopes) {
-            if (scope.containsKey(name)) {
-                return scope.get(name);
-            }
-        }
         return null;
     }
 }
