@@ -43,13 +43,13 @@ public class ControlStructuresTest {
                                                 List.of(
                                                                 new If(
                                                                                 new Binary(Operator.GREATER_THAN,
-                                                                                                new Identifier("number"),
+                                                                                                new Identifier("number", null),
                                                                                                 new IntConst(0)),
                                                                                 new Return(new BooleanConst(true)),
                                                                                 null),
                                                                 new If(
                                                                                 new Binary(Operator.EQUALS,
-                                                                                                new Identifier("number"),
+                                                                                                new Identifier("number", null),
                                                                                                 new IntConst(0)),
                                                                                 new Return(new BooleanConst(true)),
                                                                                 null),
@@ -64,7 +64,7 @@ public class ControlStructuresTest {
                                                                                 new Binary(
                                                                                                 Operator.EQUALS,
                                                                                                 new Binary(Operator.MODULUS,
-                                                                                                                new Identifier("number"),
+                                                                                                                new Identifier("number", null),
                                                                                                                 new IntConst(2)),
                                                                                                 new IntConst(0)),
                                                                                 new Return(new BooleanConst(true)),
@@ -82,11 +82,11 @@ public class ControlStructuresTest {
                                                                                 new Binary(
                                                                                                 Operator.AND,
                                                                                                 new Binary(Operator.GREATER_THAN_OR_EQUAL,
-                                                                                                                new Identifier("number"),
-                                                                                                                new Identifier("min")),
+                                                                                                                new Identifier("number", null),
+                                                                                                                new Identifier("min", null)),
                                                                                                 new Binary(Operator.LESS_THAN_OR_EQUAL,
-                                                                                                                new Identifier("number"),
-                                                                                                                new Identifier("max"))),
+                                                                                                                new Identifier("number", null),
+                                                                                                                new Identifier("max", null))),
                                                                                 new Return(new BooleanConst(true)),
                                                                                 new Return(new BooleanConst(false)))),
                                                 false));
@@ -111,10 +111,10 @@ public class ControlStructuresTest {
                                                                                                 Type.INT,
                                                                                                 "y",
                                                                                                 new Binary(Operator.MULTIPLY,
-                                                                                                                new Identifier("x"),
+                                                                                                                new Identifier("x", null),
                                                                                                                 new IntConst(2))),
                                                                                 new Block(List.of()))),
-                                                                new Return(new Identifier("x"))),
+                                                                new Return(new Identifier("x", null))),
                                                 false));
                 c.parentClass = null;
 
@@ -138,11 +138,11 @@ public class ControlStructuresTest {
                                                                 new LocalVarDecl(Type.INT, "i", new IntConst(0)),
                                                                 new While(
                                                                                 new Binary(Operator.LESS_THAN,
-                                                                                                new Identifier("i"),
+                                                                                                new Identifier("i", null),
                                                                                                 new IntConst(10)),
                                                                                 new Block(List.of(new Unary(
                                                                                                 Operator.INCREMENT,
-                                                                                                new Identifier("i")))))),
+                                                                                                new Identifier("i", null)))))),
                                                 false));
                 c.parentClass = null;
                 Program p = new Program(List.of(c));
@@ -162,17 +162,17 @@ public class ControlStructuresTest {
                                                                 new LocalVarDecl(Type.INT, "i", new IntConst(0)),
                                                                 new While(
                                                                                 new Binary(Operator.LESS_THAN,
-                                                                                                new Identifier("i"),
+                                                                                                new Identifier("i", null),
                                                                                                 new IntConst(10)),
                                                                                 new Block(List.of(
                                                                                                 new If(
                                                                                                                 new Binary(Operator.EQUALS,
-                                                                                                                                new Identifier("i"),
+                                                                                                                                new Identifier("i", null),
                                                                                                                                 new IntConst(5)),
                                                                                                                 new Break(),
                                                                                                                 null),
                                                                                                 new Unary(Operator.INCREMENT,
-                                                                                                                new Identifier("i")))))),
+                                                                                                                new Identifier("i", null)))))),
                                                 false));
                 c.parentClass = null;
                 Program p = new Program(List.of(c));
@@ -192,16 +192,16 @@ public class ControlStructuresTest {
                                                                 new LocalVarDecl(Type.INT, "i", new IntConst(0)),
                                                                 new While(
                                                                                 new Binary(Operator.LESS_THAN,
-                                                                                                new Identifier("i"),
+                                                                                                new Identifier("i", null),
                                                                                                 new IntConst(10)),
                                                                                 new Block(List.of(
                                                                                                 new Unary(Operator.INCREMENT,
-                                                                                                                new Identifier("i")),
+                                                                                                                new Identifier("i", null)),
                                                                                                 new If(
                                                                                                                 new Binary(
                                                                                                                                 Operator.EQUALS,
                                                                                                                                 new Binary(Operator.MODULUS,
-                                                                                                                                                new Identifier("i"),
+                                                                                                                                                new Identifier("i", null),
                                                                                                                                                 new IntConst(2)),
                                                                                                                                 new IntConst(0)),
                                                                                                                 new Continue(),
@@ -225,7 +225,7 @@ public class ControlStructuresTest {
                                                                 new LocalVarDecl(Type.INT, "i", new IntConst(0)),
                                                                 new While(
                                                                                 new Binary(Operator.LESS_THAN,
-                                                                                                new Identifier("i"),
+                                                                                                new Identifier("i", null),
                                                                                                 new IntConst(5)),
                                                                                 new Block(List.of(
                                                                                                 new LocalVarDecl(
@@ -234,13 +234,13 @@ public class ControlStructuresTest {
                                                                                                                 new IntConst(0)),
                                                                                                 new While(
                                                                                                                 new Binary(Operator.LESS_THAN,
-                                                                                                                                new Identifier("j"),
+                                                                                                                                new Identifier("j", null),
                                                                                                                                 new IntConst(3)),
                                                                                                                 new Block(List.of(
                                                                                                                                 new Unary(Operator.INCREMENT,
-                                                                                                                                                new Identifier("j"))))),
+                                                                                                                                                new Identifier("j", null))))),
                                                                                                 new Unary(Operator.INCREMENT,
-                                                                                                                new Identifier("i")))))),
+                                                                                                                new Identifier("i", null)))))),
                                                 false));
                 c.parentClass = null;
                 Program p = new Program(List.of(c));
@@ -258,12 +258,12 @@ public class ControlStructuresTest {
                                                 List.of(),
                                                 List.of(
                                                                 new For(
-                                                                                new IntConst(0),
+                                                                        new LocalVarDecl(Type.INT, "i", new IntConst(0)),
                                                                                 new Binary(Operator.LESS_THAN,
-                                                                                                new Identifier("i"),
+                                                                                                new Identifier("i", null),
                                                                                                 new IntConst(10)),
                                                                                 new Unary(Operator.INCREMENT,
-                                                                                                new Identifier("i")),
+                                                                                                new Identifier("i", null)),
                                                                                 new Block(List.of()))),
                                                 false));
                 c.parentClass = null;
@@ -283,21 +283,21 @@ public class ControlStructuresTest {
                                                 List.of(
                                                                 new LocalVarDecl(Type.INT, "result", new IntConst(0)),
                                                                 new For(
-                                                                                new IntConst(0),
+                                                                                new LocalVarDecl(Type.INT, "i", new IntConst(0)),
                                                                                 new Binary(Operator.LESS_THAN,
-                                                                                                new Identifier("i"),
+                                                                                                new Identifier("i", null),
                                                                                                 new IntConst(10)),
                                                                                 new Unary(Operator.INCREMENT,
-                                                                                                new Identifier("i")),
+                                                                                                new Identifier("i", null)),
                                                                                 new Block(List.of(
                                                                                                 new If(
                                                                                                                 new Binary(Operator.EQUALS,
-                                                                                                                                new Identifier("i"),
+                                                                                                                                new Identifier("i", null),
                                                                                                                                 new IntConst(5)),
                                                                                                                 new Block(List.of()),
                                                                                                                 null),
                                                                                                 new Break()))),
-                                                                new Return(new Identifier("result"))),
+                                                                new Return(new Identifier("result", null))),
                                                 false));
                 c.parentClass = null;
                 Program p = new Program(List.of(c));
@@ -317,24 +317,24 @@ public class ControlStructuresTest {
                                                                 new LocalVarDecl(Type.INT, "sumOfEvens",
                                                                                 new IntConst(0)),
                                                                 new For(
-                                                                                new IntConst(0),
+                                                                                new LocalVarDecl(Type.INT, "i", new IntConst(0)),
                                                                                 new Binary(Operator.LESS_THAN,
-                                                                                                new Identifier("i"),
+                                                                                                new Identifier("i", null),
                                                                                                 new IntConst(10)),
                                                                                 new Unary(Operator.INCREMENT,
-                                                                                                new Identifier("i")),
+                                                                                                new Identifier("i", null)),
                                                                                 new Block(List.of(
                                                                                                 new If(
                                                                                                                 new Binary(
                                                                                                                                 Operator.EQUALS,
                                                                                                                                 new Binary(Operator.MODULUS,
-                                                                                                                                                new Identifier("i"),
+                                                                                                                                                new Identifier("i", null),
                                                                                                                                                 new IntConst(2)),
                                                                                                                                 new IntConst(0)),
                                                                                                                 new Block(List.of()),
                                                                                                                 null),
                                                                                                 new Continue()))),
-                                                                new Return(new Identifier("sumOfEvens"))),
+                                                                new Return(new Identifier("sumOfEvens", null))),
                                                 false));
                 c.parentClass = null;
                 Program p = new Program(List.of(c));
@@ -377,11 +377,11 @@ public class ControlStructuresTest {
                                                                 new LocalVarDecl(Type.INT, "i", new IntConst(0)),
                                                                 new DoWhile(
                                                                                 new Binary(Operator.LESS_THAN,
-                                                                                                new Identifier("i"),
+                                                                                                new Identifier("i", null),
                                                                                                 new IntConst(5)),
                                                                                 new Block(List.of(
                                                                                                 new Unary(Operator.INCREMENT,
-                                                                                                                new Identifier("i")))))),
+                                                                                                                new Identifier("i", null)))))),
                                                 false));
                 c.parentClass = null;
 
@@ -407,7 +407,7 @@ public class ControlStructuresTest {
                                                                                 new IntConst(5),
                                                                                 new Block(List.of(
                                                                                                 new Unary(Operator.INCREMENT,
-                                                                                                                new Identifier("i")))))),
+                                                                                                                new Identifier("i", null)))))),
                                                 false));
                 c.parentClass = null;
 

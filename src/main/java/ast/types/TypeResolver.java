@@ -70,12 +70,7 @@ public class TypeResolver implements ITypeResolver {
                 if (inner == Type.BOOLEAN)
                     return Type.BOOLEAN;
                 break;
-            case UMINUS:
-                if (inner == Type.INT)
-                    return Type.INT;
-                break;
-            case INCREMENT:
-            case DECREMENT:
+            case UMINUS, INCREMENT, DECREMENT:
                 if (inner == Type.INT)
                     return Type.INT;
                 break;
@@ -96,33 +91,25 @@ public class TypeResolver implements ITypeResolver {
         Type rightType = expr.right.resolveType(this);
 
         switch (expr.operator) {
-            case PLUS:
+            case PLUS, MULTIPLY, MINUS, DIVIDE, MODULUS:
                 if (leftType == Type.INT && rightType == Type.INT)
                     return Type.INT;
-                break;
-            case MINUS:
-                if (leftType == Type.INT && rightType == Type.INT)
-                    return Type.INT;
-                break;
-            case MULTIPLY:
-                if (leftType == Type.INT && rightType == Type.INT)
-                    return Type.INT;
-                break;
-            case DIVIDE:
-                if (leftType == Type.INT && rightType == Type.INT)
-                    return Type.INT;
-                break;
-            case MODULUS:
-                if (leftType == Type.INT && rightType == Type.INT)
-                    return Type.INT;
-                break;
-            case NEGATE:
+                else throw new UnsupportedOperationException("Operator " + expr.operator + " not supported");
+            case NEGATE, AND, OR:
                 if (leftType == Type.BOOLEAN && rightType == Type.BOOLEAN)
+                    return Type.BOOLEAN;
+                else throw new UnsupportedOperationException("Operator " + expr.operator + " not supported");
+            case LESS_THAN, LESS_THAN_OR_EQUAL, GREATER_THAN, GREATER_THAN_OR_EQUAL:
+                if (leftType == Type.INT && rightType == Type.INT)
                     return Type.BOOLEAN;
                 break;
             default:
-                break;
+                return Type.UNKNOWN;
         }
-        return Type.UNKNOWN;
+    }
+
+    @Override
+    public Type resolve(MethodCall expr) {
+        return null;
     }
 }

@@ -7,6 +7,6 @@ public class Continue implements Statement {
 
     @Override
     public void accept(IStatementBytecodeGenerator visitor) {
-        visitor.visitContinue(this);
+
     }
 }

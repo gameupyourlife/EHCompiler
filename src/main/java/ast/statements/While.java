@@ -19,5 +19,4 @@ public class While implements Statement {
     public void accept(IStatementBytecodeGenerator visitor) {
         visitor.visitWhile(this);
     }
-
 }

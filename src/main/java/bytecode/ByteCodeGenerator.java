@@ -2,16 +2,20 @@ package bytecode;
 
 import ast.*;
 import ast.Class;
+import ast.exprStatements.MethodCall;
 import ast.types.Type;
 
+import ast.types.TypeResolver;
+import bytecode.visitors.ExpressionBytecodeGenerator;
+import bytecode.visitors.StatementBytecodeGenerator;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class ByteCodeGenerator {
 
@@ -26,11 +30,14 @@ public class ByteCodeGenerator {
             String className = currentClass.name;
             int visibility = Opcodes.ACC_PUBLIC;
 
+            String parentClass;
+            parentClass = Objects.requireNonNullElse(currentClass.parentClass, "java/lang/Object");
+
             cw.visit(Opcodes.V1_8,
                     visibility,
                     className,
                     null,
-                    "java/lang/Object",
+                    parentClass,
                     null);
 
             //generate fields
@@ -40,7 +47,7 @@ public class ByteCodeGenerator {
             cw = generateBytecodeStandardConstructor(cw, currentClass);
 
             //generate methods
-            cw = generateBytecodeMethods(cw, currentClass.methods);
+            cw = generateBytecodeMethods(cw, currentClass.methods, classes);
             cw.visitEnd();
 
             byte[] classBytes = cw.toByteArray();
@@ -66,27 +73,24 @@ public class ByteCodeGenerator {
     }
 
     private String getDescriptor(Type type) {
-        switch (type) {
-            case INT:
-                return "I";
-            case BOOLEAN:
-                return "Z";
-            case CHAR:
-                return "C";
-            case VOID:
-                return "V";
-            default:
-                throw new IllegalArgumentException("Unsupported type: " + type);
-        }
+        return switch (type) {
+            case INT -> "I";
+            case BOOLEAN -> "Z";
+            case CHAR -> "C";
+            case VOID -> "V";
+            default -> throw new IllegalArgumentException("Unsupported type: " + type);
+        };
     }
 
     public ClassWriter generateBytecodeStandardConstructor(ClassWriter cw, Class cl) {
+
+        String parentClass = Objects.requireNonNullElse(cl.parentClass, "java/lang/Object");
 
         cw.visit(Opcodes.V1_8,
                 Opcodes.ACC_PUBLIC,
                 cl.name,
                 null,
-                "java/lang/Object",
+                parentClass,
                 null);
 
         MethodVisitor constructor = cw.visitMethod(Opcodes.ACC_PUBLIC,
@@ -98,7 +102,7 @@ public class ByteCodeGenerator {
         constructor.visitCode();
         constructor.visitVarInsn(Opcodes.ALOAD, 0);
         constructor.visitMethodInsn(Opcodes.INVOKESPECIAL,
-                "java/lang/Object",
+                parentClass,
                 "<init>",
                 "()V",
                 false);
@@ -109,7 +113,7 @@ public class ByteCodeGenerator {
         return cw;
     }
 
-    public ClassWriter generateBytecodeMethods(ClassWriter cw, List<Method> methods) {
+    public ClassWriter generateBytecodeMethods(ClassWriter cw, List<Method> methods, List<Class> classes) {
         if (methods.isEmpty()) {
             return cw;
         }
@@ -119,31 +123,51 @@ public class ByteCodeGenerator {
             int access = Opcodes.ACC_PUBLIC;
             MethodVisitor mv = cw.visitMethod(access, method.name, descriptor, null, null);
             mv.visitCode();
-            emitDefaultReturn(mv, method.type);
+
+            VarContext context = new VarContext();
+            context.declareVariable("this");
+
+            for (Parameter p : method.parameters) {
+                context.declareVariable(p.name);
+            }
+
+            TypeResolver resolver = new TypeResolver();
+            ExpressionBytecodeGenerator ex = new ExpressionBytecodeGenerator(mv, context, resolver);
+            StatementBytecodeGenerator gen = new StatementBytecodeGenerator(ex, mv, context, resolver);
+
+            boolean hasStatements = false;
+            for (Statement statement : method.statement) {
+                hasStatements = true;
+                if (statement instanceof MethodCall) {
+                    ((MethodCallStatement) statement).accept(gen, classes);
+                } else {
+                    statement.accept(gen);
+                }
+
+            }
+
+            if (!hasStatements) {
+                switch (method.type) {
+                    case INT, BOOLEAN, CHAR -> {
+                        mv.visitInsn(Opcodes.ICONST_0); // default-Wert
+                        mv.visitInsn(Opcodes.IRETURN);
+                    }
+                    case CLASS -> {
+                        mv.visitInsn(Opcodes.ACONST_NULL); // default-Objektwert
+                        mv.visitInsn(Opcodes.ARETURN);
+                    }
+                    case VOID -> {
+                        mv.visitInsn(Opcodes.RETURN);
+                    }
+                    default -> throw new UnsupportedOperationException("Unknown return type: " + method.type);
+                }
+            }
 
             mv.visitMaxs(0, 0);
             mv.visitEnd();
         }
 
         return cw;
-    }
-
-    // To Do: Einzelne Methoden für jeweilige Statement / Expressions mit visitor pattern
-
-    private void emitDefaultReturn(MethodVisitor mv, Type returnType) {
-        switch (returnType) {
-            case VOID:
-                mv.visitInsn(Opcodes.RETURN);
-                break;
-            case INT:
-            case BOOLEAN:
-            case CHAR:
-                mv.visitInsn(Opcodes.ICONST_0);
-                mv.visitInsn(Opcodes.IRETURN);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown return type: " + returnType);
-        }
     }
 
     private String getMethodDescriptor(Method method) {

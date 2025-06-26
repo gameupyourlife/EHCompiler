@@ -30,7 +30,7 @@ public class PrimitiveOperationsTest {
                 Type.INT,
                 "add",
                 List.of(new Parameter(Type.INT, "a"), new Parameter(Type.INT, "b")),
-                List.of(new Return(new Binary(Operator.PLUS, new Identifier("a"), new Identifier("b")))),
+                List.of(new Return(new Binary(Operator.PLUS, new Identifier("a", null), new Identifier("b", null)))),
                 false
             )
         );
@@ -60,7 +60,7 @@ public class PrimitiveOperationsTest {
                 Type.INT,
                 "subtract",
                 List.of(new Parameter(Type.INT, "a"), new Parameter(Type.INT, "b")),
-                List.of(new Return(new Binary(Operator.MINUS, new Identifier("a"), new Identifier("b")))),
+                List.of(new Return(new Binary(Operator.MINUS, new Identifier("a", null), new Identifier("b", null)))),
                 false
             )
         );
@@ -90,7 +90,7 @@ public class PrimitiveOperationsTest {
                 Type.INT,
                 "multiply",
                 List.of(new Parameter(Type.INT, "a"), new Parameter(Type.INT, "b")),
-                List.of(new Return(new Binary(Operator.MULTIPLY, new Identifier("a"), new Identifier("b")))),
+                List.of(new Return(new Binary(Operator.MULTIPLY, new Identifier("a", null), new Identifier("b", null)))),
                 false
             )
         );
@@ -119,7 +119,7 @@ public class PrimitiveOperationsTest {
                 Type.INT,
                 "divide",
                 List.of(new Parameter(Type.INT, "a"), new Parameter(Type.INT, "b")),
-                List.of(new Return(new Binary(Operator.DIVIDE, new Identifier("a"), new Identifier("b")))),
+                List.of(new Return(new Binary(Operator.DIVIDE, new Identifier("a", null), new Identifier("b", null)))),
                 false
             )
         );
@@ -148,7 +148,7 @@ public class PrimitiveOperationsTest {
                 Type.INT,
                 "modulus",
                 List.of(new Parameter(Type.INT, "a"), new Parameter(Type.INT, "b")),
-                List.of(new Return(new Binary(Operator.MODULUS, new Identifier("a"), new Identifier("b")))),
+                List.of(new Return(new Binary(Operator.MODULUS, new Identifier("a", null), new Identifier("b", null)))),
                 false
             )
         );
@@ -187,8 +187,8 @@ public class PrimitiveOperationsTest {
                 List.of(new Return(
                     new Binary(
                         Operator.AND,
-                        new Identifier("a"),
-                        new Identifier("b")
+                        new Identifier("a", null),
+                        new Identifier("b", null)
                     )
                 )),
                 false
@@ -223,8 +223,8 @@ public class PrimitiveOperationsTest {
                 List.of(new Return(
                     new Binary(
                         Operator.OR,
-                        new Identifier("a"),
-                        new Identifier("b")
+                        new Identifier("a", null),
+                        new Identifier("b", null)
                     )
                 )),
                 false
@@ -256,7 +256,7 @@ public class PrimitiveOperationsTest {
                 List.of(new Return(
                     new Unary(
                         Operator.NEGATE,
-                        new Identifier("a")
+                        new Identifier("a", null)
                     )
                 )),
                 false
@@ -293,8 +293,8 @@ public class PrimitiveOperationsTest {
                         Operator.NEGATE,
                         new Binary(
                             Operator.AND,
-                            new Identifier("a"),
-                            new Identifier("b")
+                            new Identifier("a", null),
+                            new Identifier("b", null)
                         )
                     )
                 )),
@@ -332,8 +332,8 @@ public class PrimitiveOperationsTest {
                         Operator.NEGATE,
                         new Binary(
                             Operator.OR,
-                            new Identifier("a"),
-                            new Identifier("b")
+                            new Identifier("a", null),
+                            new Identifier("b", null)
                         )
                     )
                 )),

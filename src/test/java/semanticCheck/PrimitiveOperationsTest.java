@@ -113,7 +113,7 @@ class PrimitiveOperationsTest {
                 name,
                 List.of(new ast.Parameter(Type.BOOLEAN, "a"), new ast.Parameter(Type.BOOLEAN, "b")),
                 List.of(new Return(
-                        new Binary(op, new Identifier("a"), new Identifier("b")))),
+                        new Binary(op, new Identifier("a", null), new Identifier("b", null)))),
                 false);
         Class cls = new Class("BooleanLogic");
         cls.fields = List.of();
@@ -157,7 +157,7 @@ class PrimitiveOperationsTest {
     void testNand() {
         Unary expr = new Unary(
                 Operator.NEGATE,
-                new Binary(Operator.AND, new Identifier("a"), new Identifier("b")));
+                new Binary(Operator.AND, new Identifier("a", null), new Identifier("b", null)));
         assertDoesNotThrow(() -> semanticCheck.generateTast(makeUnaryProgram("nand", expr)));
     }
 
@@ -165,7 +165,7 @@ class PrimitiveOperationsTest {
     void testNor() {
         Unary expr = new Unary(
                 Operator.NEGATE,
-                new Binary(Operator.OR, new Identifier("a"), new Identifier("b")));
+                new Binary(Operator.OR, new Identifier("a", null), new Identifier("b", null)));
         assertDoesNotThrow(() -> semanticCheck.generateTast(makeUnaryProgram("nor", expr)));
     }
 
