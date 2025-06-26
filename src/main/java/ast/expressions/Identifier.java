@@ -7,8 +7,7 @@ import bytecode.interfaces.IExpressionBytecodeGenerator;
 import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class Identifier implements Expression {
-    public String name;
-    private Type type;            // ← speichern, was resolveType zurückliefert
+    public String name;     // ← speichern, was resolveType zurückliefert
 
     public Identifier(String name) {
         this.name = name;

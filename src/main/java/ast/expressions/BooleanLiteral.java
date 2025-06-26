@@ -8,7 +8,6 @@ import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class BooleanLiteral implements Expression {
     public boolean value;
-    private Type type;
     
     public BooleanLiteral(boolean value) {
         this.value = value;

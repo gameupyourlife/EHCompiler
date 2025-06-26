@@ -8,7 +8,6 @@ import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class CharConst implements Expression {
     public char value;
-    private Type type;
 
     public CharConst(char value) {
         this.value = value;

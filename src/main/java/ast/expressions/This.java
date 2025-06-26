@@ -7,7 +7,6 @@ import bytecode.interfaces.IExpressionBytecodeGenerator;
 import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class This implements Expression {
-    private Type type;
 
     @Override
     public void accept(IStatementBytecodeGenerator visitor) {

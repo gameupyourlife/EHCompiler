@@ -8,7 +8,6 @@ import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class IntConst implements Expression {
     public int value;
-    private Type type;
     
     public IntConst(int value) {
         this.value = value;

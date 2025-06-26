@@ -11,7 +11,6 @@ public class Binary implements Expression {
     public Operator operator;
     public Expression left;
     public Expression right;
-    private Type type;
 
     public Binary(Operator operator, Expression left, Expression right) {
         this.operator = operator;
