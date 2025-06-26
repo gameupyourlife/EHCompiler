@@ -1,7 +1,7 @@
 package scannerparserlexer.adapter;
 
 import ast.types.Type;
-import scannerparserlexer.parser.ASTParser;
+import parser.ASTParser;
 
 public class TypeAdapter {
     public static Type adapt(ASTParser.TypeContext ctx) {

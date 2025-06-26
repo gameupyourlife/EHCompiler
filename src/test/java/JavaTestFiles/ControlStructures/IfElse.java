@@ -1,5 +1,3 @@
-package JavaTestFiles.ControlStructures;
-
 class IfElse {
     boolean isZeroOrPositive(int number) {
         if (number > 0) {
