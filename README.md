@@ -1,4 +1,5 @@
 # EHCompiler
+Mini Java Compiler für Compilerbau INF23 DHBW Horb
 
 ## Team
 | Aufgabe              | Personen   |
