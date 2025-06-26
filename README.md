@@ -47,7 +47,6 @@ Folgende Features werden von dem EHCompiler untestützt
 - boolean
 - int
 - char
-- String
 
 ### Operationen
 - Arithmetische (+, -, *, /)
