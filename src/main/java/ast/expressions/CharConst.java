@@ -1,22 +1,15 @@
 package ast.expressions;
 
-import ast.AbstractExpression;
 import ast.Expression;
 import ast.types.ITypeResolver;
 import ast.types.Type;
 import bytecode.interfaces.IExpressionBytecodeGenerator;
-import bytecode.interfaces.IStatementBytecodeGenerator;
 
-public class CharConst extends AbstractExpression {
+public class CharConst implements Expression {
     public char value;
 
     public CharConst(char value) {
         this.value = value;
-    }
-
-    @Override
-    public void accept(IStatementBytecodeGenerator visitor) {
-
     }
 
     @Override

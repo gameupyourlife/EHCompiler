@@ -1,11 +1,10 @@
 package ast.statements;
 
-import ast.AbstractStatement;
 import ast.Expression;
 import ast.Statement;
 import bytecode.interfaces.IStatementBytecodeGenerator;
 
-public class If extends AbstractStatement {
+public class If implements Statement {
     public Expression condition;
     public Statement thenStatement;
     public Statement elseStatement;

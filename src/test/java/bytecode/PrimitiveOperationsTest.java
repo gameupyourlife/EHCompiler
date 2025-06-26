@@ -9,7 +9,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import ast.Program;
-import ast.expressions.Unary;
+import ast.exprStatements.Unary;
 import ast.Class;
 import ast.Method;
 import ast.Parameter;

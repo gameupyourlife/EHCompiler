@@ -7,7 +7,7 @@ import org.example.semantic.semanticCheck;
 import org.example.semantic.exceptions.semanticError;
 import org.junit.jupiter.api.Test;
 import ast.Program;
-import ast.expressions.Unary;
+import ast.exprStatements.Unary;
 import ast.Class;
 import ast.Method;
 import ast.statements.Return;
@@ -122,7 +122,7 @@ class ArithmeticBinarySemanticTest {
         return new Program(List.of(cls));
     }
 
-    private Program makeUnaryProgram(String name, Unary expr) {
+    private Program makeUnaryProgram(String name, ast.exprStatements.Unary expr) {
         Method m = new Method(
                 Type.BOOLEAN,
                 name,

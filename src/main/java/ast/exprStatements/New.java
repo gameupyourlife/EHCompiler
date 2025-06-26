@@ -1,4 +1,4 @@
-package ast.expressions;
+package ast.exprStatements;
 
 import ast.Expression;
 import ast.Statement;

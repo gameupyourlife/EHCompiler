@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import scannerparserlexer.ScannerParserLexer;
 
 import ast.Program;
-import ast.expressions.Unary;
+import ast.exprStatements.Unary;
 import ast.Class;
 import ast.Method;
 import ast.statements.Return;

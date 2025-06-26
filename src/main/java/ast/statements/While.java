@@ -1,11 +1,10 @@
 package ast.statements;
 
-import ast.AbstractStatement;
 import ast.Expression;
 import ast.Statement;
 import bytecode.interfaces.IStatementBytecodeGenerator;
 
-public class While extends AbstractStatement {
+public class While implements Statement {
     public Expression condition;
     public Statement statement;
     

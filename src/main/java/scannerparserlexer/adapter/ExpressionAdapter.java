@@ -1,12 +1,12 @@
 package scannerparserlexer.adapter;
 
-import ast.AbstractExpression;
-import ast.expressions.Assign;
-import ast.expressions.MethodCall;
+import ast.Expression;
+import ast.exprStatements.Assign;
+import ast.exprStatements.MethodCall;
 import scannerparserlexer.parser.ASTParser;
 
 public class ExpressionAdapter {
-    public static AbstractExpression adapt(ASTParser.ExpressionContext ctx) {
+    public static Expression adapt(ASTParser.ExpressionContext ctx) {
         if (ctx instanceof ASTParser.PrimaryExprContext) {
             ASTParser.PrimaryExprContext primaryCtx = (ASTParser.PrimaryExprContext) ctx;
             return adaptPrimary(primaryCtx.primary());
@@ -25,7 +25,7 @@ public class ExpressionAdapter {
         }
     }
     
-    private static AbstractExpression adaptPrimary(ASTParser.PrimaryContext ctx) {
+    private static Expression adaptPrimary(ASTParser.PrimaryContext ctx) {
         if (ctx.Identifier() != null) {
             return new ast.expressions.Identifier(ctx.Identifier().getText());
         } else if (ctx.literal() != null) {
@@ -35,7 +35,7 @@ public class ExpressionAdapter {
         }
     }
     
-    private static AbstractExpression adaptLiteral(ASTParser.LiteralContext ctx) {
+    private static Expression adaptLiteral(ASTParser.LiteralContext ctx) {
         if (ctx.IntegerLiteral() != null) {
             return new ast.expressions.IntConst(Integer.parseInt(ctx.IntegerLiteral().getText()));
         } else if (ctx.BooleanLiteral() != null) {
@@ -59,7 +59,7 @@ public class ExpressionAdapter {
         }
     }
     
-    private static AbstractExpression adaptMethodCall(ASTParser.MethodCallExprContext ctx) {
+    private static Expression adaptMethodCall(ASTParser.MethodCallExprContext ctx) {
         MethodCall methodCall = new MethodCall();
         if (ctx.expression() != null) {
             methodCall.target = adapt(ctx.expression());
@@ -73,19 +73,19 @@ public class ExpressionAdapter {
                 methodCall.arguments.add(adapt(exprCtx));
             }
         }
-        return (AbstractExpression) methodCall;
+        return (Expression) methodCall;
     }
 
-    private static AbstractExpression adaptAssign(ASTParser.AssignExprContext ctx) {
+    private static Expression adaptAssign(ASTParser.AssignExprContext ctx) {
         Assign assign = new Assign();
         if (ctx.expression() != null && ctx.expression().size() >= 2) {
             assign.target = adapt(ctx.expression(0));
             assign.value = adapt(ctx.expression(1));
         }
-        return (AbstractExpression) assign;
+        return (Expression) assign;
     }
 
-    private static AbstractExpression adaptNewExpr(ASTParser.NewExprContext ctx) {
+    private static Expression adaptNewExpr(ASTParser.NewExprContext ctx) {
         MethodCall constructor = new MethodCall();
         if (ctx.Identifier() != null) {
             constructor.methodName = ctx.Identifier().getText();
@@ -96,6 +96,6 @@ public class ExpressionAdapter {
                 constructor.arguments.add(adapt(exprCtx));
             }
         }
-        return (AbstractExpression) constructor;
+        return (Expression) constructor;
     }
 }

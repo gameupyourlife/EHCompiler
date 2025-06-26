@@ -12,6 +12,7 @@ import ast.statements.If;
 import ast.statements.Return;
 import ast.types.Type;
 import ast.statements.*;
+import ast.exprStatements.*;
 import ast.expressions.*;
 import ast.Operator;
 import ast.Method;

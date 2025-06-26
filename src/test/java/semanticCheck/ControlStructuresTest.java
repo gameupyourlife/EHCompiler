@@ -22,7 +22,7 @@ import ast.statements.For;
 import ast.statements.If;
 import ast.expressions.Binary;
 import ast.expressions.BooleanConst;
-import ast.expressions.Unary;
+import ast.exprStatements.Unary;
 import ast.expressions.Identifier;
 import ast.expressions.IntConst;
 import ast.types.Type;

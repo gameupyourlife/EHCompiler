@@ -1,15 +1,13 @@
 package ast.statements;
 
-import ast.AbstractExpression;
-import ast.AbstractStatement;
 import ast.Expression;
 import ast.Statement;
 import bytecode.interfaces.IStatementBytecodeGenerator;
 
-public class ExpressionStatement extends AbstractStatement {
-    public AbstractExpression expression;
+public class ExpressionStatement implements Statement {
+    public Expression expression;
     
-    public ExpressionStatement(AbstractExpression expression) {
+    public ExpressionStatement(Expression expression) {
         this.expression = expression;
     }
 
