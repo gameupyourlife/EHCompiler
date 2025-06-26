@@ -12,10 +12,11 @@
 
 
 ## AST
-![EHCopmiler - AST](https://github.com/user-attachments/assets/f0336004-0d68-4886-af63-a07cd893921e)
+![EHCopmiler - AST (1)](https://github.com/user-attachments/assets/08126776-bcd4-4af4-aff9-90a6b7185657)
 
 ## Aktueller Stand
 Datum: 12.06.2025
+![EHCopmiler - AST](https://github.com/user-attachments/assets/f0336004-0d68-4886-af63-a07cd893921e)
 
 | Milestone              | Status   | Datum   |
 |--------------------|---|---|
