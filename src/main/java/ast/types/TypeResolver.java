@@ -58,7 +58,14 @@ public class TypeResolver implements ITypeResolver {
 
     @Override
     public Type resolve(Unary expr) {
-        Type inner = expr.expression.resolveType(this);
+
+        Type inner;
+        if (expr.expression instanceof Identifier) {
+            inner =  ((Identifier) expr.expression).getType();
+        }else {
+            inner = expr.expression.resolveType(this);
+        }
+
         switch (expr.operator) {
             case NEGATE:
                 if (inner == Type.BOOLEAN)
