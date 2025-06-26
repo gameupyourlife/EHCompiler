@@ -1,12 +1,11 @@
 package scannerparserlexer;
 
 import ast.Program;
-import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import scannerparserlexer.adapter.ProgramAdapter;
 import parser.ASTLexer;
 import parser.ASTParser;
+import scannerparserlexer.adapter.ProgramAdapter;
 
 public class ScannerParserLexer {
     public static Program parse(String input) throws Exception {
@@ -28,15 +27,7 @@ public class ScannerParserLexer {
 
     public static void main(String[] args) {
         try {
-            String input = args.length > 0 ? args[0] : "class Child extends Parent {\n" +
-                    "      int testArithmetic(int a, int b) {\n" +
-                    "          return a + b * 2 - 1;  // arithmetic operations\n" +
-                    "      }\n" +
-                    "\n" +
-                    "      boolean testLogical(int x, int y) {\n" +
-                    "          return x > y && y <= 10 || !false;  // logical operations\n" +
-                    "      }\n" +
-                    "  }";
+            String input = "class TestClass { static void main() {} }";
             Program program = parse(input);
             System.out.println("Successfully parsed input: " + input);
             if (program.classes != null) {
@@ -44,7 +35,6 @@ public class ScannerParserLexer {
                 if (!program.classes.isEmpty()) {
                     ast.Class firstClass = program.classes.get(0);
                     System.out.println("Class name: " + firstClass.name);
-                    System.out.println("Parent class: " + firstClass.parentClass);
                     if (firstClass.methods != null && !firstClass.methods.isEmpty()) {
                         System.out.println("Found " + firstClass.methods.size() + " methods");
                         for (ast.Method method : firstClass.methods) {

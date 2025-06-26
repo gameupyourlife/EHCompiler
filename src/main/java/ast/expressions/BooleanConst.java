@@ -4,6 +4,7 @@ import ast.Expression;
 import ast.types.ITypeResolver;
 import ast.types.Type;
 import bytecode.interfaces.IExpressionBytecodeGenerator;
+import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class BooleanConst implements Expression {
     public boolean value;

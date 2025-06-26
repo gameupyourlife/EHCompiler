@@ -1,5 +1,6 @@
 package ast.types;
 
+import ast.exprStatements.MethodCall;
 import ast.exprStatements.New;
 import ast.exprStatements.Unary;
 import ast.expressions.*;
@@ -13,7 +14,6 @@ public interface ITypeResolver {
 
     Type resolve(EmptyExpression expr);
 
-    Type resolve(Identifier expr);
 
     Type resolve(IntConst expr);
 
@@ -28,4 +28,6 @@ public interface ITypeResolver {
     Type resolve(New expr);
 
     Type resolve(Binary expr);
+
+    Type resolve(MethodCall expr);
 }

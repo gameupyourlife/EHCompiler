@@ -7,15 +7,15 @@ import bytecode.interfaces.IStatementBytecodeGenerator;
 import java.util.List;
 
 public class PrintlnStatement implements Statement {
-    public final List<Expression> expressions;
+    public final Expression expression;
 
-    public PrintlnStatement(List<Expression> expressions) {
-        this.expressions = expressions;
+    public PrintlnStatement(Expression expression) {
+        this.expression = expression;
     }
 
     @Override
     public void accept(IStatementBytecodeGenerator visitor) {
-        visitor.visitPrintStatementln(this);
+        visitor.visitPrintLnStatement(this);
 
     }
 }

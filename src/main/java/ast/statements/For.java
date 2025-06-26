@@ -4,15 +4,17 @@ import ast.Expression;
 import ast.Statement;
 import bytecode.interfaces.IStatementBytecodeGenerator;
 
+import javax.swing.plaf.nimbus.State;
+
 public class For implements Statement {
-    public Expression init;
+    public Statement init;
     public Expression condition;
     public Expression update;
     public Statement statement;
     
     public For() {}
     
-    public For(Expression init, Expression condition, Expression update, Statement statement) {
+    public For(Statement init, Expression condition, Expression update, Statement statement) {
         this.init = init;
         this.condition = condition;
         this.update = update;

@@ -4,12 +4,21 @@ import ast.Expression;
 import ast.types.ITypeResolver;
 import ast.types.Type;
 import bytecode.interfaces.IExpressionBytecodeGenerator;
+import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class Identifier implements Expression {
     public String name;
+    public String className;
+    private Type type;
 
-    public Identifier(String name) {
+    public Identifier(String name, String className) {
         this.name = name;
+        this.className = className;
+    }
+
+    // ← Getter für den Namen
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -19,6 +28,14 @@ public class Identifier implements Expression {
 
     @Override
     public Type resolveType(ITypeResolver resolver) {
-        return resolver.resolve(this);
+        return null;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public Type getType() {
+        return type;
     }
 }

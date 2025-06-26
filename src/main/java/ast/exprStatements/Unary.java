@@ -3,10 +3,10 @@ package ast.exprStatements;
 import ast.Expression;
 import ast.Operator;
 import ast.Statement;
-import ast.types.ITypeResolver;
-import ast.types.Type;
 import bytecode.interfaces.IExpressionBytecodeGenerator;
 import bytecode.interfaces.IStatementBytecodeGenerator;
+import ast.types.ITypeResolver;
+import ast.types.Type;
 
 public class Unary implements Expression, Statement {
     public Operator operator;
@@ -18,15 +18,13 @@ public class Unary implements Expression, Statement {
     }
 
     @Override
-    public void accept(IStatementBytecodeGenerator visitor) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'accept'");
+    public void accept(IExpressionBytecodeGenerator visitor) {
+        visitor.visitUnary(this);
     }
 
     @Override
-    public void accept(IExpressionBytecodeGenerator visitor) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'accept'");
+    public void accept(IStatementBytecodeGenerator visitor) {
+        visitor.visitUnary(this);
     }
 
     @Override
