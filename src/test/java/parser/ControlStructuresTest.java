@@ -225,6 +225,11 @@ class IfElseParsingTest {
         Class cls = program.classes.get(0);
         Method m = cls.methods.get(0);
 
+        // Debugging output
+        System.out.println("Method statements: " + m.statement);
+        assertNotNull(m.statement, "Method statements should not be null");
+
+
         assertTrue(m.statement.get(0) instanceof LocalVarDecl);
         assertTrue(m.statement.get(1) instanceof While, "Zweite Anweisung muss While sein");
         While w = (While) m.statement.get(1);

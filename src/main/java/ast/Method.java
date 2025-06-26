@@ -1,5 +1,6 @@
 package ast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ast.types.Type;
@@ -19,6 +20,7 @@ public class Method {
         this.staticFlag = staticFlag;
     }
     public Method(){
-        
+        this.parameters = new ArrayList<>();
+        this.statement = new ArrayList<>();
     }
 }
