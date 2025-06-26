@@ -52,7 +52,6 @@ Folgende Features werden von dem EHCompiler untestützt
 - Arithmetische (+, -, *, /)
 - Boolsche (&&, ||, !, ==, >=, <=, <, >)
 - Unäre (++, --)
-- String Konkatination
 - Zuweisung
 
 ### Statments
