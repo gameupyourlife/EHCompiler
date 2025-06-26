@@ -30,5 +30,5 @@ public class New implements Expression, Statement {
     public Type resolveType(ITypeResolver resolver) {
         return resolver.resolve(this);
     }
-    
+
 }

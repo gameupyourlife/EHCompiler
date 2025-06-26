@@ -1,9 +1,17 @@
 package ast.types;
 
-import ast.exprStatements.*;
+import ast.exprStatements.New;
+import ast.exprStatements.Unary;
 import ast.expressions.*;
+import org.example.context.Context;
 
 public class TypeResolver implements ITypeResolver {
+
+    private final Context ctx;
+
+    public TypeResolver(Context ctx) {
+        this.ctx = ctx;
+    }
 
     @Override
     public Type resolve(BooleanConst expr) {
@@ -27,7 +35,11 @@ public class TypeResolver implements ITypeResolver {
 
     @Override
     public Type resolve(Identifier expr) {
-        return Type.UNKNOWN;
+        Type t = ctx.lookupVariable(expr.getName());
+        if (t == null) {
+            throw new RuntimeException("Unbekannte Variable: " + expr.getName());
+        }
+        return t;
     }
 
     @Override

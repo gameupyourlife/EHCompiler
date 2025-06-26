@@ -4,12 +4,18 @@ import ast.Expression;
 import ast.types.ITypeResolver;
 import ast.types.Type;
 import bytecode.interfaces.IExpressionBytecodeGenerator;
+import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class BooleanLiteral implements Expression {
     public boolean value;
     
     public BooleanLiteral(boolean value) {
         this.value = value;
+    }
+
+    @Override
+    public void accept(IStatementBytecodeGenerator visitor) {
+
     }
 
     @Override

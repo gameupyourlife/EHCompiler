@@ -5,6 +5,7 @@ import ast.Operator;
 import ast.types.ITypeResolver;
 import ast.types.Type;
 import bytecode.interfaces.IExpressionBytecodeGenerator;
+import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class Binary implements Expression {
     public Operator operator;
@@ -23,7 +24,13 @@ public class Binary implements Expression {
     }
 
     @Override
+    public void accept(IStatementBytecodeGenerator visitor) {
+
+    }
+
+    @Override
     public void accept(IExpressionBytecodeGenerator visitor) {
         visitor.visitBinary(this);
     }
+
 }

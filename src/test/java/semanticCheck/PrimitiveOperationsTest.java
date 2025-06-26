@@ -126,7 +126,8 @@ class ArithmeticBinarySemanticTest {
         Method m = new Method(
                 Type.BOOLEAN,
                 name,
-                List.of(new ast.Parameter(Type.BOOLEAN, "a")),
+                List.of(new ast.Parameter(Type.BOOLEAN, "a"),
+                        new ast.Parameter(Type.BOOLEAN, "b")),
                 List.of(new Return(expr)),
                 false);
         Class cls = new Class("BooleanLogic");
