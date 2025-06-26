@@ -9,11 +9,6 @@ import bytecode.interfaces.IStatementBytecodeGenerator;
 public class EmptyExpression implements Expression {
 
     @Override
-    public void accept(IStatementBytecodeGenerator visitor) {
-
-    }
-
-    @Override
     public void accept(IExpressionBytecodeGenerator visitor) {
         visitor.visitEmptyExpression(this);
     }

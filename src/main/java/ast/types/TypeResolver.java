@@ -1,5 +1,6 @@
 package ast.types;
 
+import ast.exprStatements.MethodCall;
 import ast.exprStatements.New;
 import ast.exprStatements.Unary;
 import ast.expressions.*;
@@ -102,7 +103,6 @@ public class TypeResolver implements ITypeResolver {
             case LESS_THAN, LESS_THAN_OR_EQUAL, GREATER_THAN, GREATER_THAN_OR_EQUAL:
                 if (leftType == Type.INT && rightType == Type.INT)
                     return Type.BOOLEAN;
-                break;
             default:
                 return Type.UNKNOWN;
         }

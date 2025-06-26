@@ -8,6 +8,7 @@ import ast.types.Type;
 import ast.types.TypeResolver;
 import bytecode.visitors.ExpressionBytecodeGenerator;
 import bytecode.visitors.StatementBytecodeGenerator;
+import org.example.context.Context;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -47,7 +48,7 @@ public class ByteCodeGenerator {
             cw = generateBytecodeStandardConstructor(cw, currentClass);
 
             //generate methods
-            cw = generateBytecodeMethods(cw, currentClass.methods, classes);
+            cw = generateBytecodeMethods(cw, currentClass.methods, classes, program);
             cw.visitEnd();
 
             byte[] classBytes = cw.toByteArray();
@@ -113,7 +114,10 @@ public class ByteCodeGenerator {
         return cw;
     }
 
-    public ClassWriter generateBytecodeMethods(ClassWriter cw, List<Method> methods, List<Class> classes) {
+    public ClassWriter generateBytecodeMethods(ClassWriter cw, List<Method> methods, List<Class> classes, Program program) {
+        final Context ctx = new Context(program);
+
+
         if (methods.isEmpty()) {
             return cw;
         }
@@ -131,7 +135,7 @@ public class ByteCodeGenerator {
                 context.declareVariable(p.name);
             }
 
-            TypeResolver resolver = new TypeResolver();
+            TypeResolver resolver = new TypeResolver(ctx);
             ExpressionBytecodeGenerator ex = new ExpressionBytecodeGenerator(mv, context, resolver);
             StatementBytecodeGenerator gen = new StatementBytecodeGenerator(ex, mv, context, resolver);
 

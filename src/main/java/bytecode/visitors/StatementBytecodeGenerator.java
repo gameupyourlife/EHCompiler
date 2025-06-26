@@ -1,10 +1,31 @@
 package bytecode.visitors;
 
+import ast.*;
+import ast.Class;
+import ast.exprStatements.Assign;
+import ast.exprStatements.MethodCall;
+import ast.exprStatements.New;
+import ast.exprStatements.Unary;
+import ast.expressions.Identifier;
 import ast.statements.*;
+import ast.types.ClassResolver;
+import ast.types.Type;
+import ast.types.TypeResolver;
+import bytecode.VarContext;
 import bytecode.interfaces.IStatementBytecodeGenerator;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
+
     private final ExpressionBytecodeGenerator generator;
+    private final MethodVisitor mv;
+    private final VarContext context;
+    private final TypeResolver resolver;
 
     public StatementBytecodeGenerator(
             ExpressionBytecodeGenerator generator,
@@ -16,6 +37,7 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
         this.context = context;
         this.resolver = resolver;
     }
+
 
     @Override
     public void visitBlock(Block stmt) {

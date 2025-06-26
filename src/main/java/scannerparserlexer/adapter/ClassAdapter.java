@@ -4,7 +4,7 @@ import ast.Class;
 import ast.Constructor;
 import ast.Field;
 import ast.Method;
-import scannerparserlexer.parser.ASTParser;
+import parser.ASTParser;
 
 import java.util.ArrayList;
 import java.util.List;

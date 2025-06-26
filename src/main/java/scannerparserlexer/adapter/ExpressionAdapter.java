@@ -6,7 +6,7 @@ import ast.exprStatements.Assign;
 import ast.exprStatements.MethodCall;
 import ast.exprStatements.Unary;
 import ast.expressions.Binary;
-import scannerparserlexer.parser.ASTParser;
+import parser.ASTParser;
 
 public class ExpressionAdapter {
     public static Expression adapt(ASTParser.ExpressionContext ctx) {
@@ -59,7 +59,7 @@ public class ExpressionAdapter {
     
     private static Expression adaptPrimary(ASTParser.PrimaryContext ctx) {
     if (ctx.Identifier() != null) {
-        return new ast.expressions.Identifier(ctx.Identifier().getText());
+        return new ast.expressions.Identifier(ctx.Identifier().getText(), null);
     }
     else if (ctx.literal() != null) {
         return adaptLiteral(ctx.literal());

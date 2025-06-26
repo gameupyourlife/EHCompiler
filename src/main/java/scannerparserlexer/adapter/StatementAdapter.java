@@ -3,7 +3,7 @@ package scannerparserlexer.adapter;
 import ast.Expression;
 import ast.Statement;
 import ast.statements.*;
-import scannerparserlexer.parser.ASTParser;
+import parser.ASTParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,20 +77,26 @@ public class StatementAdapter {
     private static Statement adaptFor(ASTParser.ForStmtContext ctx) {
     For forStmt = new For();
 
-    // --- 1) Init (ctx.forInit() statt ctx.localVariableDeclaration())
     ASTParser.ForInitContext initCtx = ctx.forInit();
     if (initCtx != null) {
         if (initCtx.localVarDecl() != null) {
             ASTParser.LocalVarDeclContext lv = initCtx.localVarDecl();
+            LocalVarDecl decl = new LocalVarDecl();
+            decl.type = TypeAdapter.adapt(lv.type());
+            decl.name = lv.Identifier().getText();
             if (lv.expression() != null) {
-                forStmt.init = ExpressionAdapter.adapt(lv.expression());
+                decl.init = ExpressionAdapter.adapt(lv.expression());
             }
+            forStmt.init = decl;
         } else if (initCtx.expressionList() != null) {
-            forStmt.init = ExpressionAdapter.adapt(initCtx.expressionList().expression(0));
+            Expression expr = ExpressionAdapter.adapt(
+                    initCtx.expressionList().expression(0)
+            );
+            forStmt.init = new ExpressionStatement(expr);
         }
     }
 
-    if (ctx.expression().size() > 0) {
+    if (!ctx.expression().isEmpty()) {
         forStmt.condition = ExpressionAdapter.adapt(ctx.expression(0));
     }
 
