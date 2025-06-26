@@ -53,29 +53,13 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
     }
 
     @Override
-    public void visitBreak(Break stmt) {
-        // label nötig
-    }
-
-    @Override
-    public void visitContinue(Continue stmt) {
-        // label nötig
-    }
-
-    @Override
     public void visitDoWhile(DoWhile stmt) {
         Label start = new Label();
         Label condition = new Label();
         Label end = new Label();
 
         mv.visitLabel(start);
-        context.enterScope();
-        try {
-            stmt.statement.accept(this);
-        } finally {
-            context.leaveScope();
-        }
-
+        stmt.statement.accept(this);
 
         mv.visitLabel(condition);
         stmt.condition.accept(generator);
@@ -103,12 +87,7 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
         mv.visitJumpInsn(Opcodes.GOTO, check);
 
         mv.visitLabel(start);
-        context.enterScope();
-        try {
-            stmt.statement.accept(this);
-        } finally {
-            context.leaveScope();
-        }
+        stmt.statement.accept(this);
 
         if (stmt.update != null) {
             stmt.update.accept(generator);
@@ -133,23 +112,13 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
         stmt.condition.accept(generator);
         mv.visitJumpInsn(Opcodes.IFEQ, elseLabel);
 
-        context.enterScope();
-        try {
-            stmt.thenStatement.accept(this);
-        } finally {
-            context.leaveScope();
-        }
+        stmt.thenStatement.accept(this);
 
         mv.visitJumpInsn(Opcodes.GOTO, end);
 
         mv.visitLabel(elseLabel);
         if (stmt.elseStatement != null) {
-            context.enterScope();
-            try {
-                stmt.elseStatement.accept(this);
-            } finally {
-                context.leaveScope();
-            }
+            stmt.elseStatement.accept(this);
         }
 
         mv.visitLabel(end);
@@ -204,12 +173,7 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
 
         mv.visitJumpInsn(Opcodes.IFEQ, end);
 
-        context.enterScope();
-        try {
-            stmt.statement.accept(this);
-        } finally {
-            context.leaveScope();
-        }
+        stmt.statement.accept(this);
 
         mv.visitJumpInsn(Opcodes.GOTO, start);
 
@@ -256,7 +220,7 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
 
         ClassResolver classResolver = new ClassResolver(resolver);
 
-        Type returnType = stmt.target.resolveType(resolver);
+        Type returnType = stmt.resolveType(resolver);
         String owner = classResolver.resolveClassName(stmt.target);
         String descriptor = classResolver.makeMethodDescriptor(returnType, argTypes, owner);
 
@@ -287,5 +251,23 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
         if (op == Operator.UMINUS || op == Operator.NEGATE) {
             mv.visitInsn(Opcodes.POP);
         }
+    }
+
+    @Override
+    public void visitPrintLnStatement(PrintlnStatement printlnStatement) {
+
+        Type type = printlnStatement.expression.resolveType(resolver);
+        ClassResolver classResolver = new ClassResolver(resolver);
+
+        String descriptor = classResolver.getTypeDescriptor(type, "");
+
+        mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+        printlnStatement.expression.accept(generator);
+        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println", "("+ descriptor + ")V", false);
+    }
+
+    @Override
+    public void visitPrintStatement(PrintStatement printStatement) {
+
     }
 }

@@ -8,6 +8,6 @@ public class Break implements Statement {
 
     @Override
     public void accept(IStatementBytecodeGenerator visitor) {
-        visitor.visitBreak(this);
+
     }
 }

@@ -1,5 +1,5 @@
 // Generated from C:/Users/meist/OneDrive/STUDIUM/DHBW/4.Semester/Compilerbau/EHCompiler/src/main/java/scannerparserlexer/AST.g4 by ANTLR 4.13.2
-package parser;
+package scannerparserlexer.parser;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 /**

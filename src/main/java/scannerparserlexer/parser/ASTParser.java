@@ -1,10 +1,13 @@
 // Generated from C:/Users/meist/OneDrive/STUDIUM/DHBW/4.Semester/Compilerbau/EHCompiler/src/main/java/scannerparserlexer/AST.g4 by ANTLR 4.13.2
-package parser;
+package scannerparserlexer.parser;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.*;
 import org.antlr.v4.runtime.tree.*;
+import scannerparserlexer.parser.ASTListener;
+import scannerparserlexer.parser.ASTVisitor;
+
 import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -132,7 +135,7 @@ public class ASTParser extends Parser {
 		@Override public int getRuleIndex() { return RULE_program; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof ASTListener ) ((ASTListener)listener).enterProgram(this);
+			if ( listener instanceof ASTListener) ((ASTListener)listener).enterProgram(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
@@ -140,7 +143,7 @@ public class ASTParser extends Parser {
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof ASTVisitor ) return ((ASTVisitor<? extends T>)visitor).visitProgram(this);
+			if ( visitor instanceof ASTVisitor) return ((ASTVisitor<? extends T>)visitor).visitProgram(this);
 			else return visitor.visitChildren(this);
 		}
 	}
