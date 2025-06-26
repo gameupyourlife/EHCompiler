@@ -47,12 +47,22 @@ block
     : '{' statement* '}'
     ;
 
+forInit
+    : localVarDecl
+    | expressionList
+    ;
+
+localVarDecl
+    : type Identifier ('=' expression)?
+    ;
+
+
 statement
     : block                                                       # blockStmt
     | 'if' '(' expression ')' statement ('else' statement)?       # ifStmt
     | 'while' '(' expression ')' statement                        # whileStmt
     | 'do' statement 'while' '(' expression ')' ';'               # doWhileStmt
-    | 'for' '(' expression ';' expression ';' expression ')' statement  # forStmt
+    | 'for' '(' forInit? ';' expression? ';' expression? ')' statement      # forStmt
     | 'return' expression? ';'                                    # returnStmt
     | 'break' ';'                                                 # breakStmt
     | 'continue' ';'                                              # continueStmt

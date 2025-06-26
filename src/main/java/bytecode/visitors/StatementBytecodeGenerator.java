@@ -70,4 +70,18 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
     public void visitWhile(While stmt) {
 
     }
+
+
+    @Override
+    public void visitPrintStatementln(PrintlnStatement printlnStatement) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'visitPrintStatementln'");
+    }
+
+
+    @Override
+    public void visitPrintStatement(PrintStatement printStatement) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'visitPrintStatement'");
+    }
 }
