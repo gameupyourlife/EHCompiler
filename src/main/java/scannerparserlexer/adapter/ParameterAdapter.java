@@ -1,7 +1,7 @@
 package scannerparserlexer.adapter;
 
 import ast.Parameter;
-import scannerparserlexer.parser.ASTParser;
+import parser.ASTParser;
 
 public class ParameterAdapter {
     public static Parameter adapt(ASTParser.FormalParameterContext ctx) {

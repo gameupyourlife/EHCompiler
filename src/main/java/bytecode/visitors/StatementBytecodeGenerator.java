@@ -70,4 +70,14 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
     public void visitWhile(While stmt) {
 
     }
+
+    @Override
+    public void visitPrintStatementln(PrintlnStatement printlnStatement) {
+
+    }
+
+    @Override
+    public void visitPrintStatement(PrintStatement printStatement) {
+
+    }
 }

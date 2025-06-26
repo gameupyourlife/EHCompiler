@@ -1,5 +1,3 @@
-package JavaTestFiles.ControlStructures;
-
 class DoWhile {
     private void doWhile() {
         int i = 0;

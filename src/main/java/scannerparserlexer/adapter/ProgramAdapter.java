@@ -1,7 +1,7 @@
 package scannerparserlexer.adapter;
 
 import ast.Program;
-import scannerparserlexer.parser.ASTParser;
+import parser.ASTParser;
 
 public class ProgramAdapter {
     public static Program adapt(ASTParser.ProgramContext ctx) {
