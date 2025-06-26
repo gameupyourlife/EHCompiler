@@ -2,7 +2,9 @@ package org.example.semantic;
 
 import ast.*;
 import ast.Class;
+import ast.Expression;
 import ast.exprStatements.Unary;
+import ast.exprStatements.MethodCall;
 import ast.statements.ExpressionStatement;
 import ast.statements.LocalVarDecl;
 import ast.statements.Return;
@@ -21,6 +23,7 @@ import ast.statements.Continue;
 import org.example.context.Context;
 import org.example.semantic.exceptions.semanticError;
 import org.example.visitor.semanticVisitor;
+import org.example.context.Context;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -285,14 +288,14 @@ public class semanticCheck implements semanticVisitor {
             if (loopDepth == 0) {
                 errors.add(new semanticError("Break außerhalb einer Schleife"));
                 return new typeCheckResult(false, stmt);
-                }
+            }
             return new typeCheckResult(valid, stmt);
         }
         if (stmt instanceof Continue) {
             if (loopDepth == 0) {
                 errors.add(new semanticError("Continue außerhalb einer Schleife"));
                 return new typeCheckResult(false, stmt);
-                }
+            }
             return new typeCheckResult(valid, stmt);
         }
 
@@ -405,6 +408,7 @@ public class semanticCheck implements semanticVisitor {
     }
 
     public Type evaluateExpressionType(Expression expr) {
+
         if (expr instanceof ast.expressions.Identifier) {
             String name = ((ast.expressions.Identifier) expr).name;
             Type t = context.lookupVariable(name);
@@ -440,7 +444,6 @@ public class semanticCheck implements semanticVisitor {
                 errors.add(new semanticError("Variable '" + id.name + "' nicht deklariert"));
                 return null;
             }
-            id.setType(varType);
             return varType;
         }
 
@@ -502,8 +505,8 @@ public class semanticCheck implements semanticVisitor {
         }
 
         // Method-Calls
-        if (expr instanceof ast.exprStatements.MethodCall) {
-            ast.exprStatements.MethodCall call = (ast.exprStatements.MethodCall) expr;
+        if (expr instanceof MethodCall) {
+            MethodCall call = (MethodCall) expr;
             Type targetType = evaluateExpressionType(call.target);
             if (targetType == null) {
                 errors.add(new semanticError(
@@ -542,6 +545,7 @@ public class semanticCheck implements semanticVisitor {
                             "Unary operator 'UMINUS' erfordert INT operand, aber gefunden: " + operand));
                     return null;
                 }
+
                 return Type.INT;
             }
             // Prä-/Post-Inkrement, -Dekrement

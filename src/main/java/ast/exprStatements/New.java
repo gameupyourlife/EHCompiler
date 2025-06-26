@@ -9,6 +9,7 @@ import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class New implements Expression, Statement {
     public String objectName;
+    public Type type;
 
     public New(String objectName) {
         this.objectName = objectName;
@@ -30,5 +31,5 @@ public class New implements Expression, Statement {
     public Type resolveType(ITypeResolver resolver) {
         return resolver.resolve(this);
     }
-    
+
 }

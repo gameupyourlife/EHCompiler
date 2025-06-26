@@ -11,23 +11,70 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Context {
-    private Program program;
-    private final Deque<Map<String, Type>> scopes = new ArrayDeque<>();
+    private final Program program;
 
-    private final Deque<String> classStack = new ArrayDeque<>();
+    // lokale Scopes für Variablen und Parameter
+    private final Deque<Map<String, Type>> variableScopes = new ArrayDeque<>();
+
+    // Felder je Klasse
     private final Map<String, Map<String, Type>> classFields = new HashMap<>();
+
+    // Stack, um aktuellen Klassennamen zu wissen
+    private final Deque<String> classStack = new ArrayDeque<>();
 
     public Context(Program program) {
         this.program = program;
-        // globaler Scope
-        this.scopes.push(new HashMap<>());
+        // globaler Scope initialisieren
+        this.variableScopes.push(new HashMap<>());
     }
 
+    // === Klassen-Kontext ===
+    public void enterClass(String className) {
+        classStack.push(className);
+    }
+
+    public void exitClass() {
+        classStack.pop();
+    }
+
+    private String getCurrentClassName() {
+        return classStack.peek();
+    }
+
+    // === Scopes verwalten ===
+    public void enterScope() {
+        variableScopes.push(new HashMap<>());
+    }
+
+    public void exitScope() {
+        variableScopes.pop();
+    }
+
+    public boolean declareVariable(String name, Type type) {
+        Map<String, Type> current = variableScopes.peek();
+        if (current.containsKey(name)) {
+            return false;
+        }
+        current.put(name, type);
+        return true;
+    }
+
+    // === lookupVariable: lokale Variable oder Feld ===
+    public Type lookupVariable(String name) {
+        // 1) lokale Scopes
+        for (Map<String, Type> scope : variableScopes) {
+            if (scope.containsKey(name)) {
+                return scope.get(name);
+            }
+        }
+        // 2) Feld der aktuellen Klasse
+        return lookupField(name);
+    }
+
+    // === Felder auflösen ===
     public Type lookupField(String name) {
         String cls = getCurrentClassName();
-        if (cls == null) {
-            return null;
-        }
+        if (cls == null) return null;
         Map<String, Type> fields = classFields.get(cls);
         if (fields != null && fields.containsKey(name)) {
             return fields.get(name);
@@ -41,51 +88,22 @@ public class Context {
                 .put(fieldName, type);
     }
 
-    private String getCurrentClassName() {
-        return classStack.peek();
+    // === Hilfs­methoden ===
+    public boolean typeExists(Type type) {
+        return type != null;
     }
 
     public Program getProgram() {
         return program;
     }
 
-    public boolean typeExists(Type type) {
-        return type != null;
-    }
-
-    public void enterClass(String className) {
-        classStack.push(className);
-    }
-
-    public void exitClass() {
-        classStack.pop();
-    }
-
-    public void enterScope() {
-        scopes.push(new HashMap<>());
-    }
-
-    public void exitScope() {
-        scopes.pop();
-    }
-
-    public boolean declareVariable(String name, Type type) {
-        Map<String, Type> current = scopes.peek();
-        if (current.containsKey(name)) {
-            return false;
-        }
-        current.put(name, type);
-        return true;
-    }
-
     public Method findMethod(Type type, String methodName) {
-        ast.Class cls = findClassByType(type);
-        if (cls == null || cls.methods == null) {
-            return null;
-        }
-        for (Method method : cls.methods) {
-            if (method.name.equals(methodName)) {
-                return method;
+        if (type == null || methodName == null) return null;
+        Class cls = findClassByType(type);
+        if (cls == null || cls.methods == null) return null;
+        for (Method m : cls.methods) {
+            if (m.name.equals(methodName)) {
+                return m;
             }
         }
         return null;
@@ -93,15 +111,12 @@ public class Context {
 
     private Class findClassByType(Type type) {
         if (type == null) return null;
-
-        String typeName = type.name(); // z.B. INT, BOOLEAN, MyClass
-
-        for (Class cls : program.classes) {
-            if (cls.name.equalsIgnoreCase(typeName)) {
-                return cls;
+        String typeName = type.name();  // z.B. "INT", "MyClass"
+        for (Class c : program.classes) {
+            if (c.name.equalsIgnoreCase(typeName)) {
+                return c;
             }
         }
-
         return null;
     }
 }

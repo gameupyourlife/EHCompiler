@@ -1,6 +1,7 @@
 package ast.types;
 
-import ast.exprStatements.*;
+import ast.exprStatements.New;
+import ast.exprStatements.Unary;
 import ast.expressions.*;
 import org.example.context.Context;
 
@@ -38,7 +39,6 @@ public class TypeResolver implements ITypeResolver {
         if (t == null) {
             throw new RuntimeException("Unbekannte Variable: " + expr.getName());
         }
-        expr.setType(t);
         return t;
     }
 

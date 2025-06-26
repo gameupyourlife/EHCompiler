@@ -11,6 +11,7 @@ import bytecode.interfaces.IStatementBytecodeGenerator;
 public class Unary implements Expression, Statement {
     public Operator operator;
     public Expression expression;
+    public Type type;
 
     public Unary(Operator operator, Expression expression) {
         this.operator = operator;
