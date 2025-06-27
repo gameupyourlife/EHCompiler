@@ -19,4 +19,8 @@ class ArithmeticOps {
     int modulus(int a, int b) {
         return a % b;
     }
+
+    int complexOperation(int a, int b, int c) {
+        return (a + b) * c - (a / b);
+    }
 }
