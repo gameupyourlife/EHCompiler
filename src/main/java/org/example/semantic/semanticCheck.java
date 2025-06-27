@@ -3,8 +3,10 @@ package org.example.semantic;
 import ast.*;
 import ast.Class;
 import ast.Expression;
+import ast.exprStatements.Assign;
 import ast.exprStatements.Unary;
 import ast.exprStatements.MethodCall;
+import ast.expressions.*;
 import ast.statements.ExpressionStatement;
 import ast.statements.LocalVarDecl;
 import ast.statements.Return;
@@ -12,10 +14,6 @@ import ast.statements.If;
 import ast.statements.While;
 import ast.statements.For;
 import ast.statements.DoWhile;
-import ast.expressions.Identifier;
-import ast.expressions.Binary;
-import ast.expressions.BooleanConst;
-import ast.expressions.IntConst;
 import ast.Operator;
 import ast.types.Type;
 import ast.statements.Break;
@@ -247,6 +245,22 @@ public class semanticCheck implements semanticVisitor {
 
     public typeCheckResult typeCheck(Statement stmt, Type expectedReturnType) {
         boolean valid = true;
+
+        if (stmt instanceof Assign) {
+            Assign as = (Assign) stmt;
+            Type target = evaluateExpressionType(as.target);
+            Type value = evaluateExpressionType(as.value);
+            if (target == null || value == null) {
+                return null;
+            }
+            if (!target.equals(value)) {
+                errors.add(new semanticError(
+                        "Assignment-Typ-Mismatch: erwartet " + target + ", aber erhalten: " + value));
+                return null;
+            }
+            return new typeCheckResult(true, stmt);
+        }
+
         if (stmt instanceof LocalVarDecl) {
             LocalVarDecl decl = (LocalVarDecl) stmt;
             if (!context.typeExists(decl.type)) {
@@ -413,6 +427,25 @@ public class semanticCheck implements semanticVisitor {
 
     public Type evaluateExpressionType(Expression expr) {
 
+        if (expr instanceof EmptyExpression) {
+            return Type.VOID;
+        }
+
+        if (expr instanceof Assign) {
+            Assign as = (Assign) expr;
+            Type target = evaluateExpressionType(as.target);
+            Type value = evaluateExpressionType(as.value);
+            if (target == null || value == null) {
+                return null;
+            }
+            if (!target.equals(value)) {
+                errors.add(new semanticError(
+                        "Assignment-Typ-Mismatch: erwartet " + target + ", aber erhalten: " + value));
+                return null;
+            }
+            return target;
+        }
+
         if (expr instanceof ast.expressions.Identifier) {
             String name = ((ast.expressions.Identifier) expr).name;
             Type t = context.lookupVariable(name);
@@ -433,7 +466,7 @@ public class semanticCheck implements semanticVisitor {
         if (expr instanceof ast.expressions.Null) {
             return null;
         }
-        if (expr instanceof BooleanConst) {
+        if (expr instanceof BooleanConst || expr instanceof BooleanLiteral) {
             return Type.BOOLEAN;
         }
         if (expr instanceof IntConst) {

@@ -312,16 +312,7 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
     }
 
     @Override
-    public void visit(ExpressionStatement expressionStatement) {
-
-    }
-
-    @Override
     public void visitExpressionStatement(ExpressionStatement stmt) {
         stmt.expression.accept(generator);
-
-        if (stmt.expression.resolveType(resolver) != Type.VOID) {
-            mv.visitInsn(Opcodes.POP);
-        }
     }
 }

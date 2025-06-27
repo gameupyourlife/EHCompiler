@@ -31,7 +31,6 @@ public class VarContext {
             System.out.println("Verfügbare Variablen: " + localVarTable.keySet());
             throw new RuntimeException("Variable not declared: " + varName);
         }
-        System.out.println("Variable " + varName + " hat Index: " + index);
         return index;
     }
 

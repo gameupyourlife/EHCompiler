@@ -24,8 +24,5 @@ public interface IStatementBytecodeGenerator {
     void visitUnary(Unary stmt);
     void visitPrintLnStatement(PrintlnStatement printlnStatement);
     void visitPrintStatement(PrintStatement printStatement);
-
-    void visit(ExpressionStatement expressionStatement);
-
-    void visitExpressionStatement(ExpressionStatement stmt);
+    void visitExpressionStatement(ExpressionStatement expressionStatement);
 }
