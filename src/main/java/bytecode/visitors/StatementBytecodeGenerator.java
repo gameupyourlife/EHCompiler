@@ -154,7 +154,7 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
             Type type;
             if (stmt.expression instanceof Identifier) {
                 type = ((Identifier) stmt.expression).getType();
-            }else {
+            } else {
                 type = stmt.expression.resolveType(resolver);
             }
 
@@ -303,11 +303,25 @@ public class StatementBytecodeGenerator implements IStatementBytecodeGenerator {
 
         mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
         printlnStatement.expression.accept(generator);
-        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println", "("+ descriptor + ")V", false);
+        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println", "(" + descriptor + ")V", false);
     }
 
     @Override
     public void visitPrintStatement(PrintStatement printStatement) {
 
+    }
+
+    @Override
+    public void visit(ExpressionStatement expressionStatement) {
+
+    }
+
+    @Override
+    public void visitExpressionStatement(ExpressionStatement stmt) {
+        stmt.expression.accept(generator);
+
+        if (stmt.expression.resolveType(resolver) != Type.VOID) {
+            mv.visitInsn(Opcodes.POP);
+        }
     }
 }

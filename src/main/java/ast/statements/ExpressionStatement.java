@@ -6,7 +6,7 @@ import bytecode.interfaces.IStatementBytecodeGenerator;
 
 public class ExpressionStatement implements Statement {
     public Expression expression;
-    
+
     public ExpressionStatement(Expression expression) {
         this.expression = expression;
     }
@@ -14,6 +14,6 @@ public class ExpressionStatement implements Statement {
 
     @Override
     public void accept(IStatementBytecodeGenerator visitor) {
-
+        visitor.visit(this);
     }
 }

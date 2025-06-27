@@ -1,5 +1,5 @@
 package scannerparserlexer;
-
+import scannerparserlexer.parser.ASTLexer;
 import ast.Program;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
