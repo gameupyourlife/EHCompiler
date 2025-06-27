@@ -199,28 +199,35 @@ class ControlStructuresTest {
         assertTrue(w.statement instanceof Block, "Body muss ein Block sein");
         Block body = (Block) w.statement;
         assertEquals(1, body.statements.size(), "Body muss genau eine Anweisung enthalten");
-        assertTrue(body.statements.get(0) instanceof Unary, "Body-Anweisung muss Unary sein");
-        Unary inc = (Unary) body.statements.get(0);
-        assertEquals(Operator.INCREMENT, inc.operator, "Operator muss '++' sein");
-        assertTrue(inc.expression instanceof Identifier, "Expression muss Identifier sein");
-        assertEquals("i", ((Identifier) inc.expression).name, "Identifier muss 'i' sein");
-    }
+
+     assertTrue(body.statements.get(0) instanceof ExpressionStatement, "Body-Anweisung muss ExpressionStatement sein");
+
+     ExpressionStatement stmt = (ExpressionStatement) body.statements.get(0);
+
+     assertTrue(stmt.expression instanceof Unary, "Expression in ExpressionStatement muss Unary sein");
+
+     Unary inc = (Unary) stmt.expression;
+     assertEquals(Operator.INCREMENT, inc.operator, "Operator muss '++' sein");
+     assertTrue(inc.expression instanceof Identifier, "Expression muss Identifier sein");
+     assertEquals("i", ((Identifier) inc.expression).name, "Identifier muss 'i' sein");
+
+ }
 
     @Test
     void testParseNestedWhileLoop() throws Exception {
         String src =
-            "class WhileLoop {" +
-            "  void nestedWhileLoop() {" +
-            "    int i = 0;" +
-            "    while (i < 5) {" +
-            "      int j = 0;" +
-            "      while (j < 3) {" +
-            "        j++;" +
-            "      }" +
-            "      i++;" +
-            "    }" +
-            "  }" +
-            "}";
+                "class WhileLoop {" +
+                        "  void nestedWhileLoop() {" +
+                        "    int i = 0;" +
+                        "    while (i < 5) {" +
+                        "      int j = 0;" +
+                        "      while (j < 3) {" +
+                        "        j++;" +
+                        "      }" +
+                        "      i++;" +
+                        "    }" +
+                        "  }" +
+                        "}";
         Program program = ScannerParserLexer.parse(src);
         assertNotNull(program);
         Class cls = program.classes.get(0);
@@ -241,15 +248,23 @@ class ControlStructuresTest {
         Binary cond = (Binary) inner.condition;
         assertEquals(3, ((IntConst) cond.right).value, "Rechter Wert muss 3 sein");
         Block innerBody = (Block) inner.statement;
-        assertTrue(innerBody.statements.get(0) instanceof Unary, "Innerer Body muss Unary sein");
-        assertEquals(Operator.INCREMENT, ((Unary) innerBody.statements.get(0)).operator,
-                     "Operator muss '++' sein");
 
-        assertTrue(outerBody.statements.get(2) instanceof Unary, "Dritte Anweisung muss Unary sein");
+        // Prüfung auf ExpressionStatement statt direkt Unary
+        assertTrue(innerBody.statements.get(0) instanceof ExpressionStatement, "Innerer Body muss ExpressionStatement sein");
+        ExpressionStatement innerExprStmt = (ExpressionStatement) innerBody.statements.get(0);
+        assertTrue(innerExprStmt.expression instanceof Unary, "Expression muss Unary sein");
+        assertEquals(Operator.INCREMENT, ((Unary) innerExprStmt.expression).operator,
+                "Operator muss '++' sein");
+
+        assertTrue(outerBody.statements.get(2) instanceof ExpressionStatement, "Dritte Anweisung muss ExpressionStatement sein");
+        ExpressionStatement outerExprStmt = (ExpressionStatement) outerBody.statements.get(2);
+        assertTrue(outerExprStmt.expression instanceof Unary, "Expression muss Unary sein");
         assertEquals(Operator.INCREMENT,
-                     ((Unary) outerBody.statements.get(2)).operator,
-                     "Operator muss '++' sein");
+                ((Unary) outerExprStmt.expression).operator,
+                "Operator muss '++' sein");
     }
+
+
 
     @Test
     void testParseBasicForLoop() throws Exception {
@@ -258,9 +273,11 @@ class ControlStructuresTest {
                 "    for (int i = 0; i < 10; i++) { }" +
                 "  }" +
                 "}";
+
         Program program = ScannerParserLexer.parse(src);
         assertNotNull(program, "Programm darf nicht null sein");
         assertEquals(1, program.classes.size(), "Es muss genau eine Klasse geben");
+
         Class cls = program.classes.get(0);
         assertEquals("ForLoop", cls.name, "Klassenname muss 'ForLoop' sein");
         assertEquals(1, cls.methods.size(), "ForLoop muss genau eine Methode haben");
@@ -274,9 +291,15 @@ class ControlStructuresTest {
         assertTrue(m.statement.get(0) instanceof For, "Anweisung muss eine For-Schleife sein");
         For f = (For) m.statement.get(0);
 
-        assertTrue(f.init instanceof IntConst, "Init muss ein IntConst sein");
-        assertEquals(0, ((IntConst) f.init).value, "Init-Wert muss 0 sein");
+        // Init prüfen
+        assertTrue(f.init instanceof LocalVarDecl, "Init muss ein LocalVarDecl sein");
+        LocalVarDecl decl = (LocalVarDecl) f.init;
+        assertEquals("i", decl.name, "Variable muss 'i' heißen");
+        assertEquals(Type.INT, decl.type, "Typ muss INT sein");
+        assertTrue(decl.init instanceof IntConst, "Initialisierung muss IntConst sein");
+        assertEquals(0, ((IntConst) decl.init).value, "Initialwert muss 0 sein");
 
+        // Condition prüfen
         assertTrue(f.condition instanceof Binary, "Condition muss ein Binary sein");
         Binary cond = (Binary) f.condition;
         assertEquals(Operator.LESS_THAN, cond.operator, "Operator muss '<' sein");
@@ -285,17 +308,20 @@ class ControlStructuresTest {
         assertTrue(cond.right instanceof IntConst, "Rechte Seite muss IntConst sein");
         assertEquals(10, ((IntConst) cond.right).value, "Rechter Wert muss 10 sein");
 
+        // Update prüfen
         assertTrue(f.update instanceof Unary, "Update muss ein Unary sein");
         Unary upd = (Unary) f.update;
         assertEquals(Operator.INCREMENT, upd.operator, "Operator muss '++' sein");
         assertTrue(upd.expression instanceof Identifier, "Expression muss Identifier sein");
         assertEquals("i", ((Identifier) upd.expression).name, "Identifier muss 'i' sein");
 
+        // Body prüfen
         assertTrue(f.statement instanceof Block, "Body muss ein Block sein");
         assertTrue(((Block) f.statement).statements.isEmpty(), "Block darf keine Statements enthalten");
     }
 
-      @Test
+
+    @Test
     void testParseDoWhile() throws Exception {
         String src =
             "class DoWhile {" +

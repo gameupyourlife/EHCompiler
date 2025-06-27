@@ -3,7 +3,7 @@ package scannerparserlexer.adapter;
 import ast.Expression;
 import ast.Statement;
 import ast.statements.*;
-import parser.ASTParser;
+import scannerparserlexer.parser.ASTParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,14 @@ public class StatementAdapter {
             block.statements = statements;
         }
         return block;
+    }
+
+    public static PrintlnStatement adaptPrintln(ASTParser.PrintlnStmtContext ctx) {
+        PrintlnStatement printlnStmt = new PrintlnStatement();
+        if (ctx.expression() != null) {
+            printlnStmt.expression = ExpressionAdapter.adapt(ctx.expression());
+        }
+        return printlnStmt;
     }
 
     public static Statement adapt(ASTParser.StatementContext ctx) {
@@ -45,7 +53,10 @@ public class StatementAdapter {
             return new Continue();
         } else if (ctx instanceof ASTParser.DoWhileStmtContext) {
             return adaptDoWhile((ASTParser.DoWhileStmtContext) ctx);
-        } else {
+        } else if (ctx instanceof ASTParser.PrintlnStmtContext) {
+            return adaptPrintln((ASTParser.PrintlnStmtContext) ctx);
+        } 
+        else {
             return new EmptyStatement();
         }
     }
@@ -75,39 +86,37 @@ public class StatementAdapter {
     }
 
     private static Statement adaptFor(ASTParser.ForStmtContext ctx) {
-    For forStmt = new For();
+        For forStmt = new For();
 
-    ASTParser.ForInitContext initCtx = ctx.forInit();
-    if (initCtx != null) {
-        if (initCtx.localVarDecl() != null) {
-            ASTParser.LocalVarDeclContext lv = initCtx.localVarDecl();
-            LocalVarDecl decl = new LocalVarDecl();
-            decl.type = TypeAdapter.adapt(lv.type());
-            decl.name = lv.Identifier().getText();
-            if (lv.expression() != null) {
-                decl.init = ExpressionAdapter.adapt(lv.expression());
+        ASTParser.ForInitContext initCtx = ctx.forInit();
+        if (initCtx != null) {
+            if (initCtx.localVarDecl() != null) {
+                ASTParser.LocalVarDeclContext lv = initCtx.localVarDecl();
+                LocalVarDecl decl = new LocalVarDecl();
+                decl.type = TypeAdapter.adapt(lv.type());
+                decl.name = lv.Identifier().getText();
+                if (lv.expression() != null) {
+                    decl.init = ExpressionAdapter.adapt(lv.expression());
+                }
+                forStmt.init = decl;
+            } else if (initCtx.expressionList() != null) {
+                Expression expr = ExpressionAdapter.adapt(
+                        initCtx.expressionList().expression(0));
+                forStmt.init = new ExpressionStatement(expr);
             }
-            forStmt.init = decl;
-        } else if (initCtx.expressionList() != null) {
-            Expression expr = ExpressionAdapter.adapt(
-                    initCtx.expressionList().expression(0)
-            );
-            forStmt.init = new ExpressionStatement(expr);
         }
+
+        if (!ctx.expression().isEmpty()) {
+            forStmt.condition = ExpressionAdapter.adapt(ctx.expression(0));
+        }
+
+        if (ctx.expression().size() > 1) {
+            forStmt.update = ExpressionAdapter.adapt(ctx.expression(1));
+        }
+
+        forStmt.statement = adapt(ctx.statement());
+        return forStmt;
     }
-
-    if (!ctx.expression().isEmpty()) {
-        forStmt.condition = ExpressionAdapter.adapt(ctx.expression(0));
-    }
-
-    if (ctx.expression().size() > 1) {
-        forStmt.update = ExpressionAdapter.adapt(ctx.expression(1));
-    }
-
-    forStmt.statement = adapt(ctx.statement());
-    return forStmt;
-}
-
 
     private static Statement adaptReturn(ASTParser.ReturnStmtContext ctx) {
         Return returnStmt = new Return();
@@ -132,13 +141,12 @@ public class StatementAdapter {
     }
 
     private static Statement adaptExprStmt(ASTParser.ExprStmtContext ctx) {
-    if (ctx.expression() != null) {
-        Expression expr = ExpressionAdapter.adapt(ctx.expression());
-        return new ExpressionStatement(expr); // Immer wrap in ExpressionStatement
+        if (ctx.expression() != null) {
+            Expression expr = ExpressionAdapter.adapt(ctx.expression());
+            return new ExpressionStatement(expr); // Immer wrap in ExpressionStatement
+        }
+        return new EmptyStatement();
     }
-    return new EmptyStatement();
-}
-
 
     private static Statement adaptDoWhile(ASTParser.DoWhileStmtContext ctx) {
         DoWhile doWhileStmt = new DoWhile();

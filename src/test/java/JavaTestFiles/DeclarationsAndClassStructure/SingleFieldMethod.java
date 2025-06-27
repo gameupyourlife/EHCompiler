@@ -1,3 +1,5 @@
+package JavaTestFiles.DeclarationsAndClassStructure;
+
 class SingleFieldMethod {
     int field = 42;
 

@@ -112,7 +112,7 @@ public class TypeResolver implements ITypeResolver {
                 if (leftType == Type.BOOLEAN && rightType == Type.BOOLEAN)
                     return Type.BOOLEAN;
                 else throw new UnsupportedOperationException("Operator " + expr.operator + " not supported");
-            case LESS_THAN, LESS_THAN_OR_EQUAL, GREATER_THAN, GREATER_THAN_OR_EQUAL:
+            case LESS_THAN, LESS_THAN_OR_EQUAL, GREATER_THAN, GREATER_THAN_OR_EQUAL, EQUALS, NOT_EQUALS:
                 if (leftType == Type.INT && rightType == Type.INT)
                     return Type.BOOLEAN;
             default:

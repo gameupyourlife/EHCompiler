@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Scanner;
 
 import org.example.semantic.semanticCheck;
@@ -42,20 +43,21 @@ public class Main {
 
                 var bytecodeMap = gen.generateByteCode(semanticProgram);
 
-                for (var entry : bytecodeMap.entrySet()) {
-                    String className = entry.getKey();
-                    byte[] bytecode = entry.getValue();
+                for (Map.Entry<String, byte[]> entry : bytecodeMap.entrySet()) {
+    String className = entry.getKey();      
+    byte[] bytecode = entry.getValue();
 
-                    Path outputPath = Path.of("out", className + ".class");
+    Path outputPath = Path.of("out", className + ".class");
 
-                    try {
-                        Files.createDirectories(outputPath.getParent());
-                        Files.write(outputPath, bytecode);
-                        System.out.println("Klasse geschrieben: " + outputPath.toAbsolutePath());
-                    } catch (IOException e) {
-                        System.out.println("Fehler beim Schreiben der Klasse " + className + ": " + e.getMessage());
-                    }
-                }
+    try {
+        Files.createDirectories(outputPath.getParent());
+        Files.write(outputPath, bytecode);
+        System.out.println("Klasse geschrieben: " + outputPath.toAbsolutePath());
+    } catch (IOException e) {
+        System.out.println("Fehler beim Schreiben der Klasse " + className + ": " + e.getMessage());
+    }
+}
+
 
             } catch (Exception e) {
                 System.out.println("Fehler beim Lesen der Datei: " + e.getMessage());

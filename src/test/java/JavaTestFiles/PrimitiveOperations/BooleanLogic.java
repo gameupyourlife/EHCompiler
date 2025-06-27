@@ -20,4 +20,7 @@ class BooleanLogic {
         return !(a || b);
     }
 
+    boolean complexOperation(int a, boolean b, boolean c) {
+        return ((a != 0) && b) || ((a == 0) && c);
+    }
 }
