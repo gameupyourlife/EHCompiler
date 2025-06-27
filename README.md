@@ -2,12 +2,12 @@
 Mini Java Compiler für Compilerbau INF23 DHBW Horb
 
 ## Team
-| Aufgabe              | Personen   |
-|--------------------|---|
-| parser | Oliver Ilczuk, Ayo Adeniyi |
-| Semantik | Julian Lachenmaier, Rebecca Niklaus |
-| Bytecode | Din Alomerovic |
-| Tester | Max Bantle |
+| Aufgabe              | Personen   | |
+|--------------------|---| --- |
+| parser | Oliver Ilczuk, Ayo Adeniyi | https://github.com/gameupyourlife/EHCompiler/blob/main/parser.md|   
+| Semantik | Julian Lachenmaier, Rebecca Niklaus | https://github.com/gameupyourlife/EHCompiler/blob/main/semantic.md | 
+| Bytecode | Din Alomerovic | https://github.com/gameupyourlife/EHCompiler/blob/main/bytecode.md |
+| Tester | Max Bantle | https://github.com/gameupyourlife/EHCompiler/blob/main/tests.md |
 | Projektleitung | Cedric Balzer |
 
 
@@ -22,9 +22,9 @@ Datum: 12.06.2025
 | Milestone              | Status   | Datum   |
 |--------------------|---|---|
 | Leere Klasse       | ✅  | 29.05.2025  |   
-| Klasse mit Feldern | ✅  | 12.06.2025  |   
-| Klasse mit allen Expressions | ⚙️  |   |   
-| Klasse mit Methoden | ⚙️  |   |  
+| Klasse mit Feldern | ✅  | 12.06.2025  |  
+| Klasse mit allen Expressions | ✅  | 26.06.2025  |  
+| Klasse mit Methoden | ✅  | 26.06.2025  |
 
 Der Compiler ist ein Maven Projekt. Die Test sind in dem `src/test` Verzeichnis zu finden. Im `src/main` sind die drei Komponenten des Compilers, der `scannerparserlexer`, der `semantic`(check) und die `bytecode`generierung.
 
