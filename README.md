@@ -67,9 +67,12 @@ Folgende Features werden von dem EHCompiler untestützt
 
 
 ## Verwendung
-Nach dem komiliern des Compilers:
+Im Root Verzeichnis des Compilers:
 ```
 mvn exec:java
 ```
-Dann Pfad zur Datei eingeben
+Dann nach dem welcome promot eingeben
+```
+javac <dateipfad>
+```
 
